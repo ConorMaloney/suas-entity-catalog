@@ -99,6 +99,35 @@ This is the only prediction in the set that is **visible to the naked eye**.
 Below the threshold the aircraft sits still and tilts about a degree; above it,
 it is carried away on screen.
 
+### Added 2026-09-10, after diagnosing the induced-power formulation
+
+Registered after P8 and labelled as such. P9 arises from
+`MODEL_UNCERTAINTY.md`, which found that the model's `figure_of_merit`
+parameter occupies the position of the induced power factor kappa while
+carrying figure of merit's name and value, giving an effective kappa of 1.538
+against a physical range of 1.10-1.20.
+
+| ID | Prediction | Band | Source | Can fail? |
+|---|---|---|---|---|
+| **P9** | Adopting an explicit `induced_power_factor` of **1.15**, together with a **measured** avionics load, brings the held-out cruise anchor within **+/-5%** while hover stays exact and the implied profile-power share falls inside **20-35%** of hover shaft power | all three clauses must hold | Leishman, momentum theory; `MODEL_UNCERTAINTY.md` | yes |
+
+**Why it is stated with three clauses.** Setting kappa = 1.15 alone already
+brings cruise to +0.14%, so a single-clause version would be trivially
+satisfiable and would prove nothing. The demanding part is the third clause:
+at kappa = 1.15 with the *current* 15 W avionics estimate, the fitted profile
+power implies a 43.9% profile share, which is outside the plausible range. Both
+have to be true at once, and that requires the avionics figure to be wrong in
+the direction this analysis predicts.
+
+**P9 cannot be resolved yet, and is not pending on effort.** It needs a hover
+current-draw measurement that does not exist. If that measurement comes back
+near 15 W, P9 fails and the structural explanation in `MODEL_UNCERTAINTY.md`
+is wrong - which is the point of writing it down before measuring.
+
+**The shipped model was not changed to anticipate this.** FM stays at 0.65 and
+P6 stands at +14.2% FAIL. Retuning a parameter after seeing a result, to turn a
+pre-registered failure into a pass, is what rule 1 exists to prevent.
+
 ---
 
 ## Derivations

@@ -587,6 +587,13 @@ class BatteryModel:
         tilt_deg = math.degrees(math.atan2(drag_force_n, self.hover_thrust_n))
 
         v_i = self.induced_velocity(horizontal_airspeed, thrust_n)
+        # NOTE: this parameter occupies the position of the induced power
+        # factor kappa while carrying figure of merit's name and value, so the
+        # effective kappa is 1/0.65 = 1.538 against a physical 1.10-1.20. That
+        # is a real defect, diagnosed and quantified in MODEL_UNCERTAINTY.md.
+        # It is deliberately NOT fixed here: doing so would turn the
+        # pre-registered P6 failure into a pass after the fact. The correction
+        # is pre-registered as P9 and blocked on a measurement.
         induced_shaft_w = thrust_n * v_i / self.figure_of_merit
 
         if self.rotor_tip_speed_ms > 0.0:

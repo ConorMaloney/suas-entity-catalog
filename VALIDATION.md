@@ -311,16 +311,24 @@ configuration is not validated.
 Both held-out anchors fail, and P6 pre-registered the cruise failure at +10 to
 +25% before the run. The measured +14.2% is inside that band.
 
-### The zero-free-parameter result
+### The zero-free-parameter result - RETRACTED
 
-With `calibration="none"` - nothing fitted, every parameter from literature and
-specification - the model predicts **40.04 min** hover against DJI's published
-40 min.
+With `calibration="none"` - nothing fitted - the model predicts **40.04 min**
+hover against DJI's published 40 min. This was previously offered here as
+evidence that "the momentum-theory parameter set is independently reasonable."
 
-This was not pre-registered and is reported as an observation rather than a
-test. It is worth recording because it is not a fit: there is no free parameter
-to have landed it there. It says the momentum-theory parameter set is
-independently reasonable.
+**That interpretation is withdrawn.** See
+[MODEL_UNCERTAINTY.md](MODEL_UNCERTAINTY.md).
+
+The model's `figure_of_merit` sits in the position of the induced power factor
+kappa, giving an effective kappa of 1.538 against a physical 1.10-1.20. Correct
+it to 1.15 and the same unfitted mode returns **51.313 min**, an error of
+**+28.3%**. The agreement at FM = 0.65 was an inflated kappa cancelling against
+the `0.33 * ideal_induced` profile heuristic - two errors of opposite sign.
+
+A result that exact from a model with no free parameters should have drawn more
+suspicion than it did. Two compensating errors are the usual explanation for an
+unexpectedly perfect fit, and that is what this was.
 
 ### Sensitivity
 

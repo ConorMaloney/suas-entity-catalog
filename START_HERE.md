@@ -4,13 +4,41 @@ A simulation entity catalog for small UAS, built against Cosys-AirSim 3.4.1 /
 Unreal Engine 5: a physics-based endurance model, a coverage tracker that
 reports its own gaps, and a test suite built so that its tests can fail.
 
-**This page is four minutes. Everything else is optional.**
+**This page is six minutes. Everything else is optional.**
 
 ---
 
-## The three findings
+## The four findings
 
-### 1. The simulated aircraft is not a Mavic 3
+### 1. The catalog reports its own gaps, and refuses to model what it cannot
+
+```
+  UAS-QUAD-DJI-MAVIC3     16/16  100%   R3 VALIDATED
+  UAS-QUAD-DJI-MINI4PRO    6/16   38%   R0 STUB
+  UAS-QUAD-SKYDIO-X2D      6/16   38%   R0 STUB
+
+  Modelable (R1 or better) : 1
+  THIS CATALOG IS THIN. 2 of 3 entities cannot produce any number at all.
+```
+
+Every entity carries a readiness tier **computed from its record**, not
+asserted by it - and `test_catalog.py` fails the build if a file claims a tier
+higher than it earns. Below R1 the tooling raises rather than returning a
+hedged number:
+
+```
+$ python test_3a_hover.py --entity UAS-QUAD-SKYDIO-X2D
+ERROR: ... it is R0 STUB. Missing required parameters: physical.mass_kg,
+physical.propeller_diameter_m, battery.capacity_wh (+7 more...). Refusing to
+produce a number from an incomplete record.
+```
+
+The two stubs were deliberately **not** filled with plausible values. A board
+reading "3 of 3" on invented data could not be acted on; this one can.
+[STANDARDS.md](STANDARDS.md) is the governing document, written to be followed
+by a person or an AI agent.
+
+### 2. The simulated aircraft is not a Mavic 3
 
 `settings.json` declares `"VehicleType": "SimpleFlight"`, which routes to
 `setupFrameGenericQuad` - a **1.0 kg F450-class quad on Phantom 2 propellers**,
@@ -25,7 +53,7 @@ trustworthy timebase, attitude and an independently computed air density - and
 is tested on those. Every number carries a layer tag (L1 aircraft / L2 model /
 L3 simulator) so the two can never be confused.
 
-### 2. A failure was predicted in advance, and it failed on cue
+### 3. A failure was predicted in advance, failed on cue, and was then diagnosed
 
 Eight predictions were frozen in `PREDICTIONS.md` before any test ran. **P6 was
 registered as an expected FAIL**: the model, calibrated on the hover anchor
@@ -39,7 +67,17 @@ is stronger evidence of understanding than a green board - so the fitted anchor
 reports `CALIBRATED`, never `PASS`, because an anchor that cannot fail is not
 worth scoring.
 
-### 3. A coefficient recovered from behaviour matched one read from source
+**The miss was then traced to its cause.** The model's `figure_of_merit`
+occupies the position of the induced power factor kappa while carrying figure
+of merit's name and value, giving an effective kappa of 1.538 against a
+physical 1.10-1.20. Correcting it brings cruise to +0.14% - and the correction
+was **deliberately not applied**, because retuning a parameter to turn a
+pre-registered failure into a pass is exactly what the register exists to
+prevent. It is pre-registered instead, as P9, blocked on a measurement.
+[MODEL_UNCERTAINTY.md](MODEL_UNCERTAINTY.md) has the analysis, including a
+claim it retracts.
+
+### 4. A coefficient recovered from behaviour matched one read from source
 
 The simulator exposes no drag model through its API. But the C++ is readable:
 matching `MultiRotorPhysicsBody.hpp` against `F = 0.5 rho CdA v^2` gives an
@@ -59,38 +97,21 @@ confirms the test can fail: feed it a drag law 1.6x off and it goes red at +60%.
 
 ---
 
-## Run it in 60 seconds
+## Run it in one minute
 
-No simulator, no install, standard library plus numpy:
+No simulator, no install, standard library plus numpy. On the machine this was
+built on, Python 3.14 is **not on PATH** - substitute your own interpreter:
 
 ```bash
-python catalog.py                  # coverage board - what exists and what does not
-python test_regression_pinned.py   # 36 published figures, unmoved
-python battery_model.py            # the model's own self-test
+PY="C:/Users/black/AppData/Local/Python/pythoncore-3.14-64/python.exe"
+
+"$PY" catalog.py                  # the coverage board above
+"$PY" test_catalog.py             # 9 structural checks, including that the gate refuses
+"$PY" test_regression_pinned.py   # 36 published figures, unmoved
+"$PY" battery_model.py            # the model's own self-test
 ```
 
-The first one prints the honest state of the catalog:
-
-```
-  UAS-QUAD-DJI-MAVIC3     16/16  100%   R3 VALIDATED
-  UAS-QUAD-DJI-MINI4PRO    6/16   38%   R0 STUB
-  UAS-QUAD-SKYDIO-X2D      6/16   38%   R0 STUB
-
-  Modelable (R1 or better) : 1
-  THIS CATALOG IS THIN. 2 of 3 entities cannot produce any number at all.
-```
-
-Two entities hold no sourced aircraft data, the tooling refuses to model them,
-and they were deliberately **not** filled with plausible values. A board
-reading "3 of 3" on invented data would be worth nothing, because nothing on it
-could be acted on. Point a test at one and it refuses rather than hedging:
-
-```
-$ python test_3a_hover.py --entity UAS-QUAD-SKYDIO-X2D
-ERROR: ... it is R0 STUB. Missing required parameters: physical.mass_kg,
-physical.propeller_diameter_m, battery.capacity_wh (+7 more...). Refusing to
-produce a number from an incomplete record.
-```
+All four exit 0 and need nothing running.
 
 ---
 
@@ -99,14 +120,19 @@ produce a number from an incomplete record.
 | If you want | Read | Time |
 |---|---|---|
 | The VV&A case: layer model, calibration discipline, defects, limitations | [VALIDATION.md](VALIDATION.md) | 18 min |
+| Where the model's *structure* is weak, and the defect I found in it | [MODEL_UNCERTAINTY.md](MODEL_UNCERTAINTY.md) | 7 min |
 | The pre-registration and all eight results | [PREDICTIONS.md](PREDICTIONS.md) | 13 min |
 | How to add an entity - the tradecraft, written for a person or an AI agent | [STANDARDS.md](STANDARDS.md) | 9 min |
 | How this was built with an AI agent, and four times the agent was wrong | [AGENT_WORKFLOW.md](AGENT_WORKFLOW.md) | 8 min |
 | Environment, file map, run instructions | [README.md](README.md) | 11 min |
 
-**Reviewing in 15 minutes?** This page, then `VALIDATION.md` sections 1-3.
-Section 3 is the defect analysis of the prior iteration of this work and is the
-part I would want read.
+**Reviewing in 15 minutes?** This page, then `VALIDATION.md` sections 1-3 -
+the defect analysis of the prior iteration, with the evidence preserved in
+`prior_work/` so the claims can be checked.
+
+**Reviewing as an engineer?** [MODEL_UNCERTAINTY.md](MODEL_UNCERTAINTY.md).
+It is where the model is picked apart, including the finding that the hover
+anchor cannot separate induced from profile power at all.
 
 ---
 
@@ -122,6 +148,7 @@ part I would want read.
 | P6 | Model overshoots cruise by 10-25% | **FAIL +14.2% - as pre-registered** |
 | P7 | Sim T/W 1.705, hover throttle 58.7% | **PASS** |
 | P8 | Station-keeping breaks down at 29.7 m/s | **PASS** - observed bracket 25-30 m/s |
+| P9 | kappa = 1.15 plus a measured avionics load brings cruise within +/-5% | **PENDING** - blocked on a measurement, not on effort |
 
 P8's prediction was committed and pushed to GitHub **before** the test that
 resolves it was ever run, so its ordering is witnessed by the remote rather

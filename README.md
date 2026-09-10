@@ -108,6 +108,7 @@ satisfy the policy would destroy the evidence for a claim made about it.
 | `run_tests.py` | Interactive menu. |
 | `PREDICTIONS.md` | **Frozen pre-registration.** Written before any run. |
 | `VALIDATION.md` | The VV&A knowledge article - layer model, calibration discipline, defects, limitations. |
+| `MODEL_UNCERTAINTY.md` | Where the model's *structure* is weak - the induced-power defect, quantified, and why it was not silently fixed. |
 | `results/` | Test output, created on first run. |
 | `prior_work/` | The first iteration, unedited - the evidence for `VALIDATION.md` section 3. |
 
