@@ -83,6 +83,7 @@ Everything is ASCII-only, standard library plus numpy. No installation step.
 | `catalog/coverage_plan.json` | Declared intent - the only place the catalog knows about entities that do not exist. |
 | `catalog/environment/` | The simulator's own airframe. Not an entity. |
 | `STANDARDS.md` | **How to build an entity here.** Written to be followed by a person or an AI agent. |
+| `AGENT_WORKFLOW.md` | How this was built with an AI agent - prompt patterns, the review loop, and four times the agent was caught being wrong. |
 | `battery_model.py` | Momentum-theory energy model. Entity-driven, no AirSim import, runs offline. |
 | `settings_helper.py` | Safe read/modify of `settings.json` - atomic writes, backups, key preservation. |
 | `probe_sim_capabilities.py` | **Step 0.** Discovers what this install actually exposes. Gates the tests. |
@@ -232,6 +233,21 @@ python test_3a_hover.py --calibration none        # fit nothing at all
 python test_3b_wind.py --sweep 0 2 5 8 12 --axis y
 python test_3b_wind.py --wind-mode settings       # briefed restart path
 ```
+
+---
+
+## How this was built
+
+Most of the code and prose here was written by an AI agent under direction.
+[AGENT_WORKFLOW.md](AGENT_WORKFLOW.md) covers the method: the prompt patterns
+that produced usable work, the six-checkpoint review loop, and four documented
+occasions when the agent was caught being wrong - including one where it
+asserted a claim about the simulator's integrator twice, in five files, and had
+it backwards.
+
+Three of those four were caught by a tool or a direct challenge rather than by
+reading the agent's output carefully, which is itself the most useful finding
+in that document.
 
 ---
 
