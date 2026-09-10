@@ -642,12 +642,6 @@ def main(argv=None):
         settings_summary = "settings.json unavailable: %s" % exc
 
     try:
-        client = probe.connect()
-    except RuntimeError as exc:
-        print("ERROR: %s" % exc, file=sys.stderr)
-        return 1
-
-    try:
         model = battery_model.BatteryModel(
             entity=arguments.entity, profile=arguments.profile,
             calibration=arguments.calibration, verbose=True)
@@ -657,6 +651,12 @@ def main(argv=None):
         # the useful answer here.
         print("ERROR: %s" % exc, file=sys.stderr)
         return 3
+
+    try:
+        client = probe.connect()
+    except RuntimeError as exc:
+        print("ERROR: %s" % exc, file=sys.stderr)
+        return 1
 
     # Clear any wind so a hover baseline is genuinely a hover baseline. An
     # earlier run reported a "Zero Wind" scenario while settings.json still

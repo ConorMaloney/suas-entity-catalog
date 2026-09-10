@@ -613,18 +613,18 @@ def main(argv=None):
         settings_summary = "settings.json unavailable: %s" % exc
 
     try:
-        client = probe.connect()
-    except RuntimeError as exc:
-        print("ERROR: %s" % exc, file=sys.stderr)
-        return 1
-
-    try:
         model = battery_model.BatteryModel(
             entity=arguments.entity, profile=arguments.profile,
             calibration="hover", verbose=True)
     except catalog.CatalogError as exc:
         print("ERROR: %s" % exc, file=sys.stderr)
         return 3
+
+    try:
+        client = probe.connect()
+    except RuntimeError as exc:
+        print("ERROR: %s" % exc, file=sys.stderr)
+        return 1
 
     # Air density from the simulator, not assumed.
     try:

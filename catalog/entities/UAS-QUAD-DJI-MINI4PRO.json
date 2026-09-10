@@ -1,0 +1,188 @@
+{
+  "entity": "DJI Mini 4 Pro",
+  "entity_id": "UAS-QUAD-DJI-MINI4PRO",
+  "category": "UAS - Group 1 - Quadcopter",
+  "segment_id": "SEG-US-COM-2020S-QUAD-G1",
+  "schema_version": "3.0",
+  "compiled_on": "2026-09-10",
+  "compiled_by": "Conor Maloney",
+  "_standards": "See STANDARDS.md. Requirement classes and readiness tiers are enforced by catalog/schema/entity_schema_3.0.json.",
+  "readiness_declared": "R0",
+  "_readiness_note": "STUB. Structure only. Every aircraft-specific value is a DECLARED gap carrying a todo that names what would close it - contrast UAS-QUAD-SKYDIO-X2D, where several keys are absent entirely and report as NOT RECORDED. Both entities are unmodelable and both are refused by the gate; only one of them tells the next person where to look.",
+  "_stub_note": "Sub-250 g class. Worth modelling because the mass and disk-area sensitivities that dominate the Mavic 3's endurance behave very differently at a quarter of the mass. This entity is therefore a genuine test of whether the model generalises, rather than another data point sitting next to the one it was calibrated on.",
+
+  "physical": {
+    "mass_kg": {
+      "value": null,
+      "status": "missing",
+      "todo": "Takeoff weight. DJI specifications page. Confirm whether the published figure includes battery and propellers - the sub-250 g regulatory class creates an incentive to quote the most flattering configuration."
+    },
+    "propeller_diameter_m": {
+      "value": null,
+      "status": "missing",
+      "todo": "Propeller diameter from the DJI part designation, converted from inches. Do not assume it scales from the Mavic 3."
+    },
+    "rotor_count": {
+      "value": 4,
+      "unit": "count",
+      "confidence": "published",
+      "source": "Quadcopter airframe",
+      "verified_on": "2026-09-10",
+      "note": "Definitional from the category, not a measurement."
+    },
+    "dimensions_unfolded_mm": {
+      "value": null,
+      "status": "missing",
+      "todo": "DJI specifications page."
+    }
+  },
+
+  "battery": {
+    "capacity_wh": {
+      "value": null,
+      "status": "missing",
+      "todo": "Intelligent Flight Battery energy in Wh, from the DJI specifications page. Check whether the figure is for the standard or the Plus battery - they differ, and quoting the wrong one changes every endurance number this model produces."
+    },
+    "capacity_mah": {
+      "value": null,
+      "status": "missing",
+      "todo": "DJI specifications page."
+    },
+    "voltage_full_v": {
+      "value": null,
+      "status": "missing",
+      "todo": "DJI charge voltage limit. Do NOT assume the standard LiPo 4.2 V per cell figure - that exact error is already on the record against the Mavic 3, see VALIDATION.md section 7."
+    },
+    "voltage_empty_v": {
+      "value": null,
+      "status": "missing",
+      "todo": "Cutoff voltage. DJI battery documentation."
+    },
+    "chemistry": {
+      "value": null,
+      "status": "missing",
+      "todo": "DJI battery documentation. Li-ion and LiPo have different discharge curves and different safe cutoffs; the Mavic 3 record was corrected on exactly this point."
+    }
+  },
+
+  "performance_published": {
+    "_note": "No performance figure has been sourced yet. Expect DJI's specifications page and its manual to disagree, as they do for the Mavic 3 hover time. Record both and set contested rather than picking one.",
+    "max_hover_time_min": {
+      "value": null,
+      "status": "missing",
+      "todo": "Hover endurance. THIS IS THE CALIBRATION ANCHOR - no parameter can be fitted without it. Check the specifications page against the manual."
+    },
+    "max_flight_time_min": {
+      "value": null,
+      "status": "missing",
+      "todo": "Flight endurance. Capture the constant speed it was measured at at the same time, or the cruise anchor cannot be scored."
+    },
+    "flight_time_test_speed_ms": {
+      "value": null,
+      "status": "missing",
+      "todo": "The speed the flight-time figure was measured at. Without it the cruise anchor is unscorable, which is what happened to the wind anchor catalog-wide."
+    },
+    "max_flight_distance_km": {
+      "value": null,
+      "status": "missing",
+      "todo": "Maximum flight distance. Held-out validation anchor."
+    },
+    "max_speed_ms": {
+      "value": null,
+      "status": "missing",
+      "todo": "Maximum speed. Sets the best-range search ceiling."
+    },
+    "max_wind_resistance_ms": {
+      "value": null,
+      "status": "missing",
+      "todo": "Wind resistance. Note this anchor is UNSCORED catalog-wide - no wind predictor is pre-registered - so recording it does not make it scorable."
+    }
+  },
+
+  "performance_operational": {
+    "_note": "Independent measurements go here once found. The Mavic 3 record shows real-world endurance landing at 65 to 75 percent of the published figure; do not assume the same ratio holds at a quarter of the mass.",
+    "observed_flight_time_min": {
+      "value": null,
+      "status": "missing",
+      "todo": "Independent measured endurance range, from published review testing or owner reports. Record as a two-element range, not a point."
+    },
+    "usable_energy_fraction": {
+      "value": null,
+      "status": "missing",
+      "todo": "Reserve policy. 0.85 is the doctrine figure used elsewhere in this catalog, but adopt it explicitly rather than by default."
+    },
+    "operational_overhead_factor": {
+      "value": null,
+      "status": "missing",
+      "todo": "Derive from observed against published endurance once both exist. Deriving it any other way makes the operational profile unfalsifiable."
+    }
+  },
+
+  "aerodynamic_assumptions": {
+    "air_density_kg_m3": {
+      "value": 1.225,
+      "unit": "kg/m3",
+      "confidence": "published",
+      "source": "ISA sea level standard atmosphere",
+      "verified_on": "2026-09-10",
+      "note": "Environmental constant, not an aircraft property."
+    },
+    "equivalent_flat_plate_area_m2": {
+      "value": null,
+      "status": "missing",
+      "todo": "Airframe-specific drag area. Estimate from frontal area and a bluff-body Cd, or identify it from a tilt-versus-wind sweep the way test_3b_wind.py does for the simulator's airframe."
+    },
+    "figure_of_merit": {
+      "value": 0.65,
+      "unit": "dimensionless",
+      "confidence": "literature",
+      "source": "Rotorcraft literature, typical small electric multirotor",
+      "verified_on": "2026-09-10",
+      "note": "Class-typical modelling assumption carried at the same literature citation the rest of the catalog uses. It is NOT a measurement of this airframe and must be revisited before this entity is briefed. Small rotors at low Reynolds number may well sit below 0.65."
+    },
+    "motor_esc_efficiency": {
+      "value": 0.8,
+      "unit": "dimensionless",
+      "confidence": "literature",
+      "source": "Rotorcraft literature, typical small electric multirotor",
+      "verified_on": "2026-09-10",
+      "note": "Class-typical modelling assumption, not a measurement of this airframe."
+    },
+    "propulsive_efficiency": {
+      "value": 0.7,
+      "unit": "dimensionless",
+      "confidence": "literature",
+      "source": "Rotorcraft literature, typical small electric multirotor",
+      "verified_on": "2026-09-10",
+      "note": "Class-typical modelling assumption, not a measurement of this airframe."
+    },
+    "avionics_power_w": {
+      "value": null,
+      "status": "missing",
+      "todo": "Airframe-specific. Needs a hover current draw measurement or a teardown estimate. The Mavic 3 figure of 15 W is roughly 13 percent of its hover draw; at this aircraft's mass the same absolute figure would be a far larger fraction, so carrying it across would be a significant modelling error."
+    },
+    "thrust_coefficient": {
+      "value": null,
+      "status": "missing",
+      "todo": "Propeller-specific C_T. Needs the propeller model, then a UIUC propeller database lookup or a static thrust bench test."
+    },
+    "profile_power_mu_factor": {
+      "value": 4.65,
+      "unit": "dimensionless",
+      "confidence": "literature",
+      "source": "Standard rotorcraft profile power growth form P = P0 (1 + 4.65 mu^2)",
+      "verified_on": "2026-09-10",
+      "note": "Generic rotorcraft relation, not airframe-specific."
+    }
+  },
+
+  "calibration": {
+    "_note": "Declared intent. Nothing can be fitted until the hover anchor and the physical parameters exist.",
+    "fitted_parameter": "profile_power_hover_w",
+    "fitted_to_anchor": "max_hover_time_min",
+    "held_out_anchors": [
+      "max_flight_time_min",
+      "max_flight_distance_km"
+    ]
+  }
+}

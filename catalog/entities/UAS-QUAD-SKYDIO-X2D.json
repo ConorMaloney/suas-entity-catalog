@@ -1,0 +1,151 @@
+{
+  "entity": "Skydio X2D",
+  "entity_id": "UAS-QUAD-SKYDIO-X2D",
+  "category": "UAS - Group 1 - Quadcopter",
+  "segment_id": "SEG-US-DEF-2020S-QUAD-G1",
+  "schema_version": "3.0",
+  "compiled_on": "2026-09-10",
+  "compiled_by": "Conor Maloney",
+  "_standards": "See STANDARDS.md. Requirement classes and readiness tiers are enforced by catalog/schema/entity_schema_3.0.json.",
+  "readiness_declared": "R0",
+  "_readiness_note": "STUB. Structure only. Every aircraft-specific value is a declared gap or is not recorded at all - nothing here has been sourced. The catalog reports this entity as unmodelable and the gate REFUSES it. That is correct behaviour, not a defect to work around by filling fields with plausible numbers.",
+  "_stub_note": "Deliberately thin, and several optional keys are ABSENT rather than declared - they report as NOT RECORDED, in contrast with UAS-QUAD-DJI-MINI4PRO where every gap carries a todo. Public performance data for Blue UAS platforms is thinner than for commercial aircraft and some figures are not published at all, so a low readiness tier here may be the honest steady state rather than a temporary condition.",
+
+  "physical": {
+    "mass_kg": {
+      "value": null,
+      "status": "missing",
+      "todo": "Takeoff weight including battery. Skydio product documentation or the Blue UAS listing."
+    },
+    "propeller_diameter_m": {
+      "value": null,
+      "status": "missing",
+      "todo": "Propeller diameter. Needs the propeller part number from a parts listing, then convert from inches."
+    },
+    "rotor_count": {
+      "value": 4,
+      "unit": "count",
+      "confidence": "published",
+      "source": "Quadcopter airframe",
+      "verified_on": "2026-09-10",
+      "note": "Definitional from the category, not a measurement."
+    }
+  },
+
+  "battery": {
+    "capacity_wh": {
+      "value": null,
+      "status": "missing",
+      "todo": "Pack energy in Wh. Manufacturer battery specification."
+    },
+    "voltage_full_v": {
+      "value": null,
+      "status": "missing",
+      "todo": "Charge voltage limit. Manufacturer battery specification, or cell count times the per-cell limit for the stated chemistry."
+    },
+    "voltage_empty_v": {
+      "value": null,
+      "status": "missing",
+      "todo": "Cutoff voltage. Manufacturer battery specification."
+    }
+  },
+
+  "performance_published": {
+    "_note": "No performance figure has been sourced yet.",
+    "max_hover_time_min": {
+      "value": null,
+      "status": "missing",
+      "todo": "Hover endurance. THIS IS THE CALIBRATION ANCHOR - no parameter can be fitted without it."
+    },
+    "max_flight_time_min": {
+      "value": null,
+      "status": "missing",
+      "todo": "Flight endurance, together with the speed it was measured at."
+    },
+    "max_speed_ms": {
+      "value": null,
+      "status": "missing",
+      "todo": "Maximum speed. Sets the best-range search ceiling."
+    }
+  },
+
+  "performance_operational": {
+    "usable_energy_fraction": {
+      "value": null,
+      "status": "missing",
+      "todo": "Reserve policy. Likely inherited from doctrine rather than from the vendor, but adopt it explicitly."
+    },
+    "operational_overhead_factor": {
+      "value": null,
+      "status": "missing",
+      "todo": "Needs an independent measured endurance to compare against the published figure."
+    }
+  },
+
+  "aerodynamic_assumptions": {
+    "air_density_kg_m3": {
+      "value": 1.225,
+      "unit": "kg/m3",
+      "confidence": "published",
+      "source": "ISA sea level standard atmosphere",
+      "verified_on": "2026-09-10",
+      "note": "Environmental constant, not an aircraft property."
+    },
+    "equivalent_flat_plate_area_m2": {
+      "value": null,
+      "status": "missing",
+      "todo": "Airframe-specific drag area. Estimate from frontal area and a bluff-body Cd, or identify it from a tilt-versus-wind sweep the way test_3b_wind.py does for the simulator's airframe."
+    },
+    "figure_of_merit": {
+      "value": 0.65,
+      "unit": "dimensionless",
+      "confidence": "literature",
+      "source": "Rotorcraft literature, typical small electric multirotor",
+      "verified_on": "2026-09-10",
+      "note": "Class-typical modelling assumption carried at the same literature citation the rest of the catalog uses. It is NOT a measurement of this airframe and must be revisited before this entity is briefed."
+    },
+    "motor_esc_efficiency": {
+      "value": 0.8,
+      "unit": "dimensionless",
+      "confidence": "literature",
+      "source": "Rotorcraft literature, typical small electric multirotor",
+      "verified_on": "2026-09-10",
+      "note": "Class-typical modelling assumption, not a measurement of this airframe."
+    },
+    "propulsive_efficiency": {
+      "value": 0.7,
+      "unit": "dimensionless",
+      "confidence": "literature",
+      "source": "Rotorcraft literature, typical small electric multirotor",
+      "verified_on": "2026-09-10",
+      "note": "Class-typical modelling assumption, not a measurement of this airframe."
+    },
+    "avionics_power_w": {
+      "value": null,
+      "status": "missing",
+      "todo": "Airframe-specific. Needs a hover current draw measurement, or a teardown estimate of the compute, radio and gimbal loads. Skydio's onboard autonomy stack likely draws more than a comparable commercial aircraft, so do not carry the Mavic 3 figure across."
+    },
+    "thrust_coefficient": {
+      "value": null,
+      "status": "missing",
+      "todo": "Propeller-specific C_T. Needs the propeller model, then a UIUC propeller database lookup or a static thrust bench test."
+    },
+    "profile_power_mu_factor": {
+      "value": 4.65,
+      "unit": "dimensionless",
+      "confidence": "literature",
+      "source": "Standard rotorcraft profile power growth form P = P0 (1 + 4.65 mu^2)",
+      "verified_on": "2026-09-10",
+      "note": "Generic rotorcraft relation, not airframe-specific."
+    }
+  },
+
+  "calibration": {
+    "_note": "Declared intent. Nothing can be fitted until the hover anchor and the physical parameters exist.",
+    "fitted_parameter": "profile_power_hover_w",
+    "fitted_to_anchor": "max_hover_time_min",
+    "held_out_anchors": [
+      "max_flight_time_min"
+    ]
+  }
+}
