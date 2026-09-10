@@ -1,0 +1,46 @@
+========================================================================
+WIND DEMONSTRATION - RESULTS
+========================================================================
+Run on : 2026-09-10 01:54:56
+Axis   : y
+
+  Controller tilt limit : 32.73 deg (simple_flight Params.hpp:80)
+  Predicted breakaway   : 29.7 m/s
+
+  wind m/s  pred tilt  meas tilt     error  downwind m       state
+  ----------------------------------------------------------------
+       0.0       0.00       0.00      0.0%         0.0       HOLDS
+       5.0       1.04       1.02     -2.5%         0.1       HOLDS
+      12.0       5.99       5.78     -3.6%         0.6       HOLDS
+      20.0      16.26      15.11     -7.0%         1.8       HOLDS
+      25.0      24.50      24.47     -0.1%         6.2       HOLDS
+      30.0      33.27      29.28    -12.0%        36.9   BREAKAWAY
+      40.0      49.40      31.35    -36.5%       119.5   BREAKAWAY
+      60.0      69.14      31.72    -54.1%       290.0   BREAKAWAY
+
+------------------------------------------------------------------------
+BREAKAWAY
+------------------------------------------------------------------------
+  Highest wind still holding station : 25.0 m/s
+  Lowest wind causing breakaway      : 30.0 m/s
+  Predicted transition               : 29.7 m/s
+
+  The predicted transition falls INSIDE the observed
+  bracket. The controller's tilt limit, read from
+  Params.hpp before this ran, predicts where station
+  keeping fails.
+
+  Stages where hold/saturate matched prediction: 8 of 8
+
+------------------------------------------------------------------------
+WHAT THIS ALSO PROVES
+------------------------------------------------------------------------
+  Every wind change above was applied with simSetWind() to
+  an ALREADY FLYING aircraft, with no simulator restart and
+  no edit to settings.json. If the aircraft visibly tilted
+  and was blown downwind, wind set through the API reaches
+  the physics engine at runtime.
+
+  settings.json wind is a different thing: it seeds the same
+  variable at startup (SimModeWorldBase.cpp:76) and does
+  need a restart to change.

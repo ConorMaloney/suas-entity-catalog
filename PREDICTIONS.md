@@ -261,9 +261,62 @@ matters. A real Mavic 3 at 9 m/s costs **less** than hover; the simulator costs
    and are not materially affected, but **3.a should be re-run at ClockSpeed
    1.0** before its energy figures are quoted.
 
-### Pending
+### P8 - resolved 2026-09-10, after the prediction was pushed to GitHub
 
-P8 requires `wind_demo.py` to be run against the simulator. Not yet executed.
+`wind_demo.py`, y axis, ClockSpeed 1.0. Full output in
+`results/wind_demo_20260910_015456.txt`.
+
+| wind m/s | predicted tilt | measured tilt | downwind travel | state |
+|---|---|---|---|---|
+| 0 | 0.00 | 0.00 | 0.0 m | HOLDS |
+| 5 | 1.04 | 1.02 | 0.1 m | HOLDS |
+| 12 | 5.99 | 5.78 | 0.6 m | HOLDS |
+| 20 | 16.26 | 15.11 | 1.8 m | HOLDS |
+| 25 | 24.50 | 24.47 | 6.2 m | HOLDS |
+| 30 | 33.27 | **29.28** | 36.9 m | **BREAKAWAY** |
+| 40 | 49.40 | **31.35** | 119.5 m | **BREAKAWAY** |
+| 60 | 69.14 | **31.72** | 290.0 m | **BREAKAWAY** |
+
+```
+Highest wind still holding station : 25.0 m/s
+Lowest wind causing breakaway      : 30.0 m/s
+Predicted transition               : 29.7 m/s
+```
+
+**PASS.** The predicted transition falls inside the observed bracket, and all
+8 stages matched their predicted hold/saturate classification.
+
+**The mechanism is visible, not just the threshold.** Past the transition the
+measured tilt stops tracking the prediction and asymptotes: 29.28, 31.35,
+31.72 degrees, against the 32.73 degree commanded-tilt cap read from
+`simple_flight/firmware/Params.hpp:80` before this test was written. Below
+saturation the two agree to within 7%; above it they diverge *because* the cap
+has been reached. Predicted **required** tilt and measured **achievable** tilt
+are different quantities once the controller saturates, so the growing error in
+the report's error column past 30 m/s is the confirmation rather than a miss.
+The report's formatting does not currently make that distinction clear, which
+is a presentation defect logged against `wind_demo.py`, not a result defect.
+
+**Ordering is independently verifiable for this row.** Commit `5063d2f`
+contained P8's prediction and `wind_demo.py`, and contained no
+`results/wind_demo_*` file. It was pushed to
+`github.com/ConorMaloney/suas-entity-catalog` before the demo was ever run.
+GitHub holds the timestamp; it is not an assertion made by this document.
+
+### Secondary result - runtime wind, settled empirically
+
+Every wind change in the run above was applied with `simSetWind()` to an
+already-flying aircraft: no simulator restart, no edit to `settings.json`. The
+aircraft tilted, saturated and was carried 290 m downwind. Wind set through the
+API reaches the physics engine at runtime.
+
+This had been established by reading the source - `SimModeWorldBase.cpp:137`
+and `:76` both route to `physics_engine->setWind()`, one from the API and one
+from the settings loader - but source reading is evidence, not proof, and the
+installed server binary is what actually answers. Now both agree.
+
+`settings.json` wind remains a separate thing: it seeds the same variable at
+startup and does require a restart to change.
 
 ```bash
 python settings_helper.py --clock 1.0    # then RESTART the simulator
