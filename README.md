@@ -1,5 +1,11 @@
 # sUAS Entity Catalog
 
+> ### New here? Read [START_HERE.md](START_HERE.md) first - four minutes.
+>
+> It covers the three findings that matter, three commands that run with no
+> simulator, and where to go for detail. This README is the environment and
+> file map; the argument lives elsewhere.
+
 A simulation entity catalog for small unmanned aircraft, with a validated
 energy and endurance model, a coverage tracker that reports its own gaps, and
 a test suite designed so that its tests can actually fail.
@@ -83,6 +89,7 @@ Everything is ASCII-only, standard library plus numpy. No installation step.
 | `catalog/coverage_plan.json` | Declared intent - the only place the catalog knows about entities that do not exist. |
 | `catalog/environment/` | The simulator's own airframe. Not an entity. |
 | `STANDARDS.md` | **How to build an entity here.** Written to be followed by a person or an AI agent. |
+| `START_HERE.md` | **Read this first.** The three findings, in four minutes, with pointers to the detail. |
 | `AGENT_WORKFLOW.md` | How this was built with an AI agent - prompt patterns, the review loop, and four times the agent was caught being wrong. |
 | `battery_model.py` | Momentum-theory energy model. Entity-driven, no AirSim import, runs offline. |
 | `settings_helper.py` | Safe read/modify of `settings.json` - atomic writes, backups, key preservation. |
