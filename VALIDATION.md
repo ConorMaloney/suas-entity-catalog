@@ -67,7 +67,11 @@ This section is included because it is the strongest argument for the
 restructure, and because a VV&A document that omits its own predecessor's
 defects is not a VV&A document.
 
-Evidence from the existing outputs in `AirSim_Scripts/results/`:
+**The cited artifacts are in [`prior_work/`](prior_work/), unedited.** A
+document that says "check my work" and then cites files the reader cannot open
+is not saying much.
+
+Evidence:
 
 | Artifact | What it actually shows |
 |---|---|
@@ -76,7 +80,7 @@ Evidence from the existing outputs in `AirSim_Scripts/results/`:
 | same | Drift is identical to two decimal places across all three scenarios (`-0.22 / -16.08 / -129.09`). Wind had **no** measured effect on the trajectory. |
 | same | Start Z of `+118.6` in NED was captured before the post-`reset()` state settled, so the reported "drift" is the reset offset. |
 | same | Crosswind factor **1.515** against headwind **1.010** - charging 50% more for a crosswind than for a headwind. Backwards. |
-| `hover_test_20260908_003202.txt` | `time.sleep(1)` is commented out at `HoverScript_01.py:88`, so "30 seconds" is a loop counter. Wall time 0.76 s. |
+| `hover_test_20260908_003202.txt` | `time.sleep(1)` is commented out at `prior_work/HoverScript_01.py:88`, so "30 seconds" is a loop counter. Wall time 0.76 s. |
 | same | `Target 46.00 min / Actual 0.50 min / FAIL` compares **how long the test ran** against **how long the aircraft flies**. A red FAIL carrying no information. |
 
 None of this is a criticism of the effort. It is what happens when a test
@@ -100,6 +104,13 @@ which is precisely why `probe_sim_capabilities.py` now runs first.
 - No induced-power term at all - the dominant term in multirotor hover.
 - An arbitrary range model.
 - An emoji at line 50, in the file whose own constraint list forbids them.
+
+The two quickest to check yourself:
+
+```bash
+sed -n '88p' prior_work/HoverScript_01.py        # the commented-out sleep
+sed -n '50p' prior_work/battery_model_v1.py      # the emoji
+```
 
 ---
 
@@ -524,6 +535,8 @@ and then against a real Mavic 3 airframe - is a stronger artifact than either
 half alone, which is why the work was staged this way rather than starting with
 the C++.
 
-Also outstanding: tests 3.c (target tracking) and 3.d (reconnaissance profile),
-both of which are trajectory-domain problems and therefore things AirSim is
-genuinely good at - unlike energy.
+Two further experiments are worth proposing, and were deliberately outside the
+scope of this work: target tracking, and a reconnaissance flight profile. Both
+sit in the trajectory domain, which is where AirSim is genuinely strong - and
+where, unlike energy, its output can be taken at face value. Neither is a gap
+against anything promised here.

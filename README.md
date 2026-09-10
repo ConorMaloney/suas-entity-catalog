@@ -77,6 +77,12 @@ The interpreter is not on PATH. Either use the full path or set an alias:
 
 Everything is ASCII-only, standard library plus numpy. No installation step.
 
+One documented exemption: [`prior_work/`](prior_work/) preserves the first
+iteration of this work unedited, as the evidence for the defect analysis in
+`VALIDATION.md` section 3. One file there carries a non-ASCII byte at line 50 -
+an emoji, in a file whose own constraint list forbade them. Stripping it to
+satisfy the policy would destroy the evidence for a claim made about it.
+
 ---
 
 ## Files
@@ -103,6 +109,7 @@ Everything is ASCII-only, standard library plus numpy. No installation step.
 | `PREDICTIONS.md` | **Frozen pre-registration.** Written before any run. |
 | `VALIDATION.md` | The VV&A knowledge article - layer model, calibration discipline, defects, limitations. |
 | `results/` | Test output, created on first run. |
+| `prior_work/` | The first iteration, unedited - the evidence for `VALIDATION.md` section 3. |
 
 ---
 
@@ -387,9 +394,11 @@ Running the same suite before and after that rebuild is a stronger artifact
 than either half alone, which is why the work was staged this way rather than
 starting with the C++.
 
-Still outstanding: tests 3.c (target tracking) and 3.d (reconnaissance
-profile). Both are trajectory-domain problems, which is what AirSim is
-genuinely good at.
+Two further tests suggest themselves and were **not** part of the scope here:
+target tracking, and a reconnaissance flight profile. Both are
+trajectory-domain problems, which is the domain AirSim is genuinely good at -
+unlike energy, where it contributes nothing. They are listed as the natural
+next experiments rather than as gaps.
 
 **On the catalog side**, the tooling generalises and the content does not yet.
 The next work is research, not code: source the two stubs against their
