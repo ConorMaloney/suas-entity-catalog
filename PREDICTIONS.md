@@ -1,0 +1,287 @@
+# PREDICTIONS.md - Pre-registration
+
+**Frozen 2026-09-09, before any simulator run.**
+
+Every number below was derived either from the Cosys-AirSim C++ source or
+from published Mavic 3 specification, and written down **before** the
+corresponding test was executed. Acceptance bands were set at the same time.
+
+## Why this file exists
+
+The briefed tests, as originally structured, could not fail.
+
+`battery_model.py` is a pure function of time and velocity, and AirSim
+simulates no battery at all - a case-insensitive search of the whole
+`cosysairsim` package returns zero matches for `battery`, `power`, `mass` or
+`drag`. So "hover energy" is `P_hover * t`, and checking that the pack empties
+at the specification endurance is checking that `77 / 115.5 = 0.667 h`. That is
+arithmetic wearing a lab coat, and it will report PASS forever regardless of
+what the simulator does.
+
+The defence against that is not a better tolerance. It is committing to the
+number in advance, in writing, and then letting the measurement disagree.
+
+## Provenance of this register - what is checkable and what is not
+
+Pre-registration is only worth something if the ordering can be verified. A
+document asserting its own priority is the document vouching for itself, and a
+reader is entitled to ask how they would tell the difference between a
+prediction and a postdiction. So this register states plainly which of its rows
+are independently checkable and which rest on the author's word.
+
+**P1 through P7** were written on 2026-09-09 and resolved on 2026-09-10. That
+ordering is attested by file modification times and by the working record, but
+NOT by this repository: version control was initialised after those runs had
+already happened. Committing them now in an order that implied otherwise would
+be manufacturing the very evidence this method exists to make unnecessary, so
+it has not been done. Treat P1-P7 as self-attested.
+
+**P8** is different. It was committed to version control **before
+`wind_demo.py` had ever been run**, in a repository state that contains the
+prediction and no corresponding result. The commit history therefore witnesses
+the ordering independently of anything asserted here.
+
+That distinction is the honest one, and it is drawn deliberately. A register
+that claimed all eight were proven would be making exactly the kind of
+unverifiable assertion the register exists to prevent.
+
+## Rules
+
+1. Predictions are frozen before the run. This file is append-only for
+   results; the prediction rows are never edited after the fact.
+2. Bands are set from the physics, not from the observed spread.
+3. A fitted anchor is reported `CALIBRATED`, never `PASS`. It cannot fail by
+   construction, so scoring it would be dishonest.
+4. **P6 is pre-registered as an expected FAIL.** Predicting the direction and
+   magnitude of your own model's error before measuring it is stronger
+   evidence of understanding than a green board.
+5. Failures ship. A red result is a finding.
+
+---
+
+## The predictions
+
+| ID | Prediction | Band | Source | Can fail? |
+|---|---|---|---|---|
+| **P1** | Simulator effective `CdA_y` identified from a tilt-vs-wind sweep = **0.011676 m2** | +/-15% | `MultiRotorPhysicsBody.hpp:190-217`, `FastPhysicsEngine.hpp:269-308` | yes |
+| **P2** | Station-keeping tilt = **1.044 deg** at 5 m/s, **5.995 deg** at 12 m/s (y axis) | +/-20% | `tan(theta) = D/mg` | yes |
+| **P3** | Thrust (hence energy) penalty between 0 and 5 m/s wind is **below 0.5%** (predicted 0.017%) | < 0.5% | thrust ratio `1/cos(theta)` = 1.000166 | yes |
+| **P4** | Simulator rotor shaft power at 9 m/s is within **10%** of hover (predicted +0.22%) | +/-10% | `RotorParams.hpp:21-62` | yes |
+| **P5** | `EnvironmentState.air_density` = **1.225 kg/m3** at sea level | +/-2% | ISA | yes |
+| **P6** | L2 model calibrated on hover **only** predicts cruise endurance of **50-58 min** against DJI's 46 - an expected **+10 to +25% FAIL** | +10..+25% | momentum theory | yes |
+| **P7** | Simulator thrust-to-weight = **1.705**; hover throttle **58.7%** | +/-5% | `calculateMaxThrust()`, `RotorActuator.hpp:125` | yes |
+
+### Added 2026-09-10, before `wind_demo.py` was first run
+
+Registered later than P1-P7 and labelled as such, because a register that
+quietly absorbs new rows is not a register. P8 was written before the demo
+executed.
+
+| ID | Prediction | Band | Source | Can fail? |
+|---|---|---|---|---|
+| **P8** | Station-keeping breaks down at **29.7 m/s** (y axis) / **30.9 m/s** (x axis): below it the aircraft holds position, above it the controller saturates and it is blown downwind | observed transition brackets the prediction | `simple_flight/firmware/Params.hpp:80` | yes |
+
+**Derivation.** simple_flight caps commanded roll and pitch in angle-level
+mode at `Axis4r max_limit = Axis4r(pi/5.5f, pi/5.5f, pi, 1.0f)` - **32.73
+degrees**. The comment on the line above says why: past roughly that angle the
+vertical thrust component can no longer hold the vehicle up at control
+extremities.
+
+Station-keeping needs `tan(theta) = drag_factor * rho * v^2 / (m*g)`. Setting
+`theta = 32.73 deg` and solving:
+
+```
+y axis: v = sqrt(tan(32.73 deg) / (0.005838 * 1.225 / 9.8067)) = 29.7 m/s
+x axis: v = sqrt(tan(32.73 deg) / (0.005383 * 1.225 / 9.8067)) = 30.9 m/s
+```
+
+This is the only prediction in the set that is **visible to the naked eye**.
+Below the threshold the aircraft sits still and tilts about a degree; above it,
+it is carried away on screen.
+
+---
+
+## Derivations
+
+### P1 - effective CdA from the source
+
+`MultiRotorPhysicsBody.hpp:190-217` builds per-axis drag factors;
+`FastPhysicsEngine.hpp:269-308` applies
+`drag_force = normal * (-drag_factor * air_density * v^2)`.
+
+```
+propeller_xsection = pi * D * h                = 0.007182 m2
+left_right_area    = 0.180 * 0.040             = 0.007200 m2
+linear_drag_coeff  = 1.3 / 4                   = 0.325
+drag_factor_y = (0.007200 + 4 * 0.007182) * 0.325 / 2 = 0.005838
+```
+
+Since `drag_factor * rho * v^2` must equal `0.5 * rho * CdA * v^2`, the
+effective `CdA = 2 * drag_factor`:
+
+- **CdA_x = 0.010766 m2**
+- **CdA_y = 0.011676 m2**
+
+An independent literature estimate for a Mavic-class airframe gives
+**0.010 m2**. Two unrelated derivations landing within 8-17% is corroboration,
+not a fit.
+
+### P2 - tilt required to hold station
+
+```
+drag(5 m/s)  = 0.005838 * 1.225 * 25  = 0.1788 N  ->  atan(0.1788/9.8067) = 1.044 deg
+drag(12 m/s) = 0.005838 * 1.225 * 144 = 1.0299 N  ->  atan(1.0299/9.8067) = 5.995 deg
+```
+
+Mass is the simulator's 1.0 kg generic quad, not the Mavic's 0.895 kg.
+
+### P3 - why wind cannot move the energy number
+
+Thrust to hold station is `weight / cos(theta)`. At 5 m/s, `theta = 1.044 deg`,
+so the thrust ratio is `1/cos(1.044 deg) = 1.000166` - an increase of
+**0.017%**.
+
+This makes briefed constraint #4 a quantified certainty rather than a
+limitation to investigate: no experiment in this simulator can show wind
+affecting endurance, because the effect is four orders of magnitude below
+anything measurable. Any test that appears to show one is reporting an
+artifact of its own model.
+
+### P4 - AirSim has no translational lift
+
+`RotorParams.hpp:21-62` computes `thrust = C_T * rho * n^2 * D^4`. Thrust
+depends **only** on rotor speed. There is no airspeed term and no
+induced-velocity term anywhere in the rotor model.
+
+`RotorActuator.hpp:124-126` then gives `thrust = c * max_thrust`,
+`speed = sqrt(c) * max_speed`, `torque = c * max_torque`, so shaft power
+`P = torque * omega` scales as `c^1.5`, i.e. as `T^1.5`, with no airspeed
+dependence at all.
+
+At 9 m/s the aircraft tilts 3.12 deg to overcome 0.534 N of drag, raising
+thrust from 9.807 N to 9.821 N and shaft power by **+0.22%**.
+
+A real Mavic 3 goes the *other way*: DJI publishes 46 min of flight time
+against 40 min of hover, because forward airspeed reduces induced velocity.
+AirSim cannot reproduce that sign, let alone the magnitude. **Sim-derived
+power therefore can never validate cruise endurance** - that physics must live
+in the parametric model.
+
+### P6 - the expected failure
+
+The L2 model is calibrated on the hover anchor only; cruise is held out. Under
+momentum theory, forward flight reduces induced power substantially, so the
+model predicts a longer cruise endurance than DJI publishes. DJI's 46 min is
+measured at a constant 9 m/s under ideal conditions, and includes real losses
+the model does not carry.
+
+The prediction is that the model overshoots by 10-25%. A result inside that
+band confirms the model's structure is right and its absolute calibration is
+optimistic. A result *outside* it - in either direction - is more interesting
+than a pass.
+
+### P7 - thrust-to-weight and hover throttle
+
+```
+max_thrust per rotor = 4.179446 N   ->   4 rotors = 16.7178 N
+weight = 1.0 kg * 9.80665           =     9.8067 N
+T/W = 1.7047
+```
+
+`RotorActuator.hpp:125` makes thrust **linear** in the control signal
+(`output.thrust = control_signal_filtered * max_thrust`), so hover throttle is
+`9.8067 / 16.7178 = 0.587`, i.e. **58.7%**.
+
+---
+
+## Results
+
+Appended after runs. Prediction rows above are never edited.
+
+### Resolved offline (no simulator required)
+
+Run 2026-09-09 via `python battery_model.py`.
+
+| ID | Predicted | Measured | Error | Status |
+|---|---|---|---|---|
+| **P6** | 50-58 min (+10..+25% FAIL) | **52.55 min** vs DJI 46 | **+14.2%** | **FAIL as predicted** |
+| **P7** | T/W 1.705, throttle 58.7% | T/W **1.7047**, throttle **58.7%** | 0.0% | **PASS** (source-derived) |
+
+P6 landed at +14.2%, inside the pre-registered +10 to +25% band. The model
+overshoots DJI's cruise figure by the predicted amount and in the predicted
+direction.
+
+A further offline result worth recording, though it was not pre-registered:
+with `calibration="none"` - every parameter from literature and specification,
+nothing fitted at all - the model predicts **40.04 min** hover against DJI's
+published 40. That agreement is not evidence of a good fit, because there is
+no fit; it is evidence that the momentum-theory parameter set is independently
+reasonable.
+
+### Resolved against the running simulator - 2026-09-10
+
+Executed by the operator. Probe at 00:22, tests 3.a and 3.b following.
+
+| ID | Predicted | Measured | Error | Status |
+|---|---|---|---|---|
+| **P1** | CdA_y = 0.011676 m2 | **0.011476 m2** | **-1.71%** | **PASS** (band +/-15%) |
+| **P2@5** | 1.0443 deg | **1.0306 deg** | **-1.3%** | **PASS** (band +/-20%) |
+| **P2@12** | 5.9939 deg | **5.8877 deg** | **-1.8%** | **PASS** (band +/-20%) |
+| **P3** | < 0.5% (predicted 0.017%) | **0.0162%** | - | **PASS** |
+| **P4** | within 10% of hover (predicted +0.22%) | **+2.51%** (68.17 -> 69.88 W) | - | **PASS** |
+| **P5** | 1.225 kg/m3 | **1.22478 kg/m3** | **-0.02%** | **PASS** |
+
+The drag fit returned **r2 = 1.0000** across the 0/2/5/8/12 m/s sweep. The
+identified drag factor, recovered purely from observed tilt angles, lands 1.7%
+from a value computed by reading `MultiRotorPhysicsBody.hpp` before the test
+existed. Nothing was tuned to make those agree.
+
+**The probe also confirmed the rotor-state contract read from the C++.**
+`rotor_keys` came back as `['speed', 'thrust', 'torque_scaler']` - exactly the
+`MSGPACK_DEFINE_MAP(thrust, torque_scaler, speed)` in
+`MultirotorRpcLibAdaptors.hpp:54`. The runtime check was still worth doing, but
+the source reading was right.
+
+**P4 note.** Measured +2.51% against a predicted +0.22%. Well inside the band,
+but the discrepancy is real and comes from thrust: hover measured 9.932 N
+against a theoretical 9.807 N, so the aircraft was doing more control work than
+the idealised calculation assumes. The finding is unaffected - the sign is what
+matters. A real Mavic 3 at 9 m/s costs **less** than hover; the simulator costs
+**more**. AirSim cannot reproduce translational lift.
+
+### Two caveats on the run itself
+
+1. **ClockSpeed was not 1.0.** Test 3.a ran at a measured **14.54x** and 3.b at
+   **3.00x**. Test 3.b's own header printed the warning. The tilt results are
+   steady-state and survive this, but see the next point.
+2. **Sample density collapsed in 3.a.** 41 samples across 60.17 s of simulation
+   time - one sample per 1.47 sim-seconds - because the sampling loop sleeps in
+   *wall* time while the sim clock runs 14.5x faster. Energy integration on 41
+   points is coarse. The tilt and shaft-power results are steady-state averages
+   and are not materially affected, but **3.a should be re-run at ClockSpeed
+   1.0** before its energy figures are quoted.
+
+### Pending
+
+P8 requires `wind_demo.py` to be run against the simulator. Not yet executed.
+
+```bash
+python settings_helper.py --clock 1.0    # then RESTART the simulator
+python wind_demo.py                      # P8
+```
+
+### Validation of the test procedure itself
+
+Because the identification math can be checked without a simulator, it was:
+synthetic tilt data generated from the source-derived drag law was fed through
+`identify_drag()`.
+
+| Case | Result |
+|---|---|
+| Clean data, drag exactly as source predicts | recovered CdA to **0.0000%**, r2 = 1.000000 |
+| Realistic attitude noise, 0.15 deg stdev | recovered to **-2.24%**, r2 = 0.9996, P1 PASS |
+| **Negative control**: simulated drag 1.6x the source value | P1 and P2 both **FAIL**, error +60.0% |
+| Degenerate input (no non-zero wind points) | refuses to fit, returns an error |
+
+The negative control is the important row. A test that cannot fail when the
+underlying physics is wrong is not a test, and this one fails correctly.

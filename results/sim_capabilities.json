@@ -1,0 +1,154 @@
+{
+  "probed_on": "2026-09-10 00:22:48",
+  "python_version": "3.14.7",
+  "probes": {
+    "environment": {
+      "name": "environment",
+      "available": true,
+      "error": null,
+      "data": {
+        "air_density": 1.2247825860977173,
+        "air_pressure": 101302.84375,
+        "temperature": 288.13800048828125,
+        "gravity_z": 9.806650161743164,
+        "position_z": 120.15494537353516,
+        "geo_altitude": 1.8451447486877441
+      }
+    },
+    "multirotor_state": {
+      "name": "multirotor_state",
+      "available": true,
+      "error": null,
+      "data": {
+        "timestamp_raw": "1789014167133015808",
+        "timestamp_unit": "nanoseconds since epoch",
+        "timestamp_seconds": 1789014167.1330159,
+        "timestamp_attribute": "timestamp",
+        "landed_state": 0,
+        "can_arm": false,
+        "position": [
+          0.0,
+          0.0,
+          120.15494537353516
+        ],
+        "linear_velocity": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "orientation_wxyz": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "linear_acceleration": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "rotor_states": {
+      "name": "rotor_states",
+      "available": true,
+      "error": null,
+      "data": {
+        "rotor_count": 4,
+        "timestamp_attribute": "timestamp",
+        "rotor_element_type": "dict",
+        "rotor_keys": [
+          "speed",
+          "thrust",
+          "torque_scaler"
+        ],
+        "rotor_zero_sample": {
+          "thrust": 0.2786296606063843,
+          "torque_scaler": -0.0037041446194052696,
+          "speed": 172.95643615722656
+        },
+        "timestamp_raw": "1789014167127015680",
+        "timestamp_unit": "nanoseconds since epoch"
+      }
+    },
+    "imu": {
+      "name": "imu",
+      "available": true,
+      "error": null,
+      "data": {
+        "timestamp_attribute": "time_stamp",
+        "timestamp_unit": "nanoseconds since epoch",
+        "linear_acceleration": [
+          0.0,
+          0.0,
+          -9.806650161743164
+        ],
+        "angular_velocity": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "barometer": {
+      "name": "barometer",
+      "available": true,
+      "error": null,
+      "data": {
+        "altitude_declared_type": "Quaternionr",
+        "altitude_actual_type": "float",
+        "altitude_value": 1.975426435470581,
+        "pressure_declared_type": "Vector3r",
+        "pressure_actual_type": "float",
+        "pressure_value": 101301.265625
+      }
+    },
+    "distance_sensor": {
+      "name": "distance_sensor",
+      "available": false,
+      "error": "RPCError: rpclib: function 'getDistanceSensorData' (called with 2 arg(s)) threw an exception. The exception contained this information: No distance sensor with name  exist on vehicle.",
+      "data": {}
+    },
+    "clock_ratio": {
+      "name": "clock_ratio",
+      "available": true,
+      "error": null,
+      "data": {
+        "wall_elapsed_s": 2.0007565021514893,
+        "sim_elapsed_s": 2.001042604446411,
+        "measured_clock_ratio": 1.0001429970586697,
+        "timestamp_unit": "nanoseconds since epoch",
+        "sim_clock_advances": true
+      }
+    }
+  },
+  "cosysairsim_version": "3.4.1",
+  "settings": {
+    "vehicle_type": "SimpleFlight",
+    "clock_speed_configured": 1.0,
+    "wind_configured": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "summary": {
+    "can_measure_sim_time": true,
+    "measured_clock_ratio": 1.0001429970586697,
+    "can_read_air_density": true,
+    "can_read_rotor_thrust": true,
+    "can_read_rotor_speed": true,
+    "rotor_keys_found": [
+      "speed",
+      "thrust",
+      "torque_scaler"
+    ],
+    "can_test_p4_shaft_power": true,
+    "can_read_attitude": true,
+    "can_test_p1_p2_tilt": true,
+    "independent_cross_checks": [
+      "imu vs kinematics acceleration",
+      "barometer vs environment pressure"
+    ]
+  }
+}

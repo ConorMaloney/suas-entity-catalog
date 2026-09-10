@@ -1,0 +1,99 @@
+========================================================================
+TEST 3.B - WIND RESPONSE AND DRAG IDENTIFICATION
+========================================================================
+Run on : 2026-09-10 00:35:14
+
+  L1 = real aircraft   L2 = parametric model   L3 = simulator
+
+AirSim settings: C:\Users\black\Documents\AirSim\settings.json
+  SettingsVersion : 2.0
+  SimMode         : Multirotor
+  ClockSpeed      : 15.0
+  Wind (NED m/s)  : X=0.00  Y=0.00  Z=0.00
+  Vehicle 'Default'    : VehicleType=SimpleFlight, state=Armed
+  Other top keys  : SeeDocsAt
+
+  WARNING: ClockSpeed is 15.0, not 1.0. FastPhysics uses a
+  fixed integration step, so this alters the trajectory,
+  not just the wall-clock rate. Use 1.0 to validate.
+
+  Measured clock ratio : 14.91x
+  Simulator air density: 1.2148 kg/m3
+
+------------------------------------------------------------------------
+PHASE 1 - BRIEFED SCENARIOS [L3 measured, L2 energy]
+------------------------------------------------------------------------
+  Scenario                   wind  tilt deg   drift m     speed  energy Wh
+  ------------------------------------------------------------------------
+  Zero wind                  0.00    0.0508     0.123    0.0366    0.79617
+  Headwind 5 m/s             5.00    0.8235     0.007    0.0019    0.68093
+  Crosswind 5 m/s            5.00    0.8864     0.010    0.0028    0.68065
+
+  Each scenario had its wind set EXPLICITLY, including
+  the zero-wind case. A baseline that inherits whatever
+  wind the previous scenario left behind is not a
+  baseline, and reports calm numbers for a windy run.
+
+------------------------------------------------------------------------
+PHASE 2 - WIND SWEEP [L3]
+------------------------------------------------------------------------
+  wind m/s   roll deg  pitch deg   tilt deg     stdev   drift m
+  -------------------------------------------------------------
+      0.00    -0.0026     0.0028     0.0038    0.0242     0.009
+      2.00    -0.1404    -0.0228     0.1422    0.0035     0.001
+      5.00    -0.8778    -0.1421     0.8892    0.0160     0.006
+      8.00    -2.2465    -0.3616     2.2753    0.0258     0.010
+     12.00    -5.0308    -0.8086     5.0947    0.0438     0.018
+
+------------------------------------------------------------------------
+DRAG IDENTIFICATION [L3 fitted vs C++ source]
+------------------------------------------------------------------------
+  Model fitted     : tan(tilt) = k * v^2, through origin
+  Fitted slope k   : 0.00061162
+  Fit quality r2   : 1.0000
+  Mass assumed     : 1.000 kg (simulator generic quad)
+
+  Fitted drag factor : 0.004937
+  Source drag factor : 0.005838
+  Fitted CdA_y       : 0.00987 m2
+  Source CdA_y       : 0.01168 m2
+  Error              : -15.43%
+
+  The source value was derived by reading
+  MultiRotorPhysicsBody.hpp and FastPhysicsEngine.hpp,
+  BEFORE this test ran. The fitted value comes only from
+  observed tilt angles. Nothing was tuned to make them
+  agree, and the fit had no free intercept to absorb an
+  error with.
+
+------------------------------------------------------------------------
+PRE-REGISTERED PREDICTIONS
+------------------------------------------------------------------------
+  ID          Predicted     Measured     Error  Status
+  ----------------------------------------------------
+  P1            0.01168      0.00987    -15.4%  FAIL
+           fit r2 = 1.0000
+  P2@5          1.03576      0.87777    -15.3%  PASS
+           axis y, stdev 0.0109 deg
+  P2@12         5.94519      5.03076    -15.4%  PASS
+           axis y, stdev 0.0272 deg
+  P3            0.01700      0.01204      0.0%  PASS
+           from measured tilt 0.8892 deg, thrust ratio 1.000120
+
+  These bands were frozen in PREDICTIONS.md before the test
+  ran. They were not widened to accommodate a result.
+
+------------------------------------------------------------------------
+INTERPRETATION
+------------------------------------------------------------------------
+  The wind penalty on energy in this simulator is far too
+  small to measure. At 5 m/s the aircraft tilts about one
+  degree, and thrust rises by roughly 0.017 percent. Any
+  test claiming to show wind reducing range in AirSim is
+  reporting an artifact of its own model, not a simulated
+  effect.
+
+  Note also what the simulated airframe is: a 1.0 kg generic
+  quad, not the 0.895 kg Mavic 3. The drag identified here
+  is the SIMULATOR's, which is the point - it is what makes
+  the fitted-versus-source comparison a genuine test.

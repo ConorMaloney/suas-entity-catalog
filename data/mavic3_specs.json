@@ -1,0 +1,314 @@
+{
+  "entity": "DJI Mavic 3",
+  "entity_id": "UAS-QUAD-DJI-MAVIC3",
+  "category": "UAS - Group 1 - Quadcopter",
+  "schema_version": "2.0",
+  "compiled_on": "2026-09-09",
+  "compiled_by": "Conor Maloney",
+
+  "_README": [
+    "Every parameter carries its own source and verification date.",
+    "'confidence' is one of: published (vendor spec sheet), derived (computed from",
+    "published values), literature (peer-reviewed or textbook typical), estimated",
+    "(engineering judgement, stated tolerance).",
+    "Parameters marked 'contested' have sources that disagree - see notes."
+  ],
+
+  "physical": {
+    "mass_kg": {
+      "value": 0.895,
+      "unit": "kg",
+      "confidence": "published",
+      "source": "DJI Mavic 3 Classic specs - Takeoff Weight",
+      "source_url": "https://www.dji.com/mavic-3-classic/specs",
+      "verified_on": "2026-09-09",
+      "note": "DJI standard weight includes battery, propellers and microSD card."
+    },
+    "propeller_diameter_m": {
+      "value": 0.2388,
+      "unit": "m",
+      "confidence": "published",
+      "source": "DJI 9453F propeller - 9.4 x 5.3 in",
+      "verified_on": "2026-09-09",
+      "note": "CORRECTION: a prior spec file recorded 305 mm, which is a 12-inch prop. The 9453F designation encodes 9.4 in diameter (238.8 mm) and 5.3 in pitch. Disk area scales as D^2 and drives the entire induced-power term, so this error propagated into every endurance figure."
+    },
+    "propeller_pitch_m": {
+      "value": 0.1346,
+      "unit": "m",
+      "confidence": "published",
+      "source": "9453F designation - 5.3 in pitch",
+      "verified_on": "2026-09-09"
+    },
+    "rotor_count": {
+      "value": 4,
+      "unit": "count",
+      "confidence": "published",
+      "source": "Quadcopter airframe",
+      "verified_on": "2026-09-09"
+    },
+    "dimensions_unfolded_mm": {
+      "value": {"length": 347.5, "width": 283.0, "height": 107.7},
+      "unit": "mm",
+      "confidence": "published",
+      "source": "DJI Mavic 3 specs",
+      "verified_on": "2026-09-09"
+    },
+    "dimensions_folded_mm": {
+      "value": {"length": 221.0, "width": 96.3, "height": 90.3},
+      "unit": "mm",
+      "confidence": "published",
+      "source": "DJI Mavic 3 specs",
+      "verified_on": "2026-09-09"
+    }
+  },
+
+  "battery": {
+    "capacity_wh": {
+      "value": 77.0,
+      "unit": "Wh",
+      "confidence": "published",
+      "source": "DJI Intelligent Flight Battery - Energy",
+      "verified_on": "2026-09-09"
+    },
+    "capacity_mah": {
+      "value": 5000,
+      "unit": "mAh",
+      "confidence": "published",
+      "source": "DJI Intelligent Flight Battery - Capacity",
+      "verified_on": "2026-09-09"
+    },
+    "voltage_nominal_v": {
+      "value": 15.4,
+      "unit": "V",
+      "confidence": "published",
+      "source": "DJI Intelligent Flight Battery - Nominal Voltage",
+      "verified_on": "2026-09-09",
+      "note": "Consistency check: 15.4 V x 5.0 Ah = 77.0 Wh. Internally consistent."
+    },
+    "voltage_full_v": {
+      "value": 17.6,
+      "unit": "V",
+      "confidence": "published",
+      "source": "DJI Intelligent Flight Battery - Charging Voltage Limit",
+      "verified_on": "2026-09-09",
+      "note": "CORRECTION: a prior spec file recorded 16.8 V, which is the standard-LiPo 4.2 V/cell figure. DJI specifies a 17.6 V charge limit (4.4 V/cell high-voltage cells)."
+    },
+    "voltage_empty_v": {
+      "value": 14.0,
+      "unit": "V",
+      "confidence": "estimated",
+      "source": "3.5 V/cell discharge cutoff, typical for Li-ion 4S",
+      "verified_on": "2026-09-09",
+      "note": "Not published by DJI. Conservative cutoff; DJI reserves roughly 2 minutes of flight below the displayed 0%."
+    },
+    "chemistry": {
+      "value": "Li-ion 4S",
+      "confidence": "published",
+      "source": "DJI Intelligent Flight Battery - Type",
+      "verified_on": "2026-09-09",
+      "note": "CORRECTION: a prior spec file recorded 'LiPo 4S'. DJI lists Li-ion."
+    },
+    "weight_g": {
+      "value": 335.5,
+      "unit": "g",
+      "confidence": "published",
+      "source": "DJI Intelligent Flight Battery - Weight",
+      "verified_on": "2026-09-09",
+      "note": "37.5% of total takeoff weight."
+    }
+  },
+
+  "performance_published": {
+    "_note": "DJI measured these in a controlled environment: no wind, sea level, 100% to 0% battery, 1080p/24fps, APAS off, AirSense off. They are ideal-condition maxima, NOT operational planning figures. See performance_operational.",
+    "max_hover_time_min": {
+      "value": 40.0,
+      "unit": "min",
+      "confidence": "published",
+      "contested": true,
+      "source": "DJI Mavic 3 Classic specs page - Max Hovering Time",
+      "verified_on": "2026-09-09",
+      "note": "CONTESTED: the DJI specs page states 40 min; the DJI product manual states 42 min. The lower figure is used as the primary anchor. A prior spec file recorded 46 min here, which is the max FLIGHT time line, not the hover line - the two are physically distinct because forward flight gains translational lift."
+    },
+    "max_flight_time_min": {
+      "value": 46.0,
+      "unit": "min",
+      "confidence": "published",
+      "source": "DJI Mavic 3 Classic specs page - Max Flight Time",
+      "verified_on": "2026-09-09",
+      "note": "Measured at a constant 32.4 kph (9.0 m/s). This is a CRUISE figure, not a hover figure."
+    },
+    "flight_time_test_speed_ms": {
+      "value": 9.0,
+      "unit": "m/s",
+      "confidence": "derived",
+      "source": "32.4 kph / 3.6",
+      "verified_on": "2026-09-09"
+    },
+    "max_flight_distance_km": {
+      "value": 30.0,
+      "unit": "km",
+      "confidence": "published",
+      "source": "DJI Mavic 3 Classic specs - Max Flight Distance",
+      "verified_on": "2026-09-09"
+    },
+    "max_speed_ms": {
+      "value": 21.0,
+      "unit": "m/s",
+      "confidence": "published",
+      "source": "DJI Mavic 3 Classic specs - Max Horizontal Speed at sea level",
+      "verified_on": "2026-09-09",
+      "note": "Capped at 19 m/s in EU regions."
+    },
+    "max_ascent_speed_ms": {
+      "value": 8.0,
+      "unit": "m/s",
+      "confidence": "published",
+      "source": "DJI Mavic 3 Classic specs",
+      "verified_on": "2026-09-09"
+    },
+    "max_descent_speed_ms": {
+      "value": 6.0,
+      "unit": "m/s",
+      "confidence": "published",
+      "source": "DJI Mavic 3 Classic specs",
+      "verified_on": "2026-09-09"
+    },
+    "max_wind_resistance_ms": {
+      "value": 12.0,
+      "unit": "m/s",
+      "confidence": "published",
+      "source": "DJI Mavic 3 Classic specs - Max Wind Speed Resistance",
+      "verified_on": "2026-09-09"
+    }
+  },
+
+  "performance_operational": {
+    "_note": "Independent measured performance. Real-world endurance is consistently 65-75% of DJI's advertised figures. For mission planning, using the published maxima overstates endurance by roughly 30%, which is the dangerous direction to err.",
+    "observed_flight_time_min": {
+      "value": [30.0, 35.0],
+      "unit": "min",
+      "confidence": "literature",
+      "source": "TechRadar review (~30 min to RTH prompt); Pix-Pro review (35 min to 20% at 0-1 C, zero wind); MavicPilots owner reports (30-35 min typical)",
+      "verified_on": "2026-09-09"
+    },
+    "observed_hover_time_min": {
+      "value": [28.0, 30.0],
+      "unit": "min",
+      "confidence": "literature",
+      "source": "MavicPilots owner reports; comparable DJI Air 3 hover logging",
+      "verified_on": "2026-09-09"
+    },
+    "usable_energy_fraction": {
+      "value": 0.85,
+      "unit": "fraction",
+      "confidence": "estimated",
+      "source": "Operational practice: land at 15% reserve rather than 0%",
+      "verified_on": "2026-09-09",
+      "note": "Separable, defensible component of the derating. Not a fudge factor."
+    },
+    "operational_overhead_factor": {
+      "value": 1.18,
+      "unit": "ratio",
+      "confidence": "estimated",
+      "source": "Real-world power draw above ideal-condition lab conditions: gusts, temperature, maneuvering, active recording",
+      "verified_on": "2026-09-09",
+      "note": "Second separable component. Combined derate = 0.85 / 1.18 = 0.720, which reproduces observed 28.8 min hover and 33.1 min cruise against measured 28-30 and 30-35."
+    }
+  },
+
+  "aerodynamic_assumptions": {
+    "air_density_kg_m3": {
+      "value": 1.225,
+      "unit": "kg/m^3",
+      "confidence": "published",
+      "source": "ISA sea level, 15 C",
+      "verified_on": "2026-09-09",
+      "note": "Cross-checked at runtime against EnvironmentState.air_density reported by the simulation (prediction P5)."
+    },
+    "equivalent_flat_plate_area_m2": {
+      "value": 0.010,
+      "unit": "m^2",
+      "confidence": "literature",
+      "source": "Hattenberger et al. 2023, Evaluation of drag coefficient for a quadrotor model; Theys and De Schutter 2020, forward flight tests. Mavic-class CdA range 0.005-0.020.",
+      "verified_on": "2026-09-09",
+      "note": "CORRECTION: a prior spec file used Cd 0.8 x A 0.05 = 0.04 m^2, which is 2-8x the literature range. Independently corroborated: the Cosys-AirSim generic quad's own drag model yields an effective CdA of 0.0108-0.0117 m^2, derived from MultiRotorPhysicsBody.hpp:190-217."
+    },
+    "figure_of_merit": {
+      "value": 0.65,
+      "unit": "dimensionless",
+      "confidence": "literature",
+      "source": "Typical rotor figure of merit for small high-disk-loading rotors",
+      "verified_on": "2026-09-09"
+    },
+    "motor_esc_efficiency": {
+      "value": 0.80,
+      "unit": "fraction",
+      "confidence": "literature",
+      "source": "Combined brushless motor and ESC efficiency at cruise loading",
+      "verified_on": "2026-09-09"
+    },
+    "propulsive_efficiency": {
+      "value": 0.70,
+      "unit": "fraction",
+      "confidence": "literature",
+      "source": "Rotor propulsive efficiency in forward flight",
+      "verified_on": "2026-09-09"
+    },
+    "avionics_power_w": {
+      "value": 15.0,
+      "unit": "W",
+      "confidence": "estimated",
+      "source": "Flight computer, gimbal, camera, OcuSync transmission",
+      "verified_on": "2026-09-09",
+      "note": "13% of hover draw. Sensitivity is reported in the model self-test."
+    },
+    "thrust_coefficient": {
+      "value": 0.11,
+      "unit": "dimensionless",
+      "confidence": "literature",
+      "source": "C_T for a 9-10 inch two-blade propeller (UIUC propeller database range)",
+      "verified_on": "2026-09-09",
+      "note": "Used only to estimate hover RPM for the advance-ratio term in profile power. Endurance is weakly sensitive to it."
+    },
+    "profile_power_mu_factor": {
+      "value": 4.65,
+      "unit": "dimensionless",
+      "confidence": "literature",
+      "source": "Standard rotorcraft profile-power growth term P = P0 * (1 + 4.65 * mu^2)",
+      "verified_on": "2026-09-09"
+    }
+  },
+
+  "calibration": {
+    "_note": "Exactly ONE parameter is fitted. Everything else is published, derived or taken from literature. The fitted anchor cannot fail by construction and is never scored as PASS.",
+    "fitted_parameter": "profile_power_hover_w",
+    "fitted_to_anchor": "max_hover_time_min",
+    "held_out_anchors": [
+      "max_flight_time_min",
+      "max_flight_distance_km",
+      "max_wind_resistance_ms"
+    ]
+  },
+
+  "simulation_reference": {
+    "_note": "What the Cosys-AirSim SimpleFlight vehicle ACTUALLY is. This is NOT a Mavic 3. Recorded so that no L3 (simulation) number is ever misread as an L1 (real aircraft) number. Source: setupFrameGenericQuad in MultiRotorParams.hpp:311-343 and RotorParams.hpp:21-62, Cosys-AirSim 3.4.1.",
+    "frame": "setupFrameGenericQuad (F450 class)",
+    "mass_kg": 1.0,
+    "rotor_count": 4,
+    "propeller_diameter_m": 0.2286,
+    "propeller_height_m": 0.01,
+    "arm_length_m": 0.2275,
+    "body_box_m": {"x": 0.180, "y": 0.110, "z": 0.040},
+    "linear_drag_coefficient": 0.325,
+    "c_t": 0.109919,
+    "c_p": 0.040164,
+    "max_rpm": 6396.667,
+    "max_thrust_per_rotor_n": 4.179446268,
+    "max_torque_per_rotor_nm": 0.055562,
+    "thrust_to_weight": 1.70,
+    "effective_cda_x_m2": 0.01077,
+    "effective_cda_y_m2": 0.01168,
+    "configurable_from_settings_json": false,
+    "note": "No settings.json key exists for mass, drag, rotor count, propeller geometry or inertia. These are C++ compile-time constants. Changing them requires editing the plugin and rebuilding."
+  }
+}

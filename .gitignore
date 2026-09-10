@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# IDE
+.idea/
+.vscode/
+
+# Backups written by settings_helper.py
+*.bak
+
+# Scratch
+*.tmp
+.settings_*
+
+# NOTE: results/ is deliberately NOT ignored.
+# Test output is evidence in this project, not build waste. The whole point of
+# PREDICTIONS.md is that a reader can check predictions against what actually
+# came out of the simulator, so the outputs are committed alongside the
+# predictions that anticipated them.

@@ -1,0 +1,92 @@
+========================================================================
+AIRSIM CAPABILITY PROBE
+========================================================================
+Probed on      : 2026-09-10 00:22:48
+cosysairsim    : 3.4.1
+Python         : 3.14.7
+VehicleType    : SimpleFlight
+ClockSpeed set : 1.0
+Wind set       : [0.0, 0.0, 0.0]
+
+NOTE: VehicleType SimpleFlight routes to
+setupFrameGenericQuad - a 1.0 kg generic quad on 0.2286 m
+propellers. It is NOT a Mavic 3 (0.895 kg, 0.2388 m), and
+mass and rotor geometry are C++ compile-time constants
+that settings.json cannot change. Label accordingly.
+
+------------------------------------------------------------------------
+PROBE RESULTS
+------------------------------------------------------------------------
+
+[OK] environment
+    air_density                1.2247825860977173
+    air_pressure               101302.84375
+    geo_altitude               1.8451447486877441
+    gravity_z                  9.806650161743164
+    position_z                 120.15494537353516
+    temperature                288.13800048828125
+
+[OK] multirotor_state
+    can_arm                    False
+    landed_state               0
+    linear_acceleration        [0.0, 0.0, 0.0]
+    linear_velocity            [0.0, 0.0, 0.0]
+    orientation_wxyz           [1.0, 0.0, 0.0, 0.0]
+    position                   [0.0, 0.0, 120.15494537353516]
+    timestamp_attribute        timestamp
+    timestamp_raw              1789014167133015808
+    timestamp_seconds          1789014167.1330159
+    timestamp_unit             nanoseconds since epoch
+
+[OK] rotor_states
+    rotor_count                4
+    rotor_element_type         dict
+    rotor_keys                 ['speed', 'thrust', 'torque_scaler']
+    rotor_zero_sample          {'thrust': 0.2786296606063843, 'torque_scaler': -0.0037041446194052696, 'speed': 172.95643615722656}
+    timestamp_attribute        timestamp
+    timestamp_raw              1789014167127015680
+    timestamp_unit             nanoseconds since epoch
+
+[OK] imu
+    angular_velocity           [0.0, 0.0, 0.0]
+    linear_acceleration        [0.0, 0.0, -9.806650161743164]
+    timestamp_attribute        time_stamp
+    timestamp_unit             nanoseconds since epoch
+
+[OK] barometer
+    altitude_actual_type       float
+    altitude_declared_type     Quaternionr
+    altitude_value             1.975426435470581
+    pressure_actual_type       float
+    pressure_declared_type     Vector3r
+    pressure_value             101301.265625
+
+[UNAVAILABLE] distance_sensor
+    error: RPCError: rpclib: function 'getDistanceSensorData' (called with 2 arg(s)) threw an exception. The exception contained this information: No distance sensor with name  exist on vehicle.
+
+[OK] clock_ratio
+    measured_clock_ratio       1.0001429970586697
+    sim_clock_advances         True
+    sim_elapsed_s              2.001042604446411
+    timestamp_unit             nanoseconds since epoch
+    wall_elapsed_s             2.0007565021514893
+
+------------------------------------------------------------------------
+WHAT THE TESTS MAY CLAIM
+------------------------------------------------------------------------
+  can_measure_sim_time           True
+  can_read_air_density           True
+  can_read_attitude              True
+  can_read_rotor_speed           True
+  can_read_rotor_thrust          True
+  can_test_p1_p2_tilt            True
+  can_test_p4_shaft_power        True
+  independent_cross_checks       ['imu vs kinematics acceleration', 'barometer vs environment pressure']
+  measured_clock_ratio           1.0001429970586697
+  rotor_keys_found               ['speed', 'thrust', 'torque_scaler']
+
+P4 is testable: rotor keys ['speed', 'thrust', 'torque_scaler']
+
+Measured clock ratio 1.00x. Every duration in a test must
+come from sim timestamps, never from wall time or from
+distance divided by speed.

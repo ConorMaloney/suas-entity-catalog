@@ -1,0 +1,133 @@
+========================================================================
+TEST 3.A - HOVER ENDURANCE
+========================================================================
+Run on : 2026-09-10 00:34:46
+
+LAYER LABELS
+  L1 = real aircraft (DJI published or independently measured)
+  L2 = parametric model in battery_model.py
+  L3 = simulator output
+
+AirSim settings: C:\Users\black\Documents\AirSim\settings.json
+  SettingsVersion : 2.0
+  SimMode         : Multirotor
+  ClockSpeed      : 15.0
+  Wind (NED m/s)  : X=0.00  Y=0.00  Z=0.00
+  Vehicle 'Default'    : VehicleType=SimpleFlight, state=Armed
+  Other top keys  : SeeDocsAt
+
+  WARNING: ClockSpeed is 15.0, not 1.0. FastPhysics uses a
+  fixed integration step, so this alters the trajectory,
+  not just the wall-clock rate. Use 1.0 to validate.
+
+------------------------------------------------------------------------
+TIMEBASE [L3] - check this before believing anything below
+------------------------------------------------------------------------
+  Simulation time elapsed : 60.17 s
+  Wall clock elapsed      : 4.14 s
+  Measured clock ratio    : 14.54x
+  Timestamp unit detected : nanoseconds since epoch
+  Samples collected       : 41
+
+  Every duration above is a difference of simulation
+  timestamps. None is a loop counter, and none is a
+  distance divided by a speed.
+
+------------------------------------------------------------------------
+P5 - AIR DENSITY CROSS-CHECK [L3 vs L2]
+------------------------------------------------------------------------
+  Simulator air density : 1.2248 kg/m3
+  Model assumption      : 1.2250 kg/m3
+  Error                 : -0.02% (tolerance +/-2.0%)
+  Result                : PASS
+  Simulator temperature : 15.0 C
+
+------------------------------------------------------------------------
+STATION KEEPING [L3]
+------------------------------------------------------------------------
+  Commanded altitude    : 10.0 m
+  Mean ground speed     : 0.0000 m/s
+  Max ground speed      : 0.0000 m/s
+  Final drift           : 0.000 m
+  Max tilt              : 0.000 deg
+
+  Drift is measured from a reference captured AFTER the
+  aircraft settled, so it is station-keeping error and not
+  a post-takeoff transient.
+
+------------------------------------------------------------------------
+ENERGY [L2 driven by L3]
+------------------------------------------------------------------------
+  Model profile         : operational
+  Calibration           : hover
+  Usable capacity       : 65.45 Wh of 77.00 Wh
+  Mean power            : 136.29 W
+  Energy consumed       : 2.2781 Wh
+  Battery remaining     : 96.519 %
+
+  These are MODEL figures. The simulator contributed the
+  timebase and the velocity, not the energy: AirSim has no
+  battery, no mass property exposed, and no power model.
+
+------------------------------------------------------------------------
+RATE-BASED VALIDATION [L2 vs L1]
+------------------------------------------------------------------------
+  Discharge rate        : 3.4707 %/min
+  Extrapolated endurance: 28.81 min
+
+  A 60 second sample legitimately probes a 40 minute claim
+  because the comparison is between RATES, not durations.
+  Comparing test length against aircraft endurance, as an
+  earlier version did, tells you nothing at all.
+
+VALIDATION AGAINST PUBLISHED SPECIFICATION
+  profile=operational  calibration=hover  tolerance=+/-10.0%
+
+  Anchor                           Target  Predicted     Error  Status      Scored
+  --------------------------------------------------------------------------------
+  Hover endurance                   28.81      28.81      0.0%  CALIBRATED  FITTED - not scored
+  Cruise endurance at 9.0 m/s       33.14      37.85     14.2%  FAIL        held out
+  Max range                         21.61      27.43     26.9%  FAIL        held out
+
+  CALIBRATED means the anchor was fitted and cannot fail
+  by construction. It is never counted as a pass.
+  Held-out anchors scored: 2, passed: 0, failed: 2
+
+------------------------------------------------------------------------
+P4 - TRANSLATIONAL LIFT [L3 measured]
+------------------------------------------------------------------------
+  Rotor shaft power at hover     : 68.17 W
+  Rotor shaft power at 9.0 m/s   : 69.88 W
+  Difference                     : +2.51% (tolerance +/-10%)
+  Result                         : PASS
+  Total thrust hover / cruise    : 9.932 / 10.095 N
+
+  Shaft power measured as sum of |torque| * omega from
+  getRotorStates(). A PASS means cruise costs the same
+  as hover, i.e. the simulator has NO translational
+  lift. RotorParams.hpp computes thrust as
+  C_T * rho * n^2 * D^4, which contains no airspeed and
+  no induced-velocity term, so AirSim is structurally
+  incapable of reproducing DJI's 46 min flight time
+  against a 40 min hover time.
+
+  Consequence: sim-derived power can NEVER validate
+  cruise endurance. That physics lives in the L2 model.
+
+------------------------------------------------------------------------
+WHAT THIS TEST DOES NOT ESTABLISH
+------------------------------------------------------------------------
+  The simulated airframe is not a Mavic 3. VehicleType
+  SimpleFlight routes to setupFrameGenericQuad: 1.0 kg on
+  0.2286 m propellers, against the Mavic 3's 0.895 kg on
+  0.2388 m. Mass and rotor geometry are C++ compile-time
+  constants and settings.json cannot change them.
+
+  So no hover-endurance number here is a measurement of a
+  Mavic 3. The endurance figure is the L2 model's, and the
+  simulator's contribution is a trustworthy clock and an
+  independently computed air density.
+
+  Probe-reported capabilities in force for this run:
+    rotor thrust readable : True
+    rotor speed readable  : True

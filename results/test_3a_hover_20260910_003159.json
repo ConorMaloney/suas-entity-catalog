@@ -1,0 +1,1059 @@
+{
+  "samples": [
+    {
+      "sim_time_s": 0.0060002803802490234,
+      "wall_time_s": 0.0004210472106933594,
+      "dt_s": 0.0060002803802490234,
+      "battery_percent": 99.99965291770326,
+      "power_w": 136.29284896067705,
+      "energy_wh": 0.00022716536321860944,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015404541045427322
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 1.5120322704315186,
+      "wall_time_s": 0.10128974914550781,
+      "dt_s": 1.5060319900512695,
+      "battery_percent": 99.9125374815985,
+      "power_w": 136.29284896067705,
+      "energy_wh": 0.05724421829377571,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015404541045427322
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 3.012064218521118,
+      "wall_time_s": 0.20206189155578613,
+      "dt_s": 1.5000319480895996,
+      "battery_percent": 99.82576911399934,
+      "power_w": 136.29284896067705,
+      "energy_wh": 0.11403411488743292,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015404541045427322
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 4.524096488952637,
+      "wall_time_s": 0.30299806594848633,
+      "dt_s": 1.5120322704315186,
+      "battery_percent": 99.73830659559785,
+      "power_w": 136.29284896067705,
+      "energy_wh": 0.17127833318120864,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015404541045427322
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 6.02712869644165,
+      "wall_time_s": 0.40352749824523926,
+      "dt_s": 1.5030322074890137,
+      "battery_percent": 99.65136467995472,
+      "power_w": 136.29284896067705,
+      "energy_wh": 0.22818181696963452,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015404541045427322
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 7.53316068649292,
+      "wall_time_s": 0.5045053958892822,
+      "dt_s": 1.5060319900512695,
+      "battery_percent": 99.56424924384997,
+      "power_w": 136.29284896067705,
+      "energy_wh": 0.2851988699001916,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015404541045427322
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 9.045192956924438,
+      "wall_time_s": 0.6055686473846436,
+      "dt_s": 1.5120322704315186,
+      "battery_percent": 99.47678672544849,
+      "power_w": 136.29284896067705,
+      "energy_wh": 0.3424430881939673,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015404541045427322
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 10.554225206375122,
+      "wall_time_s": 0.7067718505859375,
+      "dt_s": 1.5090322494506836,
+      "battery_percent": 99.38949774129978,
+      "power_w": 136.29284896067705,
+      "energy_wh": 0.39957372831929305,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015404541045427322
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 12.057257175445557,
+      "wall_time_s": 0.8075439929962158,
+      "dt_s": 1.5030319690704346,
+      "battery_percent": 99.30255583944782,
+      "power_w": 136.29284896067705,
+      "energy_wh": 0.4564772030814002,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015404541045427322
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 13.56628942489624,
+      "wall_time_s": 0.90852952003479,
+      "dt_s": 1.5090322494506836,
+      "battery_percent": 99.21526685529912,
+      "power_w": 136.29284896067705,
+      "energy_wh": 0.5136078432067259,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015404541045427322
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 15.075321674346924,
+      "wall_time_s": 1.009416103363037,
+      "dt_s": 1.5090322494506836,
+      "battery_percent": 99.12797785096963,
+      "power_w": 136.29288047091543,
+      "energy_wh": 0.5707384965403756,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.0001557491923449561
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 16.581353664398193,
+      "wall_time_s": 1.1105868816375732,
+      "dt_s": 1.5060319900512695,
+      "battery_percent": 99.04086238936614,
+      "power_w": 136.29288885369436,
+      "energy_wh": 0.627755566159866,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 18.090385913848877,
+      "wall_time_s": 1.2113268375396729,
+      "dt_s": 1.5090322494506836,
+      "battery_percent": 98.95357337966789,
+      "power_w": 136.29288885369436,
+      "energy_wh": 0.6848862230073722,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 19.590417861938477,
+      "wall_time_s": 1.311971664428711,
+      "dt_s": 1.5000319480895996,
+      "battery_percent": 98.86680498667154,
+      "power_w": 136.29288885369436,
+      "energy_wh": 0.7416761362234741,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 21.102450132369995,
+      "wall_time_s": 1.413071632385254,
+      "dt_s": 1.5120322704315186,
+      "battery_percent": 98.77934244266972,
+      "power_w": 136.29288885369436,
+      "energy_wh": 0.7989203712726747,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 22.614482402801514,
+      "wall_time_s": 1.5141637325286865,
+      "dt_s": 1.5120322704315186,
+      "battery_percent": 98.69187989866788,
+      "power_w": 136.29288885369436,
+      "energy_wh": 0.8561646063218753,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 24.120514631271362,
+      "wall_time_s": 1.6148595809936523,
+      "dt_s": 1.5060322284698486,
+      "battery_percent": 98.60476442327321,
+      "power_w": 136.29288885369436,
+      "energy_wh": 0.9131816849676871,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 25.626546621322632,
+      "wall_time_s": 1.7157917022705078,
+      "dt_s": 1.5060319900512695,
+      "battery_percent": 98.5176489616697,
+      "power_w": 136.29288885369436,
+      "energy_wh": 0.9701987545871776,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 27.12057852745056,
+      "wall_time_s": 1.8165979385375977,
+      "dt_s": 1.4940319061279297,
+      "battery_percent": 98.43122763728054,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.0267615113998907,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 28.629610776901245,
+      "wall_time_s": 1.9172627925872803,
+      "dt_s": 1.5090322494506836,
+      "battery_percent": 98.34393862758229,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.083892168247397,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 30.123642683029175,
+      "wall_time_s": 2.017822265625,
+      "dt_s": 1.4940319061279297,
+      "battery_percent": 98.25751730319311,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.1404549250601101,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 31.629674911499023,
+      "wall_time_s": 2.1185266971588135,
+      "dt_s": 1.5060322284698486,
+      "battery_percent": 98.17040182779844,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.197472003705922,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 33.13570690155029,
+      "wall_time_s": 2.219305992126465,
+      "dt_s": 1.5060319900512695,
+      "battery_percent": 98.08328636619494,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.2544890733254126,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 34.64473915100098,
+      "wall_time_s": 2.320300340652466,
+      "dt_s": 1.5090322494506836,
+      "battery_percent": 97.99599735649669,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.3116197301729189,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 36.15377140045166,
+      "wall_time_s": 2.421346664428711,
+      "dt_s": 1.5090322494506836,
+      "battery_percent": 97.90870834679843,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.3687503870204252,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 37.662803411483765,
+      "wall_time_s": 2.5223891735076904,
+      "dt_s": 1.5090320110321045,
+      "battery_percent": 97.82141935089135,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.42588103484161,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 39.17183566093445,
+      "wall_time_s": 2.62337064743042,
+      "dt_s": 1.5090322494506836,
+      "battery_percent": 97.73413034119311,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.4830116916891163,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 40.67486786842346,
+      "wall_time_s": 2.7239809036254883,
+      "dt_s": 1.5030322074890137,
+      "battery_percent": 97.64718840010201,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.5399151921332337,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 42.183899879455566,
+      "wall_time_s": 2.824924945831299,
+      "dt_s": 1.5090320110321045,
+      "battery_percent": 97.55989940419492,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.5970458399544185,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 43.68693208694458,
+      "wall_time_s": 2.9257521629333496,
+      "dt_s": 1.5030322074890137,
+      "battery_percent": 97.47295746310384,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.653949340398536,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 45.195964097976685,
+      "wall_time_s": 3.026481866836548,
+      "dt_s": 1.5090320110321045,
+      "battery_percent": 97.38566846719677,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.7110799882197207,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 46.69599628448486,
+      "wall_time_s": 3.1273651123046875,
+      "dt_s": 1.5000321865081787,
+      "battery_percent": 97.29890006040925,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.7678699104621438,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 48.20202827453613,
+      "wall_time_s": 3.2282583713531494,
+      "dt_s": 1.5060319900512695,
+      "battery_percent": 97.21178459880575,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.8248869800816343,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 49.70506048202515,
+      "wall_time_s": 3.3288683891296387,
+      "dt_s": 1.5030322074890137,
+      "battery_percent": 97.12484265771467,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.8817904805257517,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 51.217092752456665,
+      "wall_time_s": 3.4297549724578857,
+      "dt_s": 1.5120322704315186,
+      "battery_percent": 97.03738011371283,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.9390347155749523,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 52.71412467956543,
+      "wall_time_s": 3.5305042266845703,
+      "dt_s": 1.4970319271087646,
+      "battery_percent": 96.95078525502008,
+      "power_w": 136.29288885369436,
+      "energy_wh": 1.9957110505893598,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 54.217156648635864,
+      "wall_time_s": 3.631300449371338,
+      "dt_s": 1.5030319690704346,
+      "battery_percent": 96.86384332772016,
+      "power_w": 136.29288885369436,
+      "energy_wh": 2.0526145420071558,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 55.72918891906738,
+      "wall_time_s": 3.7321715354919434,
+      "dt_s": 1.5120322704315186,
+      "battery_percent": 96.77638078371832,
+      "power_w": 136.29288885369436,
+      "energy_wh": 2.109858777056356,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 57.22622084617615,
+      "wall_time_s": 3.833191156387329,
+      "dt_s": 1.4970319271087646,
+      "battery_percent": 96.68978592502557,
+      "power_w": 136.29288885369436,
+      "energy_wh": 2.1665351120707634,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 58.72625279426575,
+      "wall_time_s": 3.9339442253112793,
+      "dt_s": 1.5000319480895996,
+      "battery_percent": 96.60301753202923,
+      "power_w": 136.29288885369436,
+      "energy_wh": 2.223325025286865,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    },
+    {
+      "sim_time_s": 60.232285022735596,
+      "wall_time_s": 4.0351808071136475,
+      "dt_s": 1.5060322284698486,
+      "battery_percent": 96.51590205663456,
+      "power_w": 136.29288885369436,
+      "energy_wh": 2.280342103932677,
+      "velocity_ned": [
+        0.0,
+        0.0,
+        -0.00015620245540048927
+      ],
+      "ground_speed_ms": 0.0,
+      "position_ned": [
+        0.0,
+        0.0,
+        -10.149772644042969
+      ],
+      "drift_m": 0.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 0.0,
+      "yaw_deg": 0.0
+    }
+  ],
+  "sample_count": 41,
+  "sim_elapsed_s": 60.232285022735596,
+  "wall_elapsed_s": 4.135478258132935,
+  "measured_clock_ratio": 14.564768876315885,
+  "timestamp_unit": "nanoseconds since epoch",
+  "altitude_m": 10.0,
+  "energy_consumed_wh": 2.280342103932677,
+  "battery_remaining_percent": 96.51590205663456,
+  "discharge_percent": 3.484097943365441,
+  "discharge_rate_percent_per_min": 3.470661565023125,
+  "extrapolated_endurance_min": 28.81295053594017,
+  "mean_power_w": 136.2928789192321,
+  "mean_ground_speed_ms": 0.0,
+  "max_ground_speed_ms": 0.0,
+  "max_tilt_deg": 0.0,
+  "final_drift_m": 0.0,
+  "p5_air_density": {
+    "prediction": "P5",
+    "tested": true,
+    "measured_air_density": 1.2247819900512695,
+    "model_air_density": 1.225,
+    "error_percent": -0.01779673050861694,
+    "tolerance_percent": 2.0,
+    "status": "PASS",
+    "temperature_c": 14.987969970703148,
+    "air_pressure_pa": 101302.78125,
+    "gravity_z": 9.806650161743164
+  },
+  "p4_translational_lift": {
+    "prediction": "P4",
+    "tested": true,
+    "hover_shaft_power_w": 68.17283292301038,
+    "cruise_shaft_power_w": 69.86768450352903,
+    "cruise_speed_ms": 9.0,
+    "hover_thrust_n": 9.932039942060198,
+    "cruise_thrust_n": 10.093794550214495,
+    "hover_speed_rad_s": 516.3120727539062,
+    "cruise_speed_rad_s": 520.4440351213727,
+    "error_percent": 2.4861099470997567,
+    "tolerance_percent": 10.0,
+    "status": "PASS"
+  },
+  "validation": {
+    "anchors": [
+      {
+        "name": "Hover endurance",
+        "unit": "min",
+        "target": 28.8135593220339,
+        "predicted": 28.813559322033903,
+        "error_percent": 1.2330006297013504e-14,
+        "tolerance_percent": 10.0,
+        "held_out": false,
+        "status": "CALIBRATED",
+        "source": "operational (derated from 40.0 spec)"
+      },
+      {
+        "name": "Cruise endurance at 9.0 m/s",
+        "unit": "min",
+        "target": 33.13559322033898,
+        "predicted": 37.85249902362365,
+        "error_percent": 14.235163293800277,
+        "tolerance_percent": 10.0,
+        "held_out": true,
+        "status": "FAIL",
+        "source": "operational (derated from 46.0 spec)"
+      },
+      {
+        "name": "Max range",
+        "unit": "km",
+        "target": 21.610169491525426,
+        "predicted": 27.430978894398198,
+        "error_percent": 26.935510177999493,
+        "tolerance_percent": 10.0,
+        "held_out": true,
+        "status": "FAIL",
+        "source": "operational (derated from 30.0 spec)"
+      }
+    ],
+    "held_out_count": 2,
+    "passed_count": 0,
+    "failed_count": 2,
+    "all_held_out_passed": false,
+    "profile": "operational",
+    "calibration": "hover",
+    "tolerance_percent": 10.0
+  },
+  "model_state": {
+    "percentage": 96.51590205663456,
+    "voltage": 17.474572474038844,
+    "energy_consumed_wh": 2.280342103932677,
+    "capacity_wh": 77.0,
+    "usable_energy_wh": 65.45,
+    "time_elapsed_seconds": 60.232285022735596,
+    "time_elapsed_minutes": 1.0038714170455934,
+    "power_w": 136.29288885369436,
+    "airspeed_ms": 0.0,
+    "estimated_remaining_minutes": 27.809077242706802,
+    "wind_speed_ms": 0.0,
+    "wind_ned": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "wind_compensation_factor": 1.0,
+    "drift_x": 0.0,
+    "drift_y": 0.0,
+    "drift_z": 0.0,
+    "total_drift_m": 0.0,
+    "profile": "operational",
+    "power_model": "physics",
+    "calibration": "hover"
+  }
+}
