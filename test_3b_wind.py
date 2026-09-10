@@ -60,6 +60,7 @@ import sys
 import time
 
 import battery_model
+import catalog
 import probe_sim_capabilities as probe
 import settings_helper
 from test_3a_hover import quaternion_to_euler_deg
@@ -439,6 +440,8 @@ def format_report(scenarios, sweep, fit, predictions, air_density,
     lines.append("")
     lines.append(settings_summary)
     lines.append("")
+    lines.append("  Entity               : %s [%s], record %s"
+                 % (model.entity_name, model.entity_id, model.readiness))
     lines.append("  Measured clock ratio : %.2fx" % clock_ratio)
     lines.append("  Simulator air density: %.4f kg/m3" % air_density)
     lines.append("")
@@ -582,6 +585,9 @@ def main(argv=None):
                         help="run phase 2 only, skip the briefed scenarios")
     parser.add_argument("--profile", default="operational",
                         choices=["operational", "spec"])
+    parser.add_argument("--entity", default=catalog.DEFAULT_ENTITY_ID,
+                        help="catalog entity id (default: %(default)s). An "
+                             "entity below R1 readiness is REFUSED.")
     parser.add_argument("--visual-demo", action="store_true",
                         help="run the high-wind visual ramp first, so the "
                              "wind can be SEEN acting on the aircraft before "
@@ -612,12 +618,13 @@ def main(argv=None):
         print("ERROR: %s" % exc, file=sys.stderr)
         return 1
 
-    specs_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                              "catalog", "entities",
-                              "UAS-QUAD-DJI-MAVIC3.json")
-    model = battery_model.BatteryModel(
-        specs_file=specs_path if os.path.exists(specs_path) else None,
-        profile=arguments.profile, calibration="hover", verbose=True)
+    try:
+        model = battery_model.BatteryModel(
+            entity=arguments.entity, profile=arguments.profile,
+            calibration="hover", verbose=True)
+    except catalog.CatalogError as exc:
+        print("ERROR: %s" % exc, file=sys.stderr)
+        return 3
 
     # Air density from the simulator, not assumed.
     try:

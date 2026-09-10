@@ -46,6 +46,7 @@ import sys
 import time
 
 import battery_model
+import catalog
 import probe_sim_capabilities as probe
 import settings_helper
 
@@ -502,6 +503,9 @@ def format_report(results, model, density_check, settings_summary,
     lines.append("-" * 72)
     lines.append("ENERGY [L2 driven by L3]")
     lines.append("-" * 72)
+    lines.append("  Entity                : %s [%s]"
+                 % (model.entity_name, model.entity_id))
+    lines.append("  Record readiness      : %s" % model.readiness)
     lines.append("  Model profile         : %s" % model.profile)
     lines.append("  Calibration           : %s" % model.calibration)
     lines.append("  Usable capacity       : %.2f Wh of %.2f Wh"
@@ -620,6 +624,10 @@ def main(argv=None):
                              "(default: %(default)s, DJI's flight-time speed)")
     parser.add_argument("--skip-p4", action="store_true",
                         help="skip the translational-lift comparison")
+    parser.add_argument("--entity", default=catalog.DEFAULT_ENTITY_ID,
+                        help="catalog entity id (default: %(default)s). An "
+                             "entity below R1 readiness is REFUSED, not "
+                             "modelled with gaps filled in.")
     arguments = parser.parse_args(argv)
 
     capabilities = probe.load_capabilities()
@@ -639,13 +647,16 @@ def main(argv=None):
         print("ERROR: %s" % exc, file=sys.stderr)
         return 1
 
-    specs_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                              "catalog", "entities",
-                              "UAS-QUAD-DJI-MAVIC3.json")
-    model = battery_model.BatteryModel(
-        specs_file=specs_path if os.path.exists(specs_path) else None,
-        profile=arguments.profile, calibration=arguments.calibration,
-        verbose=True)
+    try:
+        model = battery_model.BatteryModel(
+            entity=arguments.entity, profile=arguments.profile,
+            calibration=arguments.calibration, verbose=True)
+    except catalog.CatalogError as exc:
+        # The gate refused. Do NOT fall back to another entity and do not
+        # produce a number from an incomplete record - saying "cannot" is
+        # the useful answer here.
+        print("ERROR: %s" % exc, file=sys.stderr)
+        return 3
 
     # Clear any wind so a hover baseline is genuinely a hover baseline. An
     # earlier run reported a "Zero Wind" scenario while settings.json still

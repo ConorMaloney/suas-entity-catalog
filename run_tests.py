@@ -7,7 +7,10 @@ what the simulator exposes - and at what ClockSpeed - produces numbers whose
 provenance nobody can reconstruct afterwards.
 
 RECOMMENDED ORDER
-    s   check settings first; ClockSpeed should be 1.0 for validation runs
+    k   the coverage board first - it says which entities can produce a
+        number at all, and an entity below R1 is REFUSED by the tests
+    r   the pinned regression check, which must be green before anything
+    s   check settings; ClockSpeed should be 1.0 for validation runs
     0   probe, so the tests know what they are allowed to claim
     m   offline model self-test, which needs no simulator at all
     1   test 3.a, hover
@@ -43,11 +46,18 @@ DJI MAVIC 3 SIMULATION ENTITY - TEST RUNNER
     w  Wind demo - ramp 0 to 60 m/s, watch it get blown away
     x  Wind demo - single 100 m/s blast (extreme)
 
+  Catalog (no simulator required):
+    k  Coverage board - what exists, how good it is, what is missing
+    e  Entity record detail (prompts for an id)
+    t  Catalog test battery
+    r  Pinned regression check
+
   No simulator required:
     m  battery_model.py offline self-test
     s  Show AirSim settings.json
     c  Set ClockSpeed to 1.0 (recommended for validation)
     p  Show the pre-registered predictions
+    d  Show the entity-building standards
 
     q  Quit
 
@@ -129,6 +139,23 @@ def main():
             run_script("wind_demo.py")
         elif choice == "x":
             run_script("wind_demo.py", ["--extreme"])
+        elif choice == "k":
+            run_script("catalog.py")
+        elif choice == "e":
+            try:
+                entity_id = input("  Entity id (blank to list): ").strip()
+            except (EOFError, KeyboardInterrupt):
+                continue
+            if entity_id:
+                run_script("catalog.py", ["--entity", entity_id])
+            else:
+                run_script("catalog.py", ["--list"])
+        elif choice == "t":
+            run_script("test_catalog.py")
+        elif choice == "r":
+            run_script("test_regression_pinned.py")
+        elif choice == "d":
+            show_file("STANDARDS.md")
         elif choice == "m":
             run_script("battery_model.py")
         elif choice == "s":
