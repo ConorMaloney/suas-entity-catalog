@@ -206,16 +206,28 @@ PINS = [
 ]
 
 # Non-numeric pins, compared exactly.
+# EDITED IN C4, deliberately, and this is the only pin edit that commit made.
+#
+# Making validation data-driven surfaced max_wind_resistance_ms, which the
+# Mavic's calibration block has always declared as a held-out anchor and which
+# no code has ever scored. It now reports UNSCORED rather than being silently
+# absent, because an anchor missing from a board is indistinguishable from one
+# that passed.
+#
+# So the SHAPE changed: four anchor rows instead of three, and held_out
+# declared 3 instead of 2. What did not change is anything scored - passed 0,
+# failed 2, and every numeric pin above held to 1e-8. P6's +14.2% cruise miss
+# is intact.
 STATUS_PINS = [
     ("spec/hover anchor statuses",
      lambda: [a["status"] for a in
               _model("spec", "hover").validate_against_spec()["anchors"]],
-     ["CALIBRATED", "FAIL", "FAIL"]),
-    ("spec/hover scored counts (held_out, passed, failed)",
+     ["CALIBRATED", "FAIL", "FAIL", "UNSCORED"]),
+    ("spec/hover counts (held_out, scored, passed, failed)",
      lambda: tuple(_model("spec", "hover").validate_against_spec()[key]
-                   for key in ("held_out_count", "passed_count",
-                               "failed_count")),
-     (2, 0, 2)),
+                   for key in ("held_out_count", "scored_count",
+                               "passed_count", "failed_count")),
+     (3, 2, 0, 2)),
 ]
 
 

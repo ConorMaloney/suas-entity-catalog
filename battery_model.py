@@ -75,6 +75,8 @@ import json
 import math
 import os
 
+import catalog
+
 GRAVITY_MS2 = 9.80665
 
 
@@ -180,61 +182,57 @@ def airsim_predicted_tilt_deg(wind_speed_ms, axis="y", air_density=1.225):
 
 class BatteryModel:
     """
-    Energy and endurance model for a DJI Mavic 3.
+    Energy and endurance model for a rotary-wing UAS entity.
+
+    The entity's parameters come from a catalog record; there are no built-in
+    defaults for any of them. That inversion is deliberate. This class used to
+    carry a Mavic 3's mass, capacity and specification anchors as class
+    constants, with the catalog file acting as an optional override layer, and
+    a missing file merely printed a warning and carried on. The consequence
+    was that pointing the model at a different entity silently scored it
+    against Mavic 3 anchors and described it with Mavic 3 prose. With one
+    entity that was invisible. With a catalog it is a defect that produces
+    confident, well-formatted, wrong answers.
+
+    So: the record is authoritative, a missing required parameter is an error,
+    and readiness gating happens in the constructor.
 
     Typical use, driven from simulation-clock deltas:
 
-        battery = BatteryModel()
+        battery = BatteryModel(entity="UAS-QUAD-DJI-MAVIC3")
         battery.set_wind(5.0, 0.0, 0.0)
-        battery.tick(dt_seconds, ground_velocity=(vx, vy, vz))
+        battery.tick(dt_seconds, ground_velocity_ned=(vx, vy, vz))
         state = battery.get_state()
     """
 
-    # ---- Published Mavic 3 specification anchors -------------------------
-    CAPACITY_WH = 77.0
-    MASS_KG = 0.895
-    PROPELLER_DIAMETER_M = 0.2388      # 9453F, 9.4 in
-    ROTOR_COUNT = 4
+    # Modelling constants that belong to the PHYSICS, not to any entity.
+    # Everything entity-specific is bound from the catalog record.
+    PROFILE_MU_FACTOR_DEFAULT = 4.65
 
-    SPEC_HOVER_TIME_MIN = 40.0         # DJI specs page (manual says 42 - contested)
-    SPEC_FLIGHT_TIME_MIN = 46.0        # measured at a constant 9.0 m/s
-    SPEC_FLIGHT_TIME_SPEED_MS = 9.0
-    SPEC_MAX_RANGE_KM = 30.0
-    SPEC_MAX_SPEED_MS = 21.0
-    SPEC_MAX_WIND_MS = 12.0
-
-    VOLTAGE_FULL_V = 17.6              # DJI charging voltage limit, 4.4 V/cell
-    VOLTAGE_NOMINAL_V = 15.4
-    VOLTAGE_EMPTY_V = 14.0             # 3.5 V/cell cutoff
-
-    # ---- Aerodynamic parameters (literature / engineering estimate) ------
-    AIR_DENSITY_KG_M3 = 1.225
-    EQUIV_FLAT_PLATE_AREA_M2 = 0.010   # CdA, literature range 0.005-0.020
-    FIGURE_OF_MERIT = 0.65
-    MOTOR_ESC_EFFICIENCY = 0.80
-    PROPULSIVE_EFFICIENCY = 0.70
-    AVIONICS_POWER_W = 15.0
-    THRUST_COEFFICIENT = 0.11
-    PROFILE_MU_FACTOR = 4.65
-
-    # ---- Operational derating (two separable factors, not one fudge) -----
-    USABLE_ENERGY_FRACTION = 0.85
-    OPERATIONAL_OVERHEAD_FACTOR = 1.18
-
-    def __init__(self, specs_file=None, profile="operational",
-                 calibration="hover", power_model="physics", verbose=True):
+    def __init__(self, entity=None, specs_file=None, profile="operational",
+                 calibration="hover", power_model="physics", verbose=True,
+                 allow_provisional=True):
         """
         Args:
-            specs_file: optional path to mavic3_specs.json. Only used to
-                override defaults; the model runs standalone without it.
+            entity: catalog entity id, e.g. "UAS-QUAD-DJI-MAVIC3". Resolved
+                through catalog.load_entity(). Defaults to
+                catalog.DEFAULT_ENTITY_ID.
+            specs_file: explicit path to an entity record. Wins over `entity`.
+                Retained so a caller outside the catalog can still drive the
+                model directly.
             profile: "operational" (default, derated to observed performance)
-                or "spec" (matches DJI's ideal-condition maxima).
+                or "spec" (matches the vendor's ideal-condition maxima).
             calibration: "hover" fits one parameter to the hover anchor.
-                "none" fits nothing and reports raw error against every
-                anchor. Both appear in the writeup.
-            power_model: "physics" (momentum theory) or "linear" (constant
-                power discharge, retained for comparison against the simpler
-                prior model).
+                "none" fits nothing and reports raw error against every anchor.
+            power_model: "physics" (momentum theory) or "linear".
+            allow_provisional: when False, an R1 PROVISIONAL record raises
+                instead of producing stamped output. Default True, because
+                this project labels loudly rather than withholding.
+
+        Raises:
+            catalog.CatalogError if the record is missing, malformed, or
+            below R1 readiness. There is deliberately no fallback to another
+            entity's values.
         """
         if profile not in ("operational", "spec"):
             raise ValueError("profile must be 'operational' or 'spec'")
@@ -247,24 +245,31 @@ class BatteryModel:
         self.calibration = calibration
         self.power_model = power_model
 
-        # Instance copies so a caller can perturb them for sensitivity runs.
-        self.capacity_wh = self.CAPACITY_WH
-        self.mass_kg = self.MASS_KG
-        self.propeller_diameter_m = self.PROPELLER_DIAMETER_M
-        self.rotor_count = self.ROTOR_COUNT
-        self.air_density_kg_m3 = self.AIR_DENSITY_KG_M3
-        self.cda_m2 = self.EQUIV_FLAT_PLATE_AREA_M2
-        self.figure_of_merit = self.FIGURE_OF_MERIT
-        self.motor_esc_efficiency = self.MOTOR_ESC_EFFICIENCY
-        self.propulsive_efficiency = self.PROPULSIVE_EFFICIENCY
-        self.avionics_power_w = self.AVIONICS_POWER_W
-        self.thrust_coefficient = self.THRUST_COEFFICIENT
-        self.voltage_full = self.VOLTAGE_FULL_V
-        self.voltage_empty = self.VOLTAGE_EMPTY_V
-
-        self.specs_source = "built-in defaults"
+        # ---- Resolve and bind the entity record ----
         if specs_file:
-            self._load_specs(specs_file)
+            self.document = catalog.load_entity_file(specs_file)
+            self.specs_source = specs_file
+        else:
+            entity_id = entity or catalog.DEFAULT_ENTITY_ID
+            self.document = catalog.load_entity(entity_id)
+            self.specs_source = "catalog:%s" % entity_id
+
+        self.entity_id = self.document.get("entity_id")
+        self.entity_name = self.document.get("entity")
+        self.category = self.document.get("category")
+
+        # ---- Readiness gate, before any number is computed ----
+        schema = catalog.load_schema()
+        self.assessment = catalog.assess_entity(self.document, schema)
+        gate = catalog.require_modelable(
+            self.assessment, "BatteryModel(%s)" % self.entity_id,
+            min_tier="R2" if not allow_provisional else "R1")
+        self.readiness = gate["readiness"]
+        self.provisional = gate["provisional"]
+        self.provisional_reasons = gate["provisional_reasons"]
+        self.provisional_banner = gate["banner"]
+
+        self._bind_entity()
 
         # ---- Wind state ----
         # Set BEFORE _recompute_derived(), because deriving the hover
@@ -295,50 +300,96 @@ class BatteryModel:
     # -----------------------------------------------------------------
     # Setup
     # -----------------------------------------------------------------
-    def _load_specs(self, specs_file):
-        """Load overrides from mavic3_specs.json. Missing file is non-fatal."""
-        if not os.path.exists(specs_file):
-            print("WARNING: specs file not found, using built-in defaults: %s"
-                  % specs_file)
-            return
-        try:
-            with open(specs_file, "r") as handle:
-                specs = json.load(handle)
-        except (ValueError, IOError) as exc:
-            print("WARNING: could not parse specs file (%s), using built-in "
-                  "defaults: %s" % (exc, specs_file))
-            return
+    def _bind_entity(self):
+        """
+        Bind every model parameter from the catalog record.
 
-        def pull(section, key):
-            node = specs.get(section, {}).get(key)
-            if isinstance(node, dict) and "value" in node:
-                return node["value"]
-            return None
+        There is no fallback. catalog.require_modelable() has already run in
+        the constructor and guaranteed that every REQUIRED_MEASURED and
+        REQUIRED_MODELING parameter is present, so a KeyError here means the
+        schema and this method disagree about what is required - which is a
+        bug worth crashing on rather than papering over.
 
-        mapping = [
-            ("physical", "mass_kg", "mass_kg"),
-            ("physical", "propeller_diameter_m", "propeller_diameter_m"),
-            ("battery", "capacity_wh", "capacity_wh"),
-            ("battery", "voltage_full_v", "voltage_full"),
-            ("battery", "voltage_empty_v", "voltage_empty"),
-            ("aerodynamic_assumptions", "air_density_kg_m3",
-             "air_density_kg_m3"),
-            ("aerodynamic_assumptions", "equivalent_flat_plate_area_m2",
-             "cda_m2"),
-            ("aerodynamic_assumptions", "figure_of_merit", "figure_of_merit"),
-            ("aerodynamic_assumptions", "motor_esc_efficiency",
-             "motor_esc_efficiency"),
-            ("aerodynamic_assumptions", "propulsive_efficiency",
-             "propulsive_efficiency"),
-            ("aerodynamic_assumptions", "avionics_power_w",
-             "avionics_power_w"),
-        ]
-        for section, key, attr in mapping:
-            value = pull(section, key)
-            if value is not None:
-                setattr(self, attr, value)
+        Unlike the previous _load_specs, this retains each parameter's
+        confidence and source alongside its value, in self.provenance, so a
+        report can say where a number came from rather than just what it is.
+        """
+        self.provenance = {}
 
-        self.specs_source = specs_file
+        def bind(path, required=True, default=None):
+            record = catalog.get_parameter(self.document, path)
+            status = catalog.parameter_status(record)
+            if status != "present":
+                if required:
+                    raise catalog.CatalogError(
+                        "entity %s: required parameter %s is %s. The "
+                        "readiness gate should have caught this; schema and "
+                        "_bind_entity disagree about what is required."
+                        % (self.entity_id, path, status))
+                return default
+            self.provenance[path] = {
+                "value": record.get("value"),
+                "confidence": record.get("confidence"),
+                "source": record.get("source"),
+                "verified_on": record.get("verified_on"),
+                "contested": bool(record.get("contested")),
+            }
+            return record.get("value")
+
+        # ---- Physical ----
+        self.mass_kg = bind("physical.mass_kg")
+        self.propeller_diameter_m = bind("physical.propeller_diameter_m")
+        self.rotor_count = bind("physical.rotor_count")
+
+        # ---- Battery ----
+        self.capacity_wh = bind("battery.capacity_wh")
+        self.voltage_full = bind("battery.voltage_full_v")
+        self.voltage_empty = bind("battery.voltage_empty_v")
+        self.voltage_nominal = bind("battery.voltage_nominal_v",
+                                    required=False)
+
+        # ---- Aerodynamic and modelling assumptions ----
+        aero = "aerodynamic_assumptions."
+        self.air_density_kg_m3 = bind(aero + "air_density_kg_m3")
+        self.cda_m2 = bind(aero + "equivalent_flat_plate_area_m2")
+        self.figure_of_merit = bind(aero + "figure_of_merit")
+        self.motor_esc_efficiency = bind(aero + "motor_esc_efficiency")
+        self.propulsive_efficiency = bind(aero + "propulsive_efficiency")
+        self.avionics_power_w = bind(aero + "avionics_power_w")
+        self.thrust_coefficient = bind(aero + "thrust_coefficient")
+        self.profile_mu_factor = bind(aero + "profile_power_mu_factor",
+                                      required=False,
+                                      default=self.PROFILE_MU_FACTOR_DEFAULT)
+
+        # ---- Published performance anchors ----
+        published = "performance_published."
+        self.spec_hover_time_min = bind(published + "max_hover_time_min")
+        self.spec_max_speed_ms = bind(published + "max_speed_ms")
+        self.spec_flight_time_min = bind(published + "max_flight_time_min",
+                                         required=False)
+        self.spec_flight_time_speed_ms = bind(
+            published + "flight_time_test_speed_ms", required=False)
+        self.spec_max_range_km = bind(published + "max_flight_distance_km",
+                                      required=False)
+        self.spec_max_wind_ms = bind(published + "max_wind_resistance_ms",
+                                     required=False)
+
+        # ---- Operational derating ----
+        operational = "performance_operational."
+        required_operational = (self.profile == "operational")
+        self.usable_energy_fraction = bind(
+            operational + "usable_energy_fraction",
+            required=required_operational, default=1.0)
+        self.operational_overhead = bind(
+            operational + "operational_overhead_factor",
+            required=required_operational, default=1.0)
+
+        # ---- Calibration declaration, now live rather than decorative ----
+        calibration_block = self.document.get("calibration") or {}
+        self.fitted_parameter = calibration_block.get("fitted_parameter")
+        self.fitted_to_anchor = calibration_block.get("fitted_to_anchor")
+        self.held_out_anchors = list(
+            calibration_block.get("held_out_anchors") or [])
 
     def _recompute_derived(self):
         """
@@ -368,8 +419,8 @@ class BatteryModel:
         # Effective capacity after the usable-energy derate.
         if self.profile == "operational":
             self.usable_energy_wh = (self.capacity_wh
-                                     * self.USABLE_ENERGY_FRACTION)
-            self.overhead_factor = self.OPERATIONAL_OVERHEAD_FACTOR
+                                     * self.usable_energy_fraction)
+            self.overhead_factor = self.operational_overhead
         else:
             self.usable_energy_wh = self.capacity_wh
             self.overhead_factor = 1.0
@@ -379,7 +430,7 @@ class BatteryModel:
         # This anchor is fitted and therefore CANNOT FAIL. It is reported as
         # CALIBRATED, never as PASS.
         target_hover_power_w = (self.capacity_wh
-                                / (self.SPEC_HOVER_TIME_MIN / 60.0))
+                                / (self.spec_hover_time_min / 60.0))
         if self.calibration == "hover":
             induced_shaft_w = (self.hover_induced_power_ideal_w
                                / self.figure_of_merit)
@@ -407,7 +458,15 @@ class BatteryModel:
     def print_configuration(self):
         """Print the resolved configuration. ASCII only."""
         print("BatteryModel configured")
-        print("  Entity              : DJI Mavic 3")
+        if self.provisional and self.provisional_banner:
+            for line in self.provisional_banner:
+                print(line)
+            print("")
+        print("  Entity              : %s  [%s]"
+              % (self.entity_name, self.entity_id))
+        print("  Readiness           : %s %s"
+              % (self.readiness,
+                 catalog.TIER_NAMES.get(self.readiness, "")))
         print("  Specs source        : %s" % self.specs_source)
         print("  Profile             : %s" % self.profile)
         print("  Power model         : %s" % self.power_model)
@@ -535,7 +594,7 @@ class BatteryModel:
         else:
             mu = 0.0
         profile_shaft_w = (self.profile_power_hover_w
-                           * (1.0 + self.PROFILE_MU_FACTOR * mu * mu))
+                           * (1.0 + self.profile_mu_factor * mu * mu))
 
         parasitic_shaft_w = (self.calculate_drag_power(horizontal_airspeed)
                              / self.propulsive_efficiency)
@@ -749,6 +808,14 @@ class BatteryModel:
             "profile": self.profile,
             "power_model": self.power_model,
             "calibration": self.calibration,
+            # Readiness travels with the state, so every consumer that dumps
+            # get_state() into its results JSON carries the provenance stamp
+            # without needing to know it exists.
+            "entity_id": self.entity_id,
+            "entity": self.entity_name,
+            "readiness": self.readiness,
+            "provisional": self.provisional,
+            "provisional_reasons": self.provisional_reasons,
         }
 
     def endurance_minutes(self, ground_velocity_ned=(0.0, 0.0, 0.0),
@@ -767,7 +834,7 @@ class BatteryModel:
         flight-time test.
         """
         if search_max_ms is None:
-            search_max_ms = self.SPEC_MAX_SPEED_MS
+            search_max_ms = self.spec_max_speed_ms
         best_speed = 0.0
         best_metric = 0.0
         speed = step_ms
@@ -847,89 +914,115 @@ class BatteryModel:
 
     def validate_against_spec(self, tolerance_percent=10.0):
         """
-        Compare model predictions against every published anchor.
+        Compare model predictions against the entity's OWN published anchors.
 
-        Anchors fitted during calibration are reported as CALIBRATED and are
-        explicitly NOT scored, because they cannot fail by construction.
-        Only held-out anchors receive PASS or FAIL.
+        Data-driven. The anchor table is built from the record's
+        performance_published section, and which anchor is fitted versus held
+        out comes from the record's calibration block. Nothing here is
+        hardcoded to any particular aircraft.
 
-        Validation is on RATES and extrapolated endurance, never on how long
-        a test happened to run. A 60-second test can legitimately probe a
-        40-minute endurance claim; comparing 60 seconds against 40 minutes
-        and calling it a failure tells you nothing.
+        That matters more than it sounds. This method previously read every
+        target from a class constant and embedded the numbers in its own label
+        strings - "operational (derated from 40.0 spec)", "DJI specs page". A
+        second entity would have been scored against a Mavic 3 and described
+        with Mavic 3 prose, and the report would have looked entirely normal.
+
+        Anchors fitted during calibration report CALIBRATED and are not
+        scored, because they cannot fail by construction. Anchors with no
+        predictor report UNSCORED with a reason rather than being dropped -
+        an anchor quietly missing from a board is indistinguishable from one
+        that passed.
+
+        Validation is on RATES and extrapolated endurance, never on how long a
+        test happened to run.
         """
         anchors = []
+        derate = ((self.usable_energy_fraction / self.operational_overhead)
+                  if self.profile == "operational" else 1.0)
+        profile_label = ("operational (derated from %s spec by %.3f)"
+                         if self.profile == "operational" else "%s%.0s")
 
-        hover_predicted = self.capacity_wh / self.power_required(
-            (0.0, 0.0, 0.0), (0.0, 0.0, 0.0))["total_w"] * 60.0
-        if self.profile == "operational":
-            hover_predicted = self.endurance_minutes()
-            hover_target = (self.SPEC_HOVER_TIME_MIN
-                            * self.USABLE_ENERGY_FRACTION
-                            / self.OPERATIONAL_OVERHEAD_FACTOR)
-            hover_target_label = "operational (derated from 40.0 spec)"
-        else:
-            hover_target = self.SPEC_HOVER_TIME_MIN
-            hover_target_label = "DJI specs page (manual says 42.0)"
+        def source_for(anchor_name, published_value):
+            record = catalog.get_parameter(
+                self.document, "performance_published.%s" % anchor_name)
+            source = (record or {}).get("source") or "entity record"
+            if (record or {}).get("contested"):
+                source += " [CONTESTED]"
+            if self.profile == "operational":
+                return "operational, derated from %.4g %s" % (published_value,
+                                                              source)
+            return source
 
-        anchors.append(self._score_anchor(
-            name="Hover endurance",
-            unit="min",
-            target=hover_target,
-            predicted=hover_predicted,
-            tolerance_percent=tolerance_percent,
-            held_out=(self.calibration != "hover"),
-            source=hover_target_label))
+        def add(anchor_name, display, unit, published_value, predicted):
+            if published_value is None:
+                return
+            target = published_value * derate
+            anchors.append(self._score_anchor(
+                name=display, unit=unit, target=target, predicted=predicted,
+                tolerance_percent=tolerance_percent,
+                held_out=(anchor_name != self.fitted_to_anchor
+                          or self.calibration != "hover"),
+                source=source_for(anchor_name, published_value)))
 
-        cruise_speed = self.SPEC_FLIGHT_TIME_SPEED_MS
-        cruise_predicted = self.endurance_minutes((cruise_speed, 0.0, 0.0))
-        if self.profile == "operational":
-            cruise_target = (self.SPEC_FLIGHT_TIME_MIN
-                             * self.USABLE_ENERGY_FRACTION
-                             / self.OPERATIONAL_OVERHEAD_FACTOR)
-            cruise_label = "operational (derated from 46.0 spec)"
-        else:
-            cruise_target = self.SPEC_FLIGHT_TIME_MIN
-            cruise_label = "DJI specs page, measured at 9.0 m/s"
+        # ---- Hover endurance ----
+        add("max_hover_time_min", "Hover endurance", "min",
+            self.spec_hover_time_min, self.endurance_minutes())
 
-        anchors.append(self._score_anchor(
-            name="Cruise endurance at %.1f m/s" % cruise_speed,
-            unit="min",
-            target=cruise_target,
-            predicted=cruise_predicted,
-            tolerance_percent=tolerance_percent,
-            held_out=True,
-            source=cruise_label))
+        # ---- Cruise endurance, at the speed the vendor measured it ----
+        cruise_speed = self.spec_flight_time_speed_ms
+        if self.spec_flight_time_min is not None and cruise_speed:
+            add("max_flight_time_min",
+                "Cruise endurance at %.1f m/s" % cruise_speed, "min",
+                self.spec_flight_time_min,
+                self.endurance_minutes((cruise_speed, 0.0, 0.0)))
 
-        range_predicted = self.max_range_km()
-        if self.profile == "operational":
-            range_target = (self.SPEC_MAX_RANGE_KM
-                            * self.USABLE_ENERGY_FRACTION
-                            / self.OPERATIONAL_OVERHEAD_FACTOR)
-            range_label = "operational (derated from 30.0 spec)"
-        else:
-            range_target = self.SPEC_MAX_RANGE_KM
-            range_label = "DJI specs page"
+        # ---- Maximum range ----
+        add("max_flight_distance_km", "Max range", "km",
+            self.spec_max_range_km, self.max_range_km())
 
-        anchors.append(self._score_anchor(
-            name="Max range",
-            unit="km",
-            target=range_target,
-            predicted=range_predicted,
-            tolerance_percent=tolerance_percent,
-            held_out=True,
-            source=range_label))
+        # ---- Anchors declared held out for which no predictor exists ----
+        scored_names = {"max_hover_time_min", "max_flight_time_min",
+                        "max_flight_distance_km"}
+        for anchor_name in self.held_out_anchors:
+            if anchor_name in scored_names:
+                continue
+            record = catalog.get_parameter(
+                self.document, "performance_published.%s" % anchor_name)
+            if record is None:
+                continue
+            anchors.append({
+                "name": anchor_name,
+                "unit": (record.get("unit") or ""),
+                "target": record.get("value"),
+                "predicted": None,
+                "error_percent": None,
+                "tolerance_percent": tolerance_percent,
+                "held_out": True,
+                "status": "UNSCORED",
+                "source": (record.get("source") or "entity record"),
+                "reason": ("declared held out, but this project has no "
+                           "predictor for it; adding one is a new falsifiable "
+                           "claim and must be pre-registered first"),
+            })
 
+        scored = [a for a in anchors if a["status"] in ("PASS", "FAIL")]
         passed = [a for a in anchors if a["status"] == "PASS"]
         failed = [a for a in anchors if a["status"] == "FAIL"]
+        unscored = [a for a in anchors if a["status"] == "UNSCORED"]
         return {
+            "entity_id": self.entity_id,
+            "entity": self.entity_name,
             "anchors": anchors,
             "held_out_count": len([a for a in anchors if a["held_out"]]),
+            "scored_count": len(scored),
             "passed_count": len(passed),
             "failed_count": len(failed),
+            "unscored_count": len(unscored),
             "all_held_out_passed": len(failed) == 0,
             "profile": self.profile,
             "calibration": self.calibration,
+            "readiness": self.readiness,
+            "provisional": self.provisional,
             "tolerance_percent": tolerance_percent,
         }
 
@@ -966,17 +1059,37 @@ class BatteryModel:
             validation = self.validate_against_spec()
 
         lines = []
+        # The provisional stamp goes FIRST and unconditionally. A
+        # banner the caller must remember to print will eventually
+        # not be printed, and a validation table from a thin record
+        # must not be screenshottable without it.
+        if self.provisional and self.provisional_banner:
+            lines.extend(self.provisional_banner)
+            lines.append("")
+
         lines.append("VALIDATION AGAINST PUBLISHED SPECIFICATION")
-        lines.append("  profile=%s  calibration=%s  tolerance=+/-%.1f%%"
-                     % (validation["profile"], validation["calibration"],
-                        validation["tolerance_percent"]))
+        lines.append("  entity=%s [%s]"
+                     % (validation.get("entity"),
+                        validation.get("entity_id")))
+        lines.append("  profile=%s  calibration=%s  readiness=%s"
+                     % (validation["profile"],
+                        validation["calibration"],
+                        validation.get("readiness")))
+        lines.append("  tolerance=+/-%.1f%%"
+                     % validation["tolerance_percent"])
         lines.append("")
         header = ("  %-28s %10s %10s %9s  %-11s %s"
-                  % ("Anchor", "Target", "Predicted", "Error", "Status",
-                     "Scored"))
+                  % ("Anchor", "Target", "Predicted", "Error",
+                     "Status", "Scored"))
         lines.append(header)
         lines.append("  " + "-" * (len(header) - 2))
         for anchor in validation["anchors"]:
+            if anchor["status"] == "UNSCORED":
+                lines.append(
+                    "  %-28s %10.2f %10s %9s  %-11s %s"
+                    % (anchor["name"][:28], anchor["target"],
+                       "-", "-", "UNSCORED", "no predictor"))
+                continue
             lines.append(
                 "  %-28s %10.2f %10.2f %8.1f%%  %-11s %s"
                 % (anchor["name"][:28],
@@ -984,15 +1097,25 @@ class BatteryModel:
                    anchor["predicted"],
                    anchor["error_percent"],
                    anchor["status"],
-                   "held out" if anchor["held_out"] else "FITTED - not scored"))
+                   "held out" if anchor["held_out"]
+                   else "FITTED - not scored"))
         lines.append("")
-        lines.append("  CALIBRATED means the anchor was fitted and cannot fail")
-        lines.append("  by construction. It is never counted as a pass.")
-        lines.append("  Held-out anchors scored: %d, passed: %d, failed: %d"
+        lines.append("  CALIBRATED means the anchor was fitted and")
+        lines.append("  cannot fail by construction. It is never")
+        lines.append("  counted as a pass.")
+        if validation.get("unscored_count"):
+            lines.append("  UNSCORED means the anchor is declared held")
+            lines.append("  out but this project has no predictor for")
+            lines.append("  it. Inventing one to fill the row would be")
+            lines.append("  a new falsifiable claim, and must be")
+            lines.append("  pre-registered before it is run.")
+        lines.append("  Held-out declared: %d, scored: %d, passed: %d,"
+                     " failed: %d"
                      % (validation["held_out_count"],
+                        validation.get("scored_count", 0),
                         validation["passed_count"],
                         validation["failed_count"]))
-        return "\n".join(lines)
+        return chr(10).join(lines)
 
 
 # ---------------------------------------------------------------------------
@@ -1136,7 +1259,7 @@ def _self_test():
     baseline = BatteryModel(profile="spec", calibration="none", verbose=False)
     baseline_hover = baseline.endurance_minutes()
     baseline_cruise = baseline.endurance_minutes(
-        (BatteryModel.SPEC_FLIGHT_TIME_SPEED_MS, 0.0, 0.0))
+        (baseline.spec_flight_time_speed_ms, 0.0, 0.0))
     print("  Baseline (unfitted): hover %.2f min, cruise %.2f min"
           % (baseline_hover, baseline_cruise))
     print("")
@@ -1155,7 +1278,7 @@ def _self_test():
         perturbed._recompute_derived()
         hover = perturbed.endurance_minutes()
         cruise = perturbed.endurance_minutes(
-            (BatteryModel.SPEC_FLIGHT_TIME_SPEED_MS, 0.0, 0.0))
+            (baseline.spec_flight_time_speed_ms, 0.0, 0.0))
         print("  %-26s %7.2f min %7.1f%% %7.2f min %7.1f%%"
               % (label, hover,
                  (hover - baseline_hover) / baseline_hover * 100.0,
@@ -1175,14 +1298,14 @@ def _self_test():
     print("  Source: MultiRotorParams.hpp setupFrameGenericQuad.")
     print("")
     print("  Sim mass            : %.3f kg (Mavic 3: %.3f kg)"
-          % (AIRSIM_GENERIC_QUAD["mass_kg"], BatteryModel.MASS_KG))
+          % (AIRSIM_GENERIC_QUAD["mass_kg"], model.mass_kg))
     print("  Sim propeller       : %.4f m (Mavic 3: %.4f m)"
           % (AIRSIM_GENERIC_QUAD["propeller_diameter_m"],
-             BatteryModel.PROPELLER_DIAMETER_M))
+             model.propeller_diameter_m))
     print("  Sim effective CdA_x : %.5f m2" % factors["effective_cda_x_m2"])
     print("  Sim effective CdA_y : %.5f m2" % factors["effective_cda_y_m2"])
     print("  Model CdA (Mavic 3) : %.5f m2"
-          % BatteryModel.EQUIV_FLAT_PLATE_AREA_M2)
+          % model.cda_m2)
     print("")
     print("  Two independent derivations - literature for the Mavic, C++")
     print("  source for the sim - agree to within 17%. Corroboration.")
