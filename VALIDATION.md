@@ -1,9 +1,14 @@
-# VALIDATION.md - DJI Mavic 3 simulation entity
+# VALIDATION.md - sUAS entity catalog
 
-Verification, Validation and Accreditation notes for the Mavic 3 entity built
-against Cosys-AirSim 3.4.1 / UE5. This is the "show your work" document: every
-modeling decision here should be defensible to a subject-matter expert, and
-where a decision is weak it is labelled weak rather than dressed up.
+Verification, Validation and Accreditation notes, built against Cosys-AirSim
+3.4.1 / UE5. This is the "show your work" document: every modeling decision
+here should be defensible to a subject-matter expert, and where a decision is
+weak it is labelled weak rather than dressed up.
+
+Most of what follows is worked through the DJI Mavic 3, which is the only
+entity in the catalog with a complete record. Section 8a covers what changed
+when the project became a catalog rather than a single entity, and
+[STANDARDS.md](STANDARDS.md) is the governing document for adding another.
 
 ---
 
@@ -396,6 +401,75 @@ underlying physics is wrong is not a test.
 
 ---
 
+## 8a. The catalog layer
+
+This document was written when the project held exactly one entity. It now
+holds a catalog, and two things in it changed as a result.
+
+### The defect the catalog exposed
+
+`validate_against_spec` used to read every anchor target from a **class
+constant**, hardcode `held_out=True`, and embed the numbers in its own label
+strings - "operational (derated from 40.0 spec)", "DJI specs page". With one
+entity that was invisible. With a second, it would have scored that entity
+against Mavic 3 targets and described it with Mavic 3 prose, and the report
+would have looked entirely normal.
+
+Anchors are now built from each record's own `performance_published` section,
+and fitted-versus-held-out comes from its `calibration` block - data that had
+been sitting in the file since the beginning with no code reading it.
+
+The same pass removed the warning-and-continue path for a missing specs file.
+That behaviour meant an unreadable record produced a full set of plausible
+Mavic numbers, which is the most dangerous failure mode available to a catalog.
+
+### The wind anchor, now visible
+
+Making validation data-driven surfaced `max_wind_resistance_ms`. The Mavic's
+`calibration` block has always declared it a held-out anchor and no code has
+ever scored it. It now reports **UNSCORED** with a stated reason.
+
+It is not filled in. A wind-resistance predictor would be a new falsifiable
+claim, and rule 1 of the register requires a claim to be frozen before it is
+run. Turning an UNSCORED row green by inventing a predictor for it is exactly
+the move the register exists to prevent.
+
+The consequence is a shape change in the validation output: four anchor rows
+instead of three, and held-out **declared** 3 instead of 2, while **scored**
+stays 2, passed 0, failed 2. Results files committed before 2026-09-10 carry
+the three-row form. Nothing was rewritten; a reader diffing an old payload
+against a new one is seeing this change, not a discrepancy.
+
+### Readiness, and why a record can be refused
+
+Each entity carries a computed readiness tier (R0 STUB through R3 VALIDATED).
+Below R1 the gate raises rather than returning a hedged number, because below
+R1 a required input is genuinely absent - the model cannot compute a disk area
+without a propeller diameter. At R1 it stamps rather than refuses, which
+matches the discipline in section 8: this project prints FAIL, prints
+CALIBRATED rather than hiding a fit, and ships red boards. Label loudly, do not
+withhold.
+
+The tier is computed from the record and compared against the tier the record
+*claims*. Over-claiming fails `test_catalog.py`. That is the same mechanism as
+"CALIBRATED, never PASS" applied to metadata rather than to physics: a claim
+that cannot fail is not worth making.
+
+Two catalog entities are stubs carrying no sourced aircraft data at all. The
+board says so, the gate refuses them, and they were deliberately not populated
+with plausible figures. A coverage board reading "1 of 3 modelable" can be
+acted on; one reading "3 of 3" on invented data cannot.
+
+### Regression protection
+
+Every published figure in this document is pinned in
+`test_regression_pinned.py` with absolute tolerances at 1e-8. The catalog
+refactor moved none of them. Pin group zero records the check that made the
+refactor safe to attempt: model-from-defaults and model-from-file agreed to
+exactly 0.0 before the defaults were deleted.
+
+---
+
 ## 9. Limitations
 
 Stated plainly, because a validation document that reads as advocacy is not
@@ -417,8 +491,19 @@ worth much.
    values, not measurements** for this aircraft. The sensitivity table shows
    both matter at +17% per +20%, so they are the parameters most worth
    replacing with measured values.
-6. **P1-P5 have not been executed.** They require the running simulator and are
-   marked pending in `PREDICTIONS.md`. They are not passes.
+6. **The catalog is thin.** Two of three entities hold no sourced aircraft data
+   and cannot produce a number. This is reported honestly rather than hidden,
+   but it is still a limitation: the tooling generalises, and the *content*
+   does not yet.
+7. **The modelling assumptions carried onto the stubs are class-typical, not
+   measured.** Figure of merit, motor and propulsive efficiency and the
+   profile-power factor are literature values for small electric multirotors.
+   They are labelled as such on every stub, and they must be revisited before
+   any stub is briefed - particularly for the sub-250 g Mini 4 Pro, where a
+   figure of merit borrowed from a much larger rotor is a real risk.
+8. **`max_wind_resistance_ms` is declared held out but UNSCORED**, catalog-wide.
+   No wind predictor is pre-registered, so the anchor cannot be scored without
+   first registering one.
 
 ---
 

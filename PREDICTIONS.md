@@ -323,6 +323,24 @@ python settings_helper.py --clock 1.0    # then RESTART the simulator
 python wind_demo.py                      # P8
 ```
 
+### Note on the anchor table shape, 2026-09-10
+
+The catalog refactor made `validate_against_spec` data-driven, which surfaced
+`max_wind_resistance_ms` - declared a held-out anchor in the Mavic's record
+since the beginning, and never scored by any code. It now reports **UNSCORED**
+with a stated reason rather than being silently absent, because an anchor
+missing from a board is indistinguishable from one that passed.
+
+So the validation output has four anchor rows instead of three, and held-out
+**declared** is 3 rather than 2. **Scored is still 2, passed 0, failed 2.** No
+result in this register moved: P6's cruise miss is unchanged at +14.2%, and
+`test_regression_pinned.py` holds every numeric figure to 1e-8.
+
+The anchor is deliberately not filled in. A wind-resistance predictor would be
+a new falsifiable claim and rule 1 requires it to be frozen before it is run.
+Inventing one to turn an UNSCORED row green is precisely the move this register
+exists to prevent.
+
 ### Validation of the test procedure itself
 
 Because the identification math can be checked without a simulator, it was:

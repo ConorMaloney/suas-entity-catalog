@@ -1,8 +1,26 @@
-# DJI Mavic 3 Simulation Entity
+# sUAS Entity Catalog
 
-A validated energy and endurance model for a DJI Mavic 3, built against
-Cosys-AirSim 3.4.1 / Unreal Engine 5, with a test suite designed so that its
-tests can actually fail.
+A simulation entity catalog for small unmanned aircraft, with a validated
+energy and endurance model, a coverage tracker that reports its own gaps, and
+a test suite designed so that its tests can actually fail.
+
+Built against Cosys-AirSim 3.4.1 / Unreal Engine 5.
+
+**Current state of the catalog:**
+
+```
+  UAS-QUAD-DJI-MAVIC3     16/16  100%   R3 VALIDATED
+  UAS-QUAD-DJI-MINI4PRO    6/16   38%   R0 STUB
+  UAS-QUAD-SKYDIO-X2D      6/16   38%   R0 STUB
+
+  Modelable (R1 or better) : 1 of 3
+```
+
+Two of the three entities cannot produce a number, and the tooling refuses to
+let them. That is reported rather than hidden, and the stubs are not filled
+with plausible values to improve the board - see [STANDARDS.md](STANDARDS.md)
+section 5. A catalog reading "3 of 3" on invented data would be worth nothing,
+because nothing on it could be acted on.
 
 ---
 
@@ -59,14 +77,21 @@ Everything is ASCII-only, standard library plus numpy. No installation step.
 
 | File | Purpose |
 |---|---|
-| `battery_model.py` | Momentum-theory energy model. No AirSim import; runs offline. |
+| `catalog.py` | Loader, validator, coverage tracker and readiness gate. |
+| `catalog/entities/*.json` | One file per entity. Every parameter carries `confidence`, `source` and `verified_on`. |
+| `catalog/schema/entity_schema_3.0.json` | Machine-readable requirement declaration. The validator reads this. |
+| `catalog/coverage_plan.json` | Declared intent - the only place the catalog knows about entities that do not exist. |
+| `catalog/environment/` | The simulator's own airframe. Not an entity. |
+| `STANDARDS.md` | **How to build an entity here.** Written to be followed by a person or an AI agent. |
+| `battery_model.py` | Momentum-theory energy model. Entity-driven, no AirSim import, runs offline. |
 | `settings_helper.py` | Safe read/modify of `settings.json` - atomic writes, backups, key preservation. |
 | `probe_sim_capabilities.py` | **Step 0.** Discovers what this install actually exposes. Gates the tests. |
 | `test_3a_hover.py` | Test 3.a - hover endurance (rate-based), plus P5 and P4. |
 | `test_3b_wind.py` | Test 3.b - wind scenarios plus drag identification (P1, P2, P3). |
 | `wind_demo.py` | Visual high-wind ramp (P8). Watch the aircraft get blown away. |
+| `test_catalog.py` | Catalog test battery - nine ways the catalog could go wrong while looking fine. |
+| `test_regression_pinned.py` | Change detector for every published figure. |
 | `run_tests.py` | Interactive menu. |
-| `data/mavic3_specs.json` | Specification data, every parameter carrying `source` and `verified_on`. |
 | `PREDICTIONS.md` | **Frozen pre-registration.** Written before any run. |
 | `VALIDATION.md` | The VV&A knowledge article - layer model, calibration discipline, defects, limitations. |
 | `results/` | Test output, created on first run. |
@@ -89,7 +114,43 @@ forward-integration check, and a sensitivity table.
 python settings_helper.py --show
 ```
 
-### 2. Set ClockSpeed to 1.0 before validating
+### 2. The catalog
+
+```bash
+python catalog.py                              # coverage board
+python catalog.py --entity UAS-QUAD-DJI-MAVIC3 # one record, with its gaps
+python catalog.py --schema                     # the requirement declaration
+python test_catalog.py                         # nine structural checks
+python test_regression_pinned.py               # published figures unmoved
+```
+
+Every entity gets a **readiness tier**, computed from its record rather than
+asserted by it:
+
+| Tier | The gate does |
+|---|---|
+| R0 STUB | **refuses** - a required input is absent, so there is no number to produce |
+| R1 PROVISIONAL | runs, every output stamped with an unmissable banner |
+| R2 MODELED | runs clean |
+| R3 VALIDATED | quotable as a planning product |
+
+Each entity file also declares a tier, and `test_catalog.py` **fails if the
+computed tier is below the declared one**. Over-claiming is a red build rather
+than a matter of taste.
+
+Pointing a test at a stub does not produce a hedged number; it produces a
+refusal, without needing a simulator:
+
+```
+$ python test_3a_hover.py --entity UAS-QUAD-SKYDIO-X2D
+ERROR: BatteryModel(UAS-QUAD-SKYDIO-X2D) requires entity
+'UAS-QUAD-SKYDIO-X2D' at readiness R1 or better; it is R0 STUB. Missing
+required parameters: physical.mass_kg, physical.propeller_diameter_m,
+battery.capacity_wh (+7 more...). Refusing to produce a number from an
+incomplete record.
+```
+
+### 3. Set ClockSpeed to 1.0 before validating
 
 ```bash
 python settings_helper.py --clock 1.0
@@ -122,7 +183,7 @@ control response, collisions and anything time-integrated do. Treat any value
 above 1.0 as an accelerant that must be validated by running the same test at
 both settings and comparing.
 
-### 3. Probe first
+### 4. Probe first
 
 ```bash
 python probe_sim_capabilities.py
@@ -134,7 +195,7 @@ measured simulation-to-wall clock ratio - and writes
 `results/sim_capabilities.json`. The tests assert against that file and fail
 loudly rather than substituting a modeled number for a measured one.
 
-### 4. The tests
+### 5. The tests
 
 ```bash
 python test_3a_hover.py        # hover endurance, P5, P4
@@ -142,7 +203,7 @@ python test_3b_wind.py         # wind scenarios, drag identification, P1/P2/P3
 python run_tests.py            # or use the menu
 ```
 
-### 5. Seeing the wind
+### 6. Seeing the wind
 
 The measured tilts in 3.b are around one degree - correct, but invisible on
 screen. To actually watch wind act on the aircraft:
@@ -165,6 +226,7 @@ It doubles as a control experiment: every wind change is applied with
 Useful options:
 
 ```bash
+python test_3a_hover.py --entity UAS-QUAD-DJI-MAVIC3
 python test_3a_hover.py --duration 120 --altitude 20
 python test_3a_hover.py --calibration none        # fit nothing at all
 python test_3b_wind.py --sweep 0 2 5 8 12 --axis y
@@ -305,3 +367,12 @@ starting with the C++.
 Still outstanding: tests 3.c (target tracking) and 3.d (reconnaissance
 profile). Both are trajectory-domain problems, which is what AirSim is
 genuinely good at.
+
+**On the catalog side**, the tooling generalises and the content does not yet.
+The next work is research, not code: source the two stubs against their
+vendors' documentation and raise them off R0. Every gap in them already carries
+a `todo` naming what would close it, so `python catalog.py --entity <id>` is
+the work queue. The fixed-wing segments in `coverage_plan.json` need a second
+energy model before they can be populated at all - momentum theory has no
+fixed-wing equivalent - and that is deliberately listed as a gap rather than
+quietly omitted.
