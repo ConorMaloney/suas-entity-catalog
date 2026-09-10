@@ -2,6 +2,7 @@
   "entity": "DJI Mavic 3",
   "entity_id": "UAS-QUAD-DJI-MAVIC3",
   "category": "UAS - Group 1 - Quadcopter",
+  "segment_id": "SEG-US-COM-2020S-QUAD-G1",
   "schema_version": "3.0",
   "compiled_on": "2026-09-09",
   "compiled_by": "Conor Maloney",

@@ -12,109 +12,292 @@
     "for it is about 120 lines and a reader can audit it in one sitting,",
     "and a draft-07 interpreter is neither."
   ],
-
   "confidence_vocabulary": {
     "published": "Vendor specification sheet or official manual. Cite the page.",
     "derived": "Computed from published values. State the computation in 'note'.",
     "literature": "Peer-reviewed paper or engineering textbook typical value.",
     "estimated": "Engineering judgement. State the basis and tolerance in 'note'."
   },
-
   "parameter_statuses": {
     "present": "Default when 'status' is absent. 'value' must be non-null, 'confidence' must be from the vocabulary, and 'source' is mandatory.",
     "missing": "A declared gap. 'value' MUST be null, 'confidence' MUST be absent, and a 'todo' string is mandatory.",
     "not_applicable": "Does not apply to this airframe. 'value' MUST be null, 'confidence' MUST be absent, and 'note' must explain why.",
     "_absent_key": "A parameter key that is not in the file at all is NOT RECORDED. For completeness scoring it counts the same as 'missing', but it is reported differently: an author who wrote status 'missing' with a todo has demonstrably looked, and one who omitted the key has not."
   },
-
   "requirement_classes": {
     "REQUIRED_MEASURED": "Must be present AND carry confidence 'published' or 'derived'. These are the parameters the model is most sensitive to; a guess in any one of them invalidates every number downstream, regardless of how well sourced the rest of the record is.",
     "REQUIRED_MODELING": "Must be present. 'literature' and 'estimated' are acceptable, because these are modelling choices rather than facts about the aircraft, but 'source' is still mandatory so the choice is auditable.",
     "REQUIRED_FOR_OPERATIONAL": "Must be present only when the operational profile is used. An entity missing these can still produce spec-profile figures while being structurally incapable of producing an operational planning number.",
     "OPTIONAL": "Recorded when known. Absence never blocks modelling, but anchors listed in the entity's own calibration block are checked separately by a cross-field rule."
   },
-
   "readiness_tiers": {
-    "R0": {"name": "STUB", "meaning": "Below R1. The gate REFUSES. No number can be produced, because a required input is absent."},
-    "R1": {"name": "PROVISIONAL", "meaning": "No schema errors and every REQUIRED_MEASURED and REQUIRED_MODELING parameter present. The model runs and every output carries a PROVISIONAL banner."},
-    "R2": {"name": "MODELED", "meaning": "R1, plus every REQUIRED_MEASURED parameter is published or derived, every present parameter carries a source, nothing is dated in the future, and the calibration block is internally coherent. Output is unstamped."},
-    "R3": {"name": "VALIDATED", "meaning": "R2, plus at least two held-out anchors present and scorable, REQUIRED_FOR_OPERATIONAL complete, and the oldest verified_on within the staleness limit. Quotable as a planning product. A held-out anchor that MISSES does not block R3 so long as the miss is scored and on the record - see STANDARDS.md section 8."}
+    "R0": {
+      "name": "STUB",
+      "meaning": "Below R1. The gate REFUSES. No number can be produced, because a required input is absent."
+    },
+    "R1": {
+      "name": "PROVISIONAL",
+      "meaning": "No schema errors and every REQUIRED_MEASURED and REQUIRED_MODELING parameter present. The model runs and every output carries a PROVISIONAL banner."
+    },
+    "R2": {
+      "name": "MODELED",
+      "meaning": "R1, plus every REQUIRED_MEASURED parameter is published or derived, every present parameter carries a source, nothing is dated in the future, and the calibration block is internally coherent. Output is unstamped."
+    },
+    "R3": {
+      "name": "VALIDATED",
+      "meaning": "R2, plus at least two held-out anchors present and scorable, REQUIRED_FOR_OPERATIONAL complete, and the oldest verified_on within the staleness limit. Quotable as a planning product. A held-out anchor that MISSES does not block R3 so long as the miss is scored and on the record - see STANDARDS.md section 8."
+    }
   },
-
   "parameters": [
-    {"path": "physical.mass_kg", "requirement": "REQUIRED_MEASURED", "value_type": "number", "unit": "kg",
-     "drives": "hover thrust; dominates induced power, which dominates hover"},
-    {"path": "physical.propeller_diameter_m", "requirement": "REQUIRED_MEASURED", "value_type": "number", "unit": "m",
-     "drives": "disk area; induced power scales as 1/sqrt(area)"},
-    {"path": "physical.rotor_count", "requirement": "REQUIRED_MEASURED", "value_type": "integer", "unit": "count",
-     "drives": "disk area and per-rotor thrust"},
-    {"path": "battery.capacity_wh", "requirement": "REQUIRED_MEASURED", "value_type": "number", "unit": "Wh",
-     "drives": "every endurance and range figure"},
-    {"path": "battery.voltage_full_v", "requirement": "REQUIRED_MEASURED", "value_type": "number", "unit": "V",
-     "drives": "reported voltage curve"},
-    {"path": "performance_published.max_hover_time_min", "requirement": "REQUIRED_MEASURED", "value_type": "number", "unit": "min",
-     "drives": "the calibration anchor; the one parameter that is fitted is fitted to this"},
-
-    {"path": "battery.voltage_empty_v", "requirement": "REQUIRED_MODELING", "value_type": "number", "unit": "V",
-     "drives": "voltage curve only, not endurance"},
-    {"path": "aerodynamic_assumptions.air_density_kg_m3", "requirement": "REQUIRED_MODELING", "value_type": "number", "unit": "kg/m3",
-     "drives": "induced velocity and parasitic drag"},
-    {"path": "aerodynamic_assumptions.equivalent_flat_plate_area_m2", "requirement": "REQUIRED_MODELING", "value_type": "number", "unit": "m2",
-     "drives": "parasitic power; negligible at hover, matters in cruise"},
-    {"path": "aerodynamic_assumptions.figure_of_merit", "requirement": "REQUIRED_MODELING", "value_type": "number", "unit": "dimensionless",
-     "drives": "induced shaft power; sensitivity roughly 17 percent per 20 percent"},
-    {"path": "aerodynamic_assumptions.motor_esc_efficiency", "requirement": "REQUIRED_MODELING", "value_type": "number", "unit": "dimensionless",
-     "drives": "shaft to electrical conversion"},
-    {"path": "aerodynamic_assumptions.propulsive_efficiency", "requirement": "REQUIRED_MODELING", "value_type": "number", "unit": "dimensionless",
-     "drives": "forward flight parasitic and climb terms"},
-    {"path": "aerodynamic_assumptions.avionics_power_w", "requirement": "REQUIRED_MODELING", "value_type": "number", "unit": "W",
-     "drives": "fixed overhead; about 13 percent of hover draw on a Mavic-class aircraft"},
-    {"path": "aerodynamic_assumptions.thrust_coefficient", "requirement": "REQUIRED_MODELING", "value_type": "number", "unit": "dimensionless",
-     "drives": "hover rotor speed, hence advance ratio"},
-    {"path": "aerodynamic_assumptions.profile_power_mu_factor", "requirement": "REQUIRED_MODELING", "value_type": "number", "unit": "dimensionless",
-     "drives": "profile power growth with advance ratio"},
-    {"path": "performance_published.max_speed_ms", "requirement": "REQUIRED_MODELING", "value_type": "number", "unit": "m/s",
-     "drives": "search ceiling for the best-range speed"},
-
-    {"path": "performance_operational.usable_energy_fraction", "requirement": "REQUIRED_FOR_OPERATIONAL", "value_type": "number", "unit": "dimensionless",
-     "drives": "reserve policy; how much of the pack is actually flyable"},
-    {"path": "performance_operational.operational_overhead_factor", "requirement": "REQUIRED_FOR_OPERATIONAL", "value_type": "number", "unit": "dimensionless",
-     "drives": "gusts, temperature and manoeuvring overhead"},
-
-    {"path": "performance_published.max_flight_time_min", "requirement": "OPTIONAL", "value_type": "number", "unit": "min",
-     "drives": "held-out validation anchor"},
-    {"path": "performance_published.flight_time_test_speed_ms", "requirement": "OPTIONAL", "value_type": "number", "unit": "m/s",
-     "drives": "the speed the flight-time anchor was measured at"},
-    {"path": "performance_published.max_flight_distance_km", "requirement": "OPTIONAL", "value_type": "number", "unit": "km",
-     "drives": "held-out validation anchor"},
-    {"path": "performance_published.max_wind_resistance_ms", "requirement": "OPTIONAL", "value_type": "number", "unit": "m/s",
-     "drives": "declared held-out anchor; currently UNSCORED, no wind predictor is pre-registered"},
-    {"path": "performance_published.max_ascent_speed_ms", "requirement": "OPTIONAL", "value_type": "number", "unit": "m/s", "drives": "reporting"},
-    {"path": "performance_published.max_descent_speed_ms", "requirement": "OPTIONAL", "value_type": "number", "unit": "m/s", "drives": "reporting"},
-    {"path": "performance_operational.observed_flight_time_min", "requirement": "OPTIONAL", "value_type": "range", "unit": "min",
-     "drives": "independent measurement; the reality check on the vendor figure"},
-    {"path": "performance_operational.observed_hover_time_min", "requirement": "OPTIONAL", "value_type": "range", "unit": "min",
-     "drives": "independent measurement"},
-    {"path": "physical.propeller_pitch_m", "requirement": "OPTIONAL", "value_type": "number", "unit": "m", "drives": "reporting"},
-    {"path": "physical.dimensions_unfolded_mm", "requirement": "OPTIONAL", "value_type": "object", "unit": "mm", "drives": "reporting"},
-    {"path": "physical.dimensions_folded_mm", "requirement": "OPTIONAL", "value_type": "object", "unit": "mm", "drives": "reporting"},
-    {"path": "battery.capacity_mah", "requirement": "OPTIONAL", "value_type": "integer", "unit": "mAh", "drives": "reporting"},
-    {"path": "battery.voltage_nominal_v", "requirement": "OPTIONAL", "value_type": "number", "unit": "V", "drives": "reporting"},
-    {"path": "battery.chemistry", "requirement": "OPTIONAL", "value_type": "string", "unit": null, "drives": "discharge curve shape and safe cutoff"},
-    {"path": "battery.weight_g", "requirement": "OPTIONAL", "value_type": "number", "unit": "g", "drives": "reporting"}
+    {
+      "path": "physical.mass_kg",
+      "requirement": "REQUIRED_MEASURED",
+      "value_type": "number",
+      "unit": "kg",
+      "drives": "hover thrust; dominates induced power, which dominates hover"
+    },
+    {
+      "path": "physical.propeller_diameter_m",
+      "requirement": "REQUIRED_MEASURED",
+      "value_type": "number",
+      "unit": "m",
+      "drives": "disk area; induced power scales as 1/sqrt(area)"
+    },
+    {
+      "path": "physical.rotor_count",
+      "requirement": "REQUIRED_MEASURED",
+      "value_type": "integer",
+      "unit": "count",
+      "drives": "disk area and per-rotor thrust"
+    },
+    {
+      "path": "battery.capacity_wh",
+      "requirement": "REQUIRED_MEASURED",
+      "value_type": "number",
+      "unit": "Wh",
+      "drives": "every endurance and range figure"
+    },
+    {
+      "path": "battery.voltage_full_v",
+      "requirement": "REQUIRED_MEASURED",
+      "value_type": "number",
+      "unit": "V",
+      "drives": "reported voltage curve"
+    },
+    {
+      "path": "performance_published.max_hover_time_min",
+      "requirement": "REQUIRED_MEASURED",
+      "value_type": "number",
+      "unit": "min",
+      "drives": "the calibration anchor; the one parameter that is fitted is fitted to this"
+    },
+    {
+      "path": "battery.voltage_empty_v",
+      "requirement": "REQUIRED_MODELING",
+      "value_type": "number",
+      "unit": "V",
+      "drives": "voltage curve only, not endurance"
+    },
+    {
+      "path": "aerodynamic_assumptions.air_density_kg_m3",
+      "requirement": "REQUIRED_MODELING",
+      "value_type": "number",
+      "unit": "kg/m3",
+      "drives": "induced velocity and parasitic drag"
+    },
+    {
+      "path": "aerodynamic_assumptions.equivalent_flat_plate_area_m2",
+      "requirement": "REQUIRED_MODELING",
+      "value_type": "number",
+      "unit": "m2",
+      "drives": "parasitic power; negligible at hover, matters in cruise"
+    },
+    {
+      "path": "aerodynamic_assumptions.figure_of_merit",
+      "requirement": "REQUIRED_MODELING",
+      "value_type": "number",
+      "unit": "dimensionless",
+      "drives": "induced shaft power; sensitivity roughly 17 percent per 20 percent"
+    },
+    {
+      "path": "aerodynamic_assumptions.motor_esc_efficiency",
+      "requirement": "REQUIRED_MODELING",
+      "value_type": "number",
+      "unit": "dimensionless",
+      "drives": "shaft to electrical conversion"
+    },
+    {
+      "path": "aerodynamic_assumptions.propulsive_efficiency",
+      "requirement": "REQUIRED_MODELING",
+      "value_type": "number",
+      "unit": "dimensionless",
+      "drives": "forward flight parasitic and climb terms"
+    },
+    {
+      "path": "aerodynamic_assumptions.avionics_power_w",
+      "requirement": "REQUIRED_MODELING",
+      "value_type": "number",
+      "unit": "W",
+      "drives": "fixed overhead; about 13 percent of hover draw on a Mavic-class aircraft"
+    },
+    {
+      "path": "aerodynamic_assumptions.thrust_coefficient",
+      "requirement": "REQUIRED_MODELING",
+      "value_type": "number",
+      "unit": "dimensionless",
+      "drives": "hover rotor speed, hence advance ratio"
+    },
+    {
+      "path": "aerodynamic_assumptions.profile_power_mu_factor",
+      "requirement": "REQUIRED_MODELING",
+      "value_type": "number",
+      "unit": "dimensionless",
+      "drives": "profile power growth with advance ratio"
+    },
+    {
+      "path": "performance_published.max_speed_ms",
+      "requirement": "REQUIRED_MODELING",
+      "value_type": "number",
+      "unit": "m/s",
+      "drives": "search ceiling for the best-range speed"
+    },
+    {
+      "path": "performance_operational.usable_energy_fraction",
+      "requirement": "REQUIRED_FOR_OPERATIONAL",
+      "value_type": "number",
+      "unit": "dimensionless",
+      "drives": "reserve policy; how much of the pack is actually flyable"
+    },
+    {
+      "path": "performance_operational.operational_overhead_factor",
+      "requirement": "REQUIRED_FOR_OPERATIONAL",
+      "value_type": "number",
+      "unit": "dimensionless",
+      "drives": "gusts, temperature and manoeuvring overhead"
+    },
+    {
+      "path": "performance_published.max_flight_time_min",
+      "requirement": "OPTIONAL",
+      "value_type": "number",
+      "unit": "min",
+      "drives": "held-out validation anchor"
+    },
+    {
+      "path": "performance_published.flight_time_test_speed_ms",
+      "requirement": "OPTIONAL",
+      "value_type": "number",
+      "unit": "m/s",
+      "drives": "the speed the flight-time anchor was measured at"
+    },
+    {
+      "path": "performance_published.max_flight_distance_km",
+      "requirement": "OPTIONAL",
+      "value_type": "number",
+      "unit": "km",
+      "drives": "held-out validation anchor"
+    },
+    {
+      "path": "performance_published.max_wind_resistance_ms",
+      "requirement": "OPTIONAL",
+      "value_type": "number",
+      "unit": "m/s",
+      "drives": "declared held-out anchor; currently UNSCORED, no wind predictor is pre-registered"
+    },
+    {
+      "path": "performance_published.max_ascent_speed_ms",
+      "requirement": "OPTIONAL",
+      "value_type": "number",
+      "unit": "m/s",
+      "drives": "reporting"
+    },
+    {
+      "path": "performance_published.max_descent_speed_ms",
+      "requirement": "OPTIONAL",
+      "value_type": "number",
+      "unit": "m/s",
+      "drives": "reporting"
+    },
+    {
+      "path": "performance_operational.observed_flight_time_min",
+      "requirement": "OPTIONAL",
+      "value_type": "range",
+      "unit": "min",
+      "drives": "independent measurement; the reality check on the vendor figure"
+    },
+    {
+      "path": "performance_operational.observed_hover_time_min",
+      "requirement": "OPTIONAL",
+      "value_type": "range",
+      "unit": "min",
+      "drives": "independent measurement"
+    },
+    {
+      "path": "physical.propeller_pitch_m",
+      "requirement": "OPTIONAL",
+      "value_type": "number",
+      "unit": "m",
+      "drives": "reporting"
+    },
+    {
+      "path": "physical.dimensions_unfolded_mm",
+      "requirement": "OPTIONAL",
+      "value_type": "object",
+      "unit": "mm",
+      "drives": "reporting"
+    },
+    {
+      "path": "physical.dimensions_folded_mm",
+      "requirement": "OPTIONAL",
+      "value_type": "object",
+      "unit": "mm",
+      "drives": "reporting"
+    },
+    {
+      "path": "battery.capacity_mah",
+      "requirement": "OPTIONAL",
+      "value_type": "integer",
+      "unit": "mAh",
+      "drives": "reporting"
+    },
+    {
+      "path": "battery.voltage_nominal_v",
+      "requirement": "OPTIONAL",
+      "value_type": "number",
+      "unit": "V",
+      "drives": "reporting"
+    },
+    {
+      "path": "battery.chemistry",
+      "requirement": "OPTIONAL",
+      "value_type": "string",
+      "unit": null,
+      "drives": "discharge curve shape and safe cutoff"
+    },
+    {
+      "path": "battery.weight_g",
+      "requirement": "OPTIONAL",
+      "value_type": "number",
+      "unit": "g",
+      "drives": "reporting"
+    }
   ],
-
   "required_top_level_keys": [
-    "entity", "entity_id", "category", "schema_version",
-    "compiled_on", "compiled_by", "readiness_declared"
+    "entity",
+    "entity_id",
+    "category",
+    "segment_id",
+    "schema_version",
+    "compiled_on",
+    "compiled_by",
+    "readiness_declared"
   ],
-
   "cross_field_rules": [
     "filename_matches_entity_id: the file basename without extension must equal entity_id. Catches the commonest stub-authoring error - copy an existing entity, rename the file, forget the id inside.",
     "calibration_block_present: 'calibration' must exist with fitted_parameter, fitted_to_anchor and held_out_anchors.",
     "calibration_anchors_exist: every anchor named by fitted_to_anchor or held_out_anchors must exist as a parameter in performance_published.",
     "fitted_anchor_not_held_out: fitted_to_anchor must not also appear in held_out_anchors. An anchor cannot both set a parameter and test it.",
     "verified_on_not_future: no verified_on may be more than one day in the future. A verification date that has not happened yet is a data-entry fault, and treating it as fresh errs in the wrong direction.",
-    "status_field_coherence: see parameter_statuses. A number under status 'missing', or a null under status 'present', is an error."
+    "status_field_coherence: see parameter_statuses. A number under status 'missing', or a null under status 'present', is an error.",
+    "segment_id_declared: every entity names the coverage_plan segment it belongs to. Attribution is DECLARED rather than inferred from category, because category alone is ambiguous - 'UAS - Group 1 - Quadcopter' matches both the commercial and the defense segment, and guessing between them would silently misreport coverage."
   ]
 }
