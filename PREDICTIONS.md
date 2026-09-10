@@ -128,6 +128,78 @@ is wrong - which is the point of writing it down before measuring.
 P6 stands at +14.2% FAIL. Retuning a parameter after seeing a result, to turn a
 pre-registered failure into a pass, is what rule 1 exists to prevent.
 
+### Added 2026-09-10, BEFORE any DJI Mini 4 Pro specification was looked up
+
+P10 is registered before the research it concerns. No Mini 4 Pro figure has
+been read at the time of writing, and the commit containing this section
+precedes the commit containing the entity record - so the ordering is witnessed
+by the repository, as P8's was.
+
+The purpose is to test whether the model **generalises to an airframe it was
+never calibrated against**. Everything to date has been fitted and validated on
+one aircraft. A sub-250 g quadcopter is roughly a quarter of the Mavic 3's mass
+and the point where the induced/profile balance diagnosed in
+`MODEL_UNCERTAINTY.md` should behave differently.
+
+| ID | Prediction | Band | Can fail? |
+|---|---|---|---|
+| **P10a** | At the published flight-time test speed, the model predicts `P_hover / P_cruise` **below 1.0** for a sub-250 g quad - the translational-lift benefit **reverses sign** relative to the Mavic 3's 1.314 | 0.85 to 1.00 | yes |
+| **P10b** | Consequently the held-out cruise anchor error is **NEGATIVE**, opposite in sign to the Mavic 3's +14.2% | -10% to -30% | yes |
+| **P10c** | The completed record reaches **R2 MODELED**, not R3 | exact tier | yes |
+
+**Derivation, from stated assumptions only.** With one parameter fitted to the
+entity's own hover anchor:
+
+```
+  cruise_predicted = hover_published * (P_hover / P_cruise)
+  cruise_error     = (hover_pub / cruise_pub) * (P_hover / P_cruise) - 1
+```
+
+Pack capacity cancels, so the prediction needs no battery data. Checked against
+the Mavic 3: `P_hover/P_cruise = 1.3137`, and `(40/46) * 1.3137 - 1 = +14.24%`,
+which reproduces the recorded P6 exactly.
+
+Assumed airframe - **every value here is an assumption, not a looked-up spec**:
+mass 0.249 kg (the regulatory class ceiling, definitional to the sub-250 g
+category), four rotors of 0.1524 m, CdA 0.0035 m2, avionics 8 W, class-typical
+efficiencies.
+
+```
+  hover induced velocity  3.696 m/s   (Mavic 3: 4.472)
+  disk loading            33.5 N/m2   (Mavic 3: 49.0)
+
+  cruise speed   P_h/P_c    error if published ratio is 40:46
+      6.0 m/s     0.9881              -14.1%
+      9.0 m/s     0.9193              -20.1%
+     12.0 m/s     0.8161              -29.0%
+```
+
+**Why the sign reverses.** Hover power falls steeply with mass, but the
+speed-dependent costs do not fall as fast. A smaller propeller has a lower tip
+speed, so at the same airspeed the advance ratio is higher and profile power
+grows faster; parasitic power still scales with the cube of speed; and the
+fixed avionics load is a much larger share of a small aircraft's total. Past
+some scale, cruising costs more than hovering, and the Mavic 3's
+flight-time-exceeds-hover-time relationship should not hold.
+
+**The main risk to this prediction is the propeller diameter**, which is
+assumed. Sensitivity at 9 m/s: a 5 in propeller gives -15.8%, 6 in gives
+-20.1%, 7 in gives -24.7%. CdA and avionics power barely matter (under 1.5%
+across plausible ranges). The published test speed matters comparably.
+
+**What would falsify it.** A positive cruise error, or a `P_hover/P_cruise`
+above 1.0, means the sign does not reverse at this scale and the scaling
+argument above is wrong. That is a live possibility: if DJI publishes the
+flight-time figure at a low speed, say 6 m/s or below, the effect shrinks
+towards zero and could stay positive.
+
+**Interaction with P9.** The kappa conflation over-weights induced power, which
+falls with airspeed, so it biases cruise predictions *upward*. On the Mavic 3
+that produced the +14.2% overshoot. If P10b resolves negative, correcting kappa
+would make it **more** negative, not less - so P9 and P10 are not independent,
+and a future kappa correction has to be re-scored against both entities rather
+than against the Mavic alone.
+
 ---
 
 ## Derivations
