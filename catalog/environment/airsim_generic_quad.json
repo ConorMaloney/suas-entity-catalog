@@ -1,0 +1,34 @@
+{
+  "_note": "The airframe the SIMULATOR actually flies. This is NOT any entity in catalog/entities. It lives here, at environment level, because it describes the Cosys-AirSim backend rather than a real aircraft, and because keeping it inside an entity file invites reading an L3 simulator number as an L1 aircraft number.",
+  "_authority": "battery_model.AIRSIM_GENERIC_QUAD is AUTHORITATIVE. This file is documentation of it. test_catalog.py asserts the two agree so the duplicate cannot drift silently.",
+  "environment_id": "SIM-COSYSAIRSIM-341-GENERICQUAD",
+  "frame": "setupFrameGenericQuad (F450 class)",
+  "source": "Cosys-AirSim 3.4.1, setupFrameGenericQuad in MultiRotorParams.hpp:311-343, RotorParams.hpp:21-62",
+  "verified_on": "2026-09-09",
+  "inputs": {
+    "mass_kg": 1.0,
+    "rotor_count": 4,
+    "propeller_diameter_m": 0.2286,
+    "propeller_height_m": 0.01,
+    "linear_drag_coefficient": 0.325,
+    "c_t": 0.109919,
+    "c_p": 0.040164,
+    "max_rpm": 6396.667,
+    "max_thrust_per_rotor_n": 4.179446268,
+    "body_box_m": {
+      "x": 0.18,
+      "y": 0.11,
+      "z": 0.04
+    }
+  },
+  "_derived_note": "Computed from inputs by battery_model.airsim_drag_factors(). Recorded at full precision so the drift guard compares numbers, not roundings.",
+  "derived": {
+    "arm_length_m": 0.2275,
+    "max_torque_per_rotor_nm": 0.055562,
+    "thrust_to_weight": 1.7047396483,
+    "effective_cda_x_m2": 0.010766185,
+    "effective_cda_y_m2": 0.011676185
+  },
+  "configurable_from_settings_json": false,
+  "note": "No settings.json key exists for mass, drag, rotor count, propeller geometry or inertia. These are C++ compile-time constants. Changing them requires editing the plugin and rebuilding."
+}

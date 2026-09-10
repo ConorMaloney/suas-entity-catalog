@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "compiled_on": "2026-09-10",
+  "compiled_by": "Conor Maloney",
+
+  "_what_this_is": [
+    "Declared INTENT. This is the only place the catalog is allowed to know",
+    "about entities that do not exist yet.",
+    "",
+    "Scanning catalog/entities/ answers 'what do we have'. It cannot answer",
+    "'what are we missing', and tracking completion per segment is the whole",
+    "job. So the segments below are hand-maintained, and the coverage board",
+    "reports populated-against-planned for each one.",
+    "",
+    "A segment listed here with zero entities is a GAP and the board says so.",
+    "That is the point: a catalog that only reports what it contains cannot",
+    "report a hole in itself.",
+    "",
+    "This list is deliberately short and hand-written. Three quadcopters do",
+    "not justify a taxonomy engine, and building one would produce impressive",
+    "machinery sitting on top of an almost empty catalog - which is exactly",
+    "the failure the coverage board exists to expose."
+  ],
+
+  "_priority_note": [
+    "'priority' is a placeholder for what would, in service, come from",
+    "customer and field feedback rather than from the modeller's judgement.",
+    "It is recorded as an opinion, not a finding, and is labelled as such on",
+    "the board."
+  ],
+
+  "segments": [
+    {
+      "segment_id": "SEG-US-COM-2020S-QUAD-G1",
+      "label": "Group 1 quadcopter, commercial",
+      "nation": "US",
+      "service_branch": "commercial",
+      "era": "2020s",
+      "category": "UAS - Group 1 - Quadcopter",
+      "planned_entity_count": 4,
+      "priority": "high",
+      "rationale": "Highest-volume class in current operations and the class most likely to appear in a planning scenario. Also the easiest to source, so a gap here is a gap of effort rather than of access."
+    },
+    {
+      "segment_id": "SEG-US-DEF-2020S-QUAD-G1",
+      "label": "Group 1 quadcopter, defense",
+      "nation": "US",
+      "service_branch": "joint",
+      "era": "2020s",
+      "category": "UAS - Group 1 - Quadcopter",
+      "planned_entity_count": 3,
+      "priority": "high",
+      "rationale": "Blue UAS list platforms. Vendor data is thinner than commercial and some performance figures are not public, so entities in this segment should be expected to sit at lower readiness tiers for legitimate reasons."
+    },
+    {
+      "segment_id": "SEG-US-DEF-2020S-FW-G2",
+      "label": "Group 2 fixed-wing, defense",
+      "nation": "US",
+      "service_branch": "army",
+      "era": "2020s",
+      "category": "UAS - Group 2 - Fixed wing",
+      "planned_entity_count": 3,
+      "priority": "medium",
+      "rationale": "NOT MODELABLE by the current energy model. The momentum-theory rotor model in battery_model.py has no fixed-wing equivalent, so admitting an entity here requires a second model first. Listed anyway, because an unlisted gap is an invisible gap."
+    },
+    {
+      "segment_id": "SEG-RU-DEF-2020S-FW-G3",
+      "label": "Group 3 fixed-wing, opposing force",
+      "nation": "RU",
+      "service_branch": "army",
+      "era": "2020s",
+      "category": "UAS - Group 3 - Fixed wing",
+      "planned_entity_count": 2,
+      "priority": "medium",
+      "rationale": "Opposing-force platforms. Sourcing is genuinely contested here rather than merely thin, which makes this the segment where the 'contested' flag and the confidence vocabulary would earn their keep. Also not modelable without a fixed-wing model."
+    }
+  ]
+}

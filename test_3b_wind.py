@@ -613,7 +613,8 @@ def main(argv=None):
         return 1
 
     specs_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                              "data", "mavic3_specs.json")
+                              "catalog", "entities",
+                              "UAS-QUAD-DJI-MAVIC3.json")
     model = battery_model.BatteryModel(
         specs_file=specs_path if os.path.exists(specs_path) else None,
         profile=arguments.profile, calibration="hover", verbose=True)
