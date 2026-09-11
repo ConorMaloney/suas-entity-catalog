@@ -73,7 +73,6 @@ ASCII only throughout. The Windows console cannot render non-ASCII output.
 
 import json
 import math
-import os
 
 import catalog
 

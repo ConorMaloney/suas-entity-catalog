@@ -48,7 +48,6 @@ ASCII only throughout.
 import argparse
 import sys
 
-import battery_model
 from battery_model import (AIRSIM_GENERIC_QUAD, BatteryModel, GRAVITY_MS2,
                            airsim_drag_factors, airsim_predicted_tilt_deg)
 

@@ -33,7 +33,7 @@ PYTHON = sys.executable
 
 MENU = """
 ========================================================================
-DJI MAVIC 3 SIMULATION ENTITY - TEST RUNNER
+SUAS ENTITY CATALOG - TEST RUNNER
 ========================================================================
 
   Simulator required:
@@ -49,6 +49,7 @@ DJI MAVIC 3 SIMULATION ENTITY - TEST RUNNER
   Catalog (no simulator required):
     k  Coverage board - what exists, how good it is, what is missing
     e  Entity record detail (prompts for an id)
+    v  Validate one record against its frozen suite (prompts for an id)
     t  Catalog test battery
     r  Pinned regression check
 
@@ -150,6 +151,16 @@ def main():
                 run_script("catalog.py", ["--entity", entity_id])
             else:
                 run_script("catalog.py", ["--list"])
+        elif choice == "v":
+            try:
+                entity_id = input("  Entity id: ").strip()
+            except (EOFError, KeyboardInterrupt):
+                continue
+            if entity_id:
+                run_script("run_validation.py",
+                           ["--record",
+                            os.path.join("catalog", "entities",
+                                         "%s.json" % entity_id)])
         elif choice == "t":
             run_script("test_catalog.py")
         elif choice == "r":

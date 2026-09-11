@@ -11,7 +11,20 @@ __pycache__/
 
 # Scratch
 *.tmp
+*.orig
 .settings_*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Virtualenvs
+venv/
+.venv/
+
+# NOTE: drafts/ is deliberately NOT ignored. A record and its research log
+# before promotion are part of the audit trail - AGENT_WORKFLOW.md section 2
+# cites the research log as a deliverable of the RESEARCH stage.
 
 # NOTE: results/ is deliberately NOT ignored.
 # Test output is evidence in this project, not build waste. The whole point of
