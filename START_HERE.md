@@ -1,10 +1,15 @@
 # START HERE
 
-A simulation entity catalog for small UAS, built against Cosys-AirSim 3.4.1 /
-Unreal Engine 5: a physics-based endurance model, a coverage tracker that
-reports its own gaps, and a test suite built so that its tests can fail.
+A **simulation entity catalog** for small UAS: a schema with enforced
+requirement classes, an agent-directed research pipeline, an automated
+validation suite, and a readiness gate that refuses to produce a number from an
+incomplete record.
 
-**This page is six minutes. Everything else is optional.**
+The catalog feeds a physics-based endurance model built against Cosys-AirSim
+3.4.1 / Unreal Engine 5. **The model is the consumer. The catalog and the
+process that keeps it honest are the subject.**
+
+**This page is seven minutes. Everything else is optional.**
 
 ---
 
@@ -13,12 +18,12 @@ reports its own gaps, and a test suite built so that its tests can fail.
 ### 1. The catalog reports its own gaps, and refuses to model what it cannot
 
 ```
-  UAS-QUAD-DJI-MAVIC3     16/16  100%   R3 VALIDATED
-  UAS-QUAD-DJI-MINI4PRO    6/16   38%   R0 STUB
-  UAS-QUAD-SKYDIO-X2D      6/16   38%   R0 STUB
+  UAS-QUAD-DJI-MAVIC3     16/16  100%   P20 D1 L8 E4   R3 VALIDATED
+  UAS-QUAD-SKYDIO-X2D      8/16   50%   P8  D0 L5 E0   R0 STUB
+  UAS-QUAD-DJI-MINI4PRO    6/16   38%   P2  D0 L4 E0   R0 STUB
 
-  Modelable (R1 or better) : 1
-  THIS CATALOG IS THIN. 2 of 3 entities cannot produce any number at all.
+  Modelable (R1 or better) : 1 of 3
+  Segment coverage         : 3 of 12 planned entities, across 4 segments
 ```
 
 Every entity carries a readiness tier **computed from its record**, not
@@ -33,74 +38,89 @@ physical.propeller_diameter_m, battery.capacity_wh (+7 more...). Refusing to
 produce a number from an incomplete record.
 ```
 
-The two stubs were deliberately **not** filled with plausible values. A board
-reading "3 of 3" on invented data could not be acted on; this one can.
-[STANDARDS.md](STANDARDS.md) is the governing document, written to be followed
-by a person or an AI agent.
+The board reports gaps against **declared intent**, not just against what
+exists - `coverage_plan.json` names 12 planned entities across 4 segments, two
+of which contain nothing at all. A catalog that only reports what it contains
+cannot report a hole in itself.
 
-### 2. The simulated aircraft is not a Mavic 3
+No stub was filled with a plausible value. [STANDARDS.md](STANDARDS.md) is the
+governing document, written to be followed by a person or an AI agent.
 
-`settings.json` declares `"VehicleType": "SimpleFlight"`, which routes to
-`setupFrameGenericQuad` - a **1.0 kg F450-class quad on Phantom 2 propellers**,
-against the Mavic 3's 0.895 kg and 0.2388 m. Mass, drag, rotor count and
-propeller geometry are **C++ compile-time constants**; `AirSimSettings.hpp`
-has no key for any of them.
+### 2. Agent-directed production, with a gate a human actually has to walk through
 
-So no endurance figure from the simulator is a figure about a Mavic 3. The
-project is built around that: the parametric model does the energy physics and
-is validated against published aircraft data, while the simulator supplies a
-trustworthy timebase, attitude and an independently computed air density - and
-is tested on those. Every number carries a layer tag (L1 aircraft / L2 model /
-L3 simulator) so the two can never be confused.
+Entities are built by an AI agent through four stages:
+
+```
+   DIRECT  ->  RESEARCH  ->  VALIDATE  ->  PROMOTE
+   binding     research      frozen        human review
+   rules       log           test suite    of every gap
+```
+
+The Skydio X2D went through all four. What came out:
+
+- **A research log** (`drafts/*.research.md`, 5.3k words) recording, per field,
+  the searches run, the sources rejected and why, and the decision taken.
+- **A record** where every value carries `value_as_published`, `confidence`,
+  `source`, `source_url` and a **verbatim `source_quote`** - and where
+  conflicting sources are preserved side by side rather than averaged.
+- **A frozen validation suite** (`catalog/tests/*.yaml`, 77 tests) run by
+  `run_validation.py`, which reads only the record, the schema and the suite -
+  no network, no other record.
+- **A human review** ([catalog/reviews/](catalog/reviews/)) adjudicating all
+  **9 gaps** the suite declared not automatable.
+
+The suite's most important output is not its 55 passes. It is the 9 **gaps** -
+tests that explicitly say *a machine cannot decide this, a person must*. They
+cover whether a quote is authentic, whether a value came from the declared
+configuration, whether tooling silently infers a field. Of the 9: four closed on
+evidence, one settled by decision, two deferred, one split, and **one -
+XF-014 - still blocks promotion**.
+
+**The X2D was not promoted.** It remains R0.
 
 ### 3. A failure was predicted in advance, failed on cue, and was then diagnosed
 
-Eight predictions were frozen in `PREDICTIONS.md` before any test ran. **P6 was
+Predictions are frozen in `PREDICTIONS.md` before any test runs - twelve
+registered to date, P1 through P10c. **P6 was
 registered as an expected FAIL**: the model, calibrated on the hover anchor
 only, should overshoot DJI's published 46-minute cruise figure by 10 to 25%.
 
-It came in at **+14.2%** (52.55 min). Max range also fails, at +26.9%. Both
-ship that way.
+It came in at **+14.2%**. Max range also fails, at +26.9%. Both ship that way.
 
-Predicting the direction and size of your own model's error before measuring it
-is stronger evidence of understanding than a green board - so the fitted anchor
-reports `CALIBRATED`, never `PASS`, because an anchor that cannot fail is not
-worth scoring.
+The fitted anchor reports `CALIBRATED`, never `PASS`, because an anchor that
+cannot fail is not worth scoring.
 
 **The miss was then traced to its cause.** The model's `figure_of_merit`
 occupies the position of the induced power factor kappa while carrying figure
-of merit's name and value, giving an effective kappa of 1.538 against a
-physical 1.10-1.20. Correcting it brings cruise to +0.14% - and the correction
-was **deliberately not applied**, because retuning a parameter to turn a
-pre-registered failure into a pass is exactly what the register exists to
-prevent. It is pre-registered instead, as P9, blocked on a measurement.
+of merit's name and value. Correcting it brings cruise to +0.14% - and the
+correction was **deliberately not applied**, because retuning a parameter to
+turn a pre-registered failure into a pass is exactly what the register exists
+to prevent. It is pre-registered instead, as P9.
 [MODEL_UNCERTAINTY.md](MODEL_UNCERTAINTY.md) has the analysis, including a
 claim it retracts.
 
-### 4. A coefficient recovered from behaviour matched one read from source
+### 4. The same discipline, applied to the physics
 
-The simulator exposes no drag model through its API. But the C++ is readable:
-matching `MultiRotorPhysicsBody.hpp` against `F = 0.5 rho CdA v^2` gives an
-effective **CdA_y = 0.011676 m2**, derived and written down before any test
-existed.
+The catalog feeds a model, and the model was held to the same standard.
 
-Test 3.b then flew a wind sweep, read the tilt the aircraft held at each speed,
-and fitted the coefficient from observed behaviour alone:
+**The simulated aircraft is not a Mavic 3.** `VehicleType: SimpleFlight` routes
+to `setupFrameGenericQuad` - a 1.0 kg F450-class quad on Phantom 2 propellers.
+Mass, drag and rotor geometry are C++ compile-time constants no setting can
+reach. So no simulator figure is a figure about a Mavic 3, and every number
+carries a layer tag (L1 aircraft / L2 model / L3 simulator).
 
-```
-  fitted CdA_y  0.011476 m2      error -1.71%      fit r2 = 1.0000
-```
-
-Nothing was tuned to make those agree, and the fit is constrained through the
-origin so it has no free intercept to absorb an error with. A negative control
-confirms the test can fail: feed it a drag law 1.6x off and it goes red at +60%.
+**A coefficient recovered from behaviour matched one read from source.**
+Reading `MultiRotorPhysicsBody.hpp` gives an effective CdA_y of 0.011676 m2,
+written down before any test existed. A wind sweep then fitted it from observed
+tilt alone: **0.011476 m2, error -1.71%, r2 = 1.0000**. Nothing was tuned to
+make those agree, and a negative control confirms the test can fail - feed it a
+drag law 1.6x off and it goes red at +60%.
 
 ---
 
 ## Run it in one minute
 
-No simulator, no install, standard library plus numpy. On the machine this was
-built on, Python 3.14 is **not on PATH** - substitute your own interpreter:
+No simulator, no install, standard library plus numpy:
 
 ```bash
 PY="C:/Users/black/AppData/Local/Python/pythoncore-3.14-64/python.exe"
@@ -119,20 +139,40 @@ All four exit 0 and need nothing running.
 
 | If you want | Read | Time |
 |---|---|---|
+| **How an entity gets built and reviewed** - prompt patterns, the review loop, seven times the agent was wrong | [AGENT_WORKFLOW.md](AGENT_WORKFLOW.md) | 11 min |
+| **How to add an entity** - the tradecraft, written for a person or an AI agent | [STANDARDS.md](STANDARDS.md) | 9 min |
+| **A gate being walked** - 9 gaps adjudicated, with what blocked promotion | [catalog/reviews/](catalog/reviews/) | 9 min |
 | The VV&A case: layer model, calibration discipline, defects, limitations | [VALIDATION.md](VALIDATION.md) | 18 min |
-| Where the model's *structure* is weak, and the defect I found in it | [MODEL_UNCERTAINTY.md](MODEL_UNCERTAINTY.md) | 7 min |
-| The pre-registration and all eight results | [PREDICTIONS.md](PREDICTIONS.md) | 13 min |
-| How to add an entity - the tradecraft, written for a person or an AI agent | [STANDARDS.md](STANDARDS.md) | 9 min |
-| How this was built with an AI agent, and four times the agent was wrong | [AGENT_WORKFLOW.md](AGENT_WORKFLOW.md) | 8 min |
+| Where the model's *structure* is weak, and the defect found in it | [MODEL_UNCERTAINTY.md](MODEL_UNCERTAINTY.md) | 7 min |
+| The pre-registration, every result, and two recorded corrections | [PREDICTIONS.md](PREDICTIONS.md) | 14 min |
 | Environment, file map, run instructions | [README.md](README.md) | 11 min |
 
-**Reviewing in 15 minutes?** This page, then `VALIDATION.md` sections 1-3 -
-the defect analysis of the prior iteration, with the evidence preserved in
-`prior_work/` so the claims can be checked.
+**Reviewing in 15 minutes?** This page, then `AGENT_WORKFLOW.md` sections 2-4 -
+the pipeline, the review loop, and the seven recorded times the agent was caught
+being wrong.
 
-**Reviewing as an engineer?** [MODEL_UNCERTAINTY.md](MODEL_UNCERTAINTY.md).
-It is where the model is picked apart, including the finding that the hover
-anchor cannot separate induced from profile power at all.
+**Reviewing as an engineer?** [MODEL_UNCERTAINTY.md](MODEL_UNCERTAINTY.md),
+where the model is picked apart - including the finding that the hover anchor
+cannot separate induced from profile power at all.
+
+---
+
+## Why there are simulation scripts in a catalog repository
+
+Because a catalog of entity parameters is only worth something if the
+parameters do something, and the only way to find out whether a record is any
+good is to run it through a model and compare against reality.
+
+`battery_model.py` is that model. `test_3a_hover.py`, `test_3b_wind.py`,
+`wind_demo.py` and `probe_sim_capabilities.py` are how its claims were tested
+against a simulator rather than asserted. They produced findings 3 and 4 above,
+and they are the reason the catalog's requirement classes are drawn where they
+are: the sensitivity analysis showing mass and rotor diameter dominate is why
+those two are `REQUIRED_MEASURED` and may not be estimated, while figure of
+merit is `REQUIRED_MODELING` and may.
+
+The scripts are evidence, not the subject. If you are short on time, they are
+the part to skip.
 
 ---
 
@@ -143,7 +183,7 @@ anchor cannot separate induced from profile power at all.
 | P1 | Sim CdA_y = 0.011676 m2 | **PASS** -1.71%, r2 = 1.0000 |
 | P2 | Tilt 1.044 / 5.995 deg at 5 / 12 m/s | **PASS** -1.3%, -1.8% |
 | P3 | Wind energy penalty below 0.5% | **PASS** 0.0162% |
-| P4 | No translational lift in AirSim | **PASS** +2.51% |
+| P4 | No translational lift in AirSim | **PASS** +2.84% |
 | P5 | Sim air density 1.225 kg/m3 | **PASS** -0.02% |
 | P6 | Model overshoots cruise by 10-25% | **FAIL +14.2% - as pre-registered** |
 | P7 | Sim T/W 1.705, hover throttle 58.7% | **PASS** |
@@ -153,21 +193,27 @@ anchor cannot separate induced from profile power at all.
 P8's prediction was committed and pushed to GitHub **before** the test that
 resolves it was ever run, so its ordering is witnessed by the remote rather
 than asserted by the document. P1-P7 are self-attested; `PREDICTIONS.md` draws
-that distinction explicitly rather than claiming all eight are proven.
+that distinction explicitly rather than claiming all nine are proven.
 
 ---
 
 ## What is not done
 
-- **The catalog is thin.** The tooling generalises; the content does not yet.
-  Two entities are stubs. Every gap in them carries a `todo` naming what would
-  close it, so `python catalog.py --entity <id>` is the work queue.
-- **The simulator still flies the wrong airframe.** Fixing it means adding
-  `setupFrameMavic3()` to the plugin and rebuilding - the only route to a
-  simulator that actually flies a Mavic 3, and out of scope here.
-- **Fixed-wing segments cannot be populated at all** until there is a second
-  energy model. Momentum theory has no fixed-wing equivalent. Listed as a gap
-  in `coverage_plan.json` rather than quietly omitted.
-- **`max_wind_resistance_ms`** is a declared held-out anchor with no predictor,
-  so it reports `UNSCORED`. Inventing one to fill the row would be a new
-  falsifiable claim requiring pre-registration first.
+- **The catalog is thin.** The tooling and the process generalise; the content
+  does not yet. Every gap carries a `todo` naming what would close it, so
+  `python catalog.py --entity <id>` is the work queue.
+- **One gap still blocks the X2D.** The record passed through a wrong variant
+  twice (see the escalation in the record). Until every value is re-confirmed
+  against an X2D source, no figure from it may be quoted.
+- **The X2D may be permanently unpromotable.** Skydio publishes no hover
+  endurance figure, and that field is the calibration anchor - a
+  `REQUIRED_MEASURED` field, which may not be estimated. Whether the catalog
+  accepts a `derived` anchor or accepts that some platforms stay R0 is an open
+  policy question, not a research task.
+- **Two schema defects are logged, not fixed** - the R3 staleness limit is
+  referenced but never defined, and the `range` value shape is undeclared.
+  Neither affects a current record.
+- **Fixed-wing segments cannot be populated at all** until a second energy
+  model exists. Listed as a gap in `coverage_plan.json` rather than omitted.
+- **The simulator still flies the wrong airframe**, and fixing it means
+  rebuilding the plugin. Out of scope here.

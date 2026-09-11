@@ -81,6 +81,21 @@ pick one. Record the one you are using, set `"contested": true`, and put both
 figures and your reasoning in `note`. The Mavic 3's hover time is the worked
 example: DJI's specifications page says 40 minutes, DJI's own manual says 42.
 
+**Two fields, two meanings.** Records produced by the research pipeline also
+carry `"conflicting": true` alongside a `conflicting_values` array. They are
+not synonyms:
+
+| Field | Means |
+|---|---|
+| `contested` | Credible sources disagree and the disagreement is *substantive* - the aircraft's real value is genuinely in dispute |
+| `conflicting` + `conflicting_values` | Multiple readings were found and **all of them are retained**, including ones rejected for being about the wrong variant or configuration |
+
+A value can be `conflicting` without being `contested` - the X2D's
+`max_speed_ms` carries rejected X2E readings, which is a variant question, not
+a dispute about the X2D. **Neither field is declared in
+`entity_schema_3.0.json`**; the validation suite flags this. Declaring both is
+logged as deferred alongside RT-005 and VT-005B in `catalog/reviews/`.
+
 ---
 
 ## 5. Declaring a gap

@@ -42,7 +42,7 @@ prediction and no corresponding result. The commit history therefore witnesses
 the ordering independently of anything asserted here.
 
 That distinction is the honest one, and it is drawn deliberately. A register
-that claimed all eight were proven would be making exactly the kind of
+that claimed every row was proven would be making exactly the kind of
 unverifiable assertion the register exists to prevent.
 
 ## Rules
@@ -319,6 +319,15 @@ published 40. That agreement is not evidence of a good fit, because there is
 no fit; it is evidence that the momentum-theory parameter set is independently
 reasonable.
 
+> **RETRACTED.** The claim in the paragraph above - that 40.04 min with nothing
+> fitted shows the parameter set is independently reasonable - does not hold.
+> `calibration="none"` still routes induced power through `figure_of_merit`
+> standing in for kappa, so the agreement reflects two compensating errors
+> rather than an unfitted model landing on the right answer. The paragraph is
+> left as written because this register is append-only. See
+> `VALIDATION.md` "The zero-free-parameter result - RETRACTED" and
+> `MODEL_UNCERTAINTY.md` "Appendix: a claim this analysis retracts".
+
 ### Resolved against the running simulator - 2026-09-10
 
 Executed by the operator. Probe at 00:22, tests 3.a and 3.b following.
@@ -329,7 +338,7 @@ Executed by the operator. Probe at 00:22, tests 3.a and 3.b following.
 | **P2@5** | 1.0443 deg | **1.0306 deg** | **-1.3%** | **PASS** (band +/-20%) |
 | **P2@12** | 5.9939 deg | **5.8877 deg** | **-1.8%** | **PASS** (band +/-20%) |
 | **P3** | < 0.5% (predicted 0.017%) | **0.0162%** | - | **PASS** |
-| **P4** | within 10% of hover (predicted +0.22%) | **+2.51%** (68.17 -> 69.88 W) | - | **PASS** |
+| **P4** | within 10% of hover (predicted +0.22%) | **+2.84%** (68.15 -> 70.08 W) | - | **PASS** |
 | **P5** | 1.225 kg/m3 | **1.22478 kg/m3** | **-0.02%** | **PASS** |
 
 The drag fit returned **r2 = 1.0000** across the 0/2/5/8/12 m/s sweep. The
@@ -343,12 +352,47 @@ existed. Nothing was tuned to make those agree.
 `MultirotorRpcLibAdaptors.hpp:54`. The runtime check was still worth doing, but
 the source reading was right.
 
-**P4 note.** Measured +2.51% against a predicted +0.22%. Well inside the band,
-but the discrepancy is real and comes from thrust: hover measured 9.932 N
+**P4 note.** Measured +2.84% against a predicted +0.22%. Well inside the band,
+but the discrepancy is real and comes from thrust: hover measured 9.930 N
 against a theoretical 9.807 N, so the aircraft was doing more control work than
 the idealised calculation assumes. The finding is unaffected - the sign is what
 matters. A real Mavic 3 at 9 m/s costs **less** than hover; the simulator costs
 **more**. AirSim cannot reproduce translational lift.
+
+### CORRECTION 2026-09-11 - P4 was quoted from a disavowed run
+
+**What was published.** P4 read **+2.51% (68.17 -> 69.88 W)** from
+`results/test_3a_hover_20260910_003446.txt`. That run measured a **14.54x**
+clock ratio and collected **41 samples** across 60 s of simulation time - one
+sample per 1.47 simulated seconds.
+
+**Why that was wrong.** This document already required otherwise. The caveats
+recorded below state that "3.a should be re-run at ClockSpeed 1.0 before its
+energy figures are quoted", and `VALIDATION.md` explains why: the integration
+step is roughly `3 ms x ClockSpeed`, so a 14.54x run integrates in ~44 ms steps.
+The figure was quoted anyway, in this file, in `README.md` and in
+`START_HERE.md`.
+
+**What it is now.** `results/test_3a_hover_20260910_053318.txt` is the
+ClockSpeed **1.00x** re-run, 597 samples, and it had been sitting in `results/`
+uncited since the day it was produced. It gives:
+
+```
+  hover  68.15 W      cruise (9 m/s)  70.08 W      difference  +2.84%
+  total thrust  9.930 N hover / 10.114 N cruise
+```
+
+**What changes.** The number, and nothing else. P4 asked whether simulator
+shaft power at 9 m/s stays within 10% of hover; +2.84% passes as comfortably as
++2.51% did, in the same direction, for the same reason. **No conclusion in this
+register moves.** P5 is unaffected - both runs report air density 1.2248 kg/m3,
+-0.02%.
+
+**Why this is recorded rather than edited away.** A silent swap from +2.51% to
++2.84% would have left no trace that the project spent a day publishing a
+figure its own method forbade. The failure here was not the measurement; it was
+that nothing checked the published figures against the rule the documents
+state. See `AGENT_WORKFLOW.md` section 5.7.
 
 ### Two caveats on the run itself
 

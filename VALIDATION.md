@@ -364,7 +364,9 @@ anchors are the ones that carry information.
 
 ## 7. Corrections to the specification data
 
-`data/mavic3_specs.json` was rebuilt with `source` and `verified_on` on every
+The Mavic 3 record - then `data/mavic3_specs.json`, now
+`catalog/entities/UAS-QUAD-DJI-MAVIC3.json` after the catalog migration -
+was rebuilt with `source` and `verified_on` on every
 parameter. Three errors in the previous file were corrected:
 
 | Field | Was | Now | Why it matters |
@@ -455,7 +457,7 @@ the move the register exists to prevent.
 
 The consequence is a shape change in the validation output: four anchor rows
 instead of three, and held-out **declared** 3 instead of 2, while **scored**
-stays 2, passed 0, failed 2. Results files committed before 2026-09-10 carry
+stays 2, passed 0, failed 2. Results files produced before 05:33 on 2026-09-10 carry
 the three-row form. Nothing was rewritten; a reader diffing an old payload
 against a new one is seeing this change, not a discrepancy.
 
