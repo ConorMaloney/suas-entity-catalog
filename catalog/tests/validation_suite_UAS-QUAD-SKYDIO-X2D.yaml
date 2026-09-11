@@ -1,0 +1,2645 @@
+suite_id: VS-UAS-QUAD-SKYDIO-X2D-004
+suite_version: 3.0.0
+frozen: true
+schema_input: catalog/schema/entity_schema_3.0.json
+format_note: v3.0.0 restructured this suite from prose assertions into dispatchable keys. Every test now
+  carries target / applies_to / checks, drawn from the closed vocabularies in runner_contract. The original
+  English assertion is retained on each test as assertion_prose - it is DOCUMENTATION and a runner must
+  never parse it. No test was added, removed, or changed in meaning; see amendment A-5.
+entity_scope:
+  entity: Skydio X2D
+  entity_id: UAS-QUAD-SKYDIO-X2D
+  category: UAS - Group 1 - Quadcopter
+  segment_id: SEG-US-DEF-2020S-QUAD-G1
+  schema_version: '3.0'
+  expected_filename: UAS-QUAD-SKYDIO-X2D.json
+  configuration: standard configuration, stock battery
+  conflict_sources:
+  - Skydio X2E
+  - alternate payload or sensor package
+  - non-standard battery
+  segment_attribution_status: corroborated - X2D is the defense variant and SEG-US-DEF-2020S-QUAD-G1 is
+    the defense segment
+  _note: XF-013 compares the record against THESE values. They were the header comment block before v3.0.0,
+    which no runner could read. Changing the scope means editing this block only - it is the single place
+    scope literals live.
+runner_contract:
+  purpose: Closed vocabularies a runner dispatches on. A test using anything not listed here is a suite
+    defect, not a record defect - fail loudly rather than skipping it.
+  unknown_verb_policy: ERROR. A runner MUST NOT silently skip a check verb it does not implement, because
+    a skipped structural check is indistinguishable from a passing one in a green report.
+  target:
+    record: Evaluate against the entity document. The runner can decide these alone.
+    report: A contract on the runner OUTPUT, not on the record. Verify your own reporting.
+    suite: A lint on this YAML file itself. Verify no other test contradicts the stated invariant.
+    tooling: A property of validator/runner source code. Human code inspection.
+    human: Manual review at promotion. Never auto-pass these; emit them as an explicit checklist.
+  applies_to_keys:
+    scope: parameters | record_root | recursive_key
+    requirement_class: list; filter parameter paths by schema requirement class
+    paths: explicit list of parameter paths
+    paths_ref: name of a list in derived_sets
+    keys: explicit list of top-level keys (record_root scope)
+    keys_ref: name of a list in derived_sets (record_root scope)
+    value_types: list; filter by the schema-declared value_type
+    statuses: list; filter blocks by parameter status. Absent status counts as present
+    shape: named predicate from the predicates block
+    where: 'inline filter: {field, equals|not_null|is_null}'
+    only_if_field_present: only evaluate blocks carrying this key
+    requires_fields: only evaluate blocks carrying ALL these keys
+    only_present_keys: bool; for record_root, skip keys absent from the record
+    key_name: 'for scope recursive_key: the key name to walk the whole document for'
+  condition: '{readiness_declared_in: [...]} - the test is skipped entirely when unmet'
+  severity: fail | warn | info | gap
+  severity_map: 'list of {when_readiness_in: [...], severity: ...}; overrides severity'
+  check_verbs:
+    field_present: 'params: field'
+    field_absent: 'params: field. Absent means the KEY is missing, not null'
+    field_not_null: 'params: field (optional at record_root - applies to each selected key)'
+    field_is_null: 'params: field. Key must exist AND be null'
+    field_non_empty_string: 'params: field. Whitespace-only fails'
+    field_in_enum: 'params: field, enum_ref, allow_absent, case_sensitive'
+    field_is_json_type: 'params: field, json_type (object|array|string|integer|float|boolean)'
+    block_is_json_type: 'params: json_type. Applies to the parameter block itself'
+    field_not_in_denylist: 'params: field (optional), denylist, case_insensitive'
+    field_matches_regex: 'params: field, regex'
+    fields_differ: 'params: field_a, field_b, normalize (strip|none)'
+    string_max_length: 'params: field, max, unit=characters'
+    exactly_one_shape: 'params: shapes_ref. Exactly one named shape must match'
+    block_matches_shape: 'params: shape'
+    implies: 'params: if_, then. Both are inline predicates'
+    paths_exist: no params. Uses applies_to to select which paths must be keys
+    no_undeclared_paths: 'params: ignore_block_keys'
+    keys_present: 'params: on_absent_message (optional). Uses applies_to.keys/keys_ref'
+    keys_unique_at_top_level: 'params: forbid_nested_resolution'
+    value_type_matches_declaration: 'params: json_types, exclude_boolean, reject_numeric_strings, allow_float_with_zero_fraction,
+      assert_internal_shape'
+    equals_scope: 'params: field, scope_key. Compares record field to entity_scope'
+    equals_schema: 'params: field, schema_key. Compares record field to the schema file'
+    equals_schema_attribute: 'params: field, schema_attribute. Per-parameter schema attribute'
+    filename_matches_field: 'params: field, strip_extension, case_sensitive'
+    date_not_future: 'params: field (optional), max_future_days, absence_is_pass'
+    date_parseable: 'params: field (optional), formats, absence_is_pass'
+    confidence_floor: 'params: allowed, marker_state (present|absent|any), finding_code. marker_state
+      filters by the escalation_marker_present predicate'
+    identity_consistency: 'params: field_a, field_b, normalize, qualifier_tokens'
+    tier_gate: 'params: tier, requires_pass, requires_no_fail_in, requires_all_present_blocks_have, unevaluated_clauses'
+    tier_not_over_declared: 'params: compute_from, qualify_labels'
+    tier_not_under_declared: no params. Emits warn only
+    emit_finding: 'params: message. Unconditional finding for every selected block'
+    report_contract: 'params: requirement. target=report'
+    suite_invariant: 'params: requirement. target=suite'
+    manual_review: no params. target=human or tooling
+predicates:
+  present_shape:
+    all_of:
+    - field: status
+      in:
+      - present
+      or_absent: true
+    - field: value
+      not_null: true
+    - field: confidence
+      in_enum: CONFIDENCE_VOCABULARY
+    - field: source
+      non_empty_string: true
+  escalation_marker_present:
+    any_of:
+    - field: note
+      non_empty_string: true
+    - field: conflicting
+      equals: true
+      json_type: boolean
+    _note: RR3. Existence only - marker wording and format are Tier 2 and are not examined.
+  field_shapes:
+    present:
+      all_of:
+      - field: status
+        in:
+        - present
+        or_absent: true
+      - field: value
+        not_null: true
+      - field: confidence
+        in_enum: CONFIDENCE_VOCABULARY
+      - field: source
+        non_empty_string: true
+    missing:
+      all_of:
+      - field: status
+        equals: missing
+      - field: value
+        is_null: true
+      - field: confidence
+        absent: true
+      - field: todo
+        non_empty_string: true
+    not_applicable:
+      all_of:
+      - field: status
+        equals: not_applicable
+      - field: value
+        is_null: true
+      - field: confidence
+        absent: true
+      - field: note
+        non_empty_string: true
+derived_sets:
+  REQUIRED_MEASURED_PATHS:
+    from: schema
+    select: parameters
+    where:
+      requirement: REQUIRED_MEASURED
+    pluck: path
+  REQUIRED_MODELING_PATHS:
+    from: schema
+    select: parameters
+    where:
+      requirement: REQUIRED_MODELING
+    pluck: path
+  REQUIRED_FOR_OPERATIONAL_PATHS:
+    from: schema
+    select: parameters
+    where:
+      requirement: REQUIRED_FOR_OPERATIONAL
+    pluck: path
+  OPTIONAL_PATHS:
+    from: schema
+    select: parameters
+    where:
+      requirement: OPTIONAL
+    pluck: path
+  ALL_DECLARED_PATHS:
+    from: schema
+    select: parameters
+    pluck: path
+  VALUE_TYPE_OF:
+    from: schema
+    select: parameters
+    map:
+    - path
+    - value_type
+  UNIT_OF:
+    from: schema
+    select: parameters
+    map:
+    - path
+    - unit
+  CONFIDENCE_VOCABULARY:
+    from: schema
+    keys_of: confidence_vocabulary
+  PARAMETER_STATUSES:
+    from: schema
+    keys_of: parameter_statuses
+    exclude_prefix: _
+  READINESS_TIERS:
+    from: schema
+    keys_of: readiness_tiers
+  REQUIRED_TOP_LEVEL_KEYS:
+    from: schema
+    value_of: required_top_level_keys
+  CORE_TOP_LEVEL_KEYS:
+    from: derived
+    value_of: REQUIRED_TOP_LEVEL_KEYS
+    minus:
+    - compiled_on
+    - compiled_by
+  PROMOTION_STAMPED_KEYS:
+    literal:
+    - compiled_on
+    - compiled_by
+  RR4_AIRFRAME_SPECIFIC:
+    literal:
+    - battery.voltage_empty_v
+    - aerodynamic_assumptions.equivalent_flat_plate_area_m2
+    - aerodynamic_assumptions.avionics_power_w
+    - aerodynamic_assumptions.thrust_coefficient
+    - performance_published.max_speed_ms
+    _source: RR4 requirements document; has no schema representation
+  RR4_CLASS_TYPICAL:
+    literal:
+    - aerodynamic_assumptions.figure_of_merit
+    - aerodynamic_assumptions.motor_esc_efficiency
+    - aerodynamic_assumptions.propulsive_efficiency
+    - aerodynamic_assumptions.profile_power_mu_factor
+    _source: RR4 requirements document; has no schema representation
+amendments:
+- id: A-1
+  version: 1.1.0
+  date: 2026-09-10
+  authority: Direction from the suite owner.
+  change: 'ENTITY_SCOPE entity_id updated from UAS-QUAD-SKYDIO-X2D to UAS-QUAD-SKYDIO-X2DENTERPRISE. Suite
+    filename and suite_id updated to match. XF-015 added.
+
+    '
+  tests_removed: []
+  tests_added:
+  - XF-015
+  change_of_expected_result: none
+  note: 'No assertion changed. v1.0.0 hardcoded no entity_id literal, so the reconciliation landed without
+    rewriting any test.
+
+    '
+- id: A-2
+  version: 2.0.0
+  date: 2026-09-10
+  authority: Revised test-author prompt from the suite owner.
+  change: 'MAJOR. Seven tests REMOVED because calibration is now entirely out of scope. The RR3/INV4 confidence
+    rule became a two-tier rule with an escalation-marker clause, replacing one warn-level test with three
+    tier-scoped ones. A new Tier 1.5 category source_quote_structure was added. compiled_on and compiled_by
+    became pre-promotion-tolerant. The entity display name is now declared as Skydio X2D Enterprise.
+
+    '
+  tests_removed:
+  - XF-002
+  - XF-003
+  - XF-004
+  - XF-005
+  - XF-006
+  - XF-007
+  - XF-012
+  - RT-004B
+  tests_added:
+  - CC-002C
+  - CC-010
+  - TL-001B
+  - TL-008
+  - SQS-001
+  - SQS-002
+  - SQS-003
+  - SQS-004
+  - SQS-005
+  - SQS-006
+  - RT-010
+  change_of_expected_result: 'YES, in both directions. A record with an incoherent calibration block that
+    FAILED v1.1.0 may now PASS v2.0.0 - the defect is not fixed, it is unexamined. A record with no source_quote
+    fields that PASSED v1.1.0 will now FAIL v2.0.0 on SQS-001 and SQS-005. v1.1.0 and v2.0.0 results are
+    not comparable.
+
+    '
+  regression_warning: 'XF-005 (an anchor cannot both set a parameter and test it) was the single highest-consequence
+    structural test in v1.1.0, because its failure mode produces a validation result that looks like a
+    successful fit and is actually the model reproducing its own input. Removing it is a deliberate scope
+    decision, not a judgement that the risk is gone. See OI-13.
+
+    '
+- id: A-3
+  version: 2.1.0
+  date: 2026-09-10
+  authority: Direction from the suite owner.
+  change: 'Entity identity corrected. entity_id UAS-QUAD-SKYDIO-X2DENTERPRISE to UAS-QUAD-SKYDIO-X2E,
+    display name Skydio X2D Enterprise to Skydio X2E, per the correct naming convention. Suite filename
+    and suite_id updated to match. OI-1 reopened, OI-16 and XF-016 added.
+
+    '
+  tests_removed: []
+  tests_added:
+  - XF-016
+  tests_changed_in_substance: []
+  change_of_expected_result: 'YES for any record. XF-001 and XF-013 compare the record against the scope
+    identity, so a record carrying the old id now FAILS both until it is renamed and its entity_id and
+    entity fields updated. No assertion LOGIC changed - only the scope values those two tests compare
+    against, which live in this suite''s header.
+
+    '
+  minor_not_major: 'Versioned 2.1.0 rather than 3.0.0 because no test was removed and no assertion was
+    rewritten. Only one test in the suite, XF-013, carries scope literals at all - that was a deliberate
+    v1.0.0 design choice and it is why a third identity change costs one header edit instead of a suite
+    rewrite.
+
+    '
+  what_this_amendment_does_not_do: 'It does NOT change segment_id, and it does NOT verify that the existing
+    defense-segment attribution still holds. The X2D is the defense variant and the X2E is the enterprise
+    variant, so correcting the entity from an X2D-derived name to X2E may have moved the entity out of
+    SEG-US-DEF-2020S-QUAD-G1 entirely. That is a coverage-attribution decision, not a naming one, and
+    the schema is explicit that it must be declared rather than inferred. See OI-16.
+
+    '
+- id: A-4
+  version: 2.2.0
+  date: 2026-09-10
+  authority: Direction from the suite owner.
+  change: 'Identity reverted to the defense variant. entity_id UAS-QUAD-SKYDIO-X2E to UAS-QUAD-SKYDIO-X2D,
+    display name Skydio X2E to Skydio X2D. Stated reason - the catalog feeds a military simulation, so
+    the defense airframe is the one in scope and the enterprise variant is not needed. Suite filename
+    and suite_id updated to match. OI-16 CLOSED. OI-1 updated.
+
+    '
+  tests_removed: []
+  tests_added: []
+  tests_changed_in_substance: []
+  change_of_expected_result: 'YES for any record carrying the X2E or X2D-Enterprise identity - XF-001
+    and XF-013 now fail until the record is renamed and its entity_id and entity fields updated. A record
+    authored against the ORIGINAL v1.0.0 scope passes both again unchanged, because this returns the identity
+    to its v1.0.0 value.
+
+    '
+  net_effect_over_four_amendments: 'entity_id has travelled UAS-QUAD-SKYDIO-X2D (v1.0.0) to UAS-QUAD-SKYDIO-X2DENTERPRISE
+    (v1.1.0) to UAS-QUAD-SKYDIO-X2E (v2.1.0) and back to UAS-QUAD-SKYDIO-X2D (v2.2.0). The identity the
+    suite was originally authored against was correct. The substantive work of v2.0.0 - calibration removal,
+    the two-tier confidence rule, the source_quote category, pre-promotion metadata handling - is unaffected
+    by any of the identity churn and stands.
+
+    '
+  history_retained_deliberately: 'Amendments A-1 through A-3 and the OI-1 narrative are kept even though
+    the identity has returned to its starting value. A frozen suite that silently rewrites its own history
+    is not frozen, and a future reader finding an X2E-named or Enterprise-named record in a backup needs
+    this ledger to know which scope it was written against. The word enterprise now appears ONLY in that
+    history and in XF-015''s qualifier-token list, never in the active scope.
+
+    '
+- id: A-5
+  version: 3.0.0
+  date: '2026-09-10'
+  authority: Direction from the suite owner - prose assertions were too fragile to run.
+  change: Structural rewrite of the FORMAT. Every test gained target, applies_to and checks, drawn from
+    closed vocabularies declared in runner_contract. The entity scope moved from a header comment block
+    into real entity_scope keys. derived_sets and predicates became resolvable structures instead of prose
+    descriptions. The prose assertion was renamed assertion_prose and demoted to documentation.
+  tests_removed: []
+  tests_added: []
+  tests_changed_in_substance: []
+  change_of_expected_result: none - no assertion changed meaning. A record scores identically under v2.2.0
+    and v3.0.0.
+  major_version_reason: The FILE FORMAT changed incompatibly. Any consumer reading the v2.x "assertion"
+    key breaks. No test semantics changed.
+  correction_made: 'RT-009 was marked automatable: true through v2.2.0. It asserts the tier computation
+    is a pure function of the record, the schema and validation_time - a property of RUNNER SOURCE CODE,
+    not of a record. Reclassified to target: tooling, automatable: false, severity: gap. This raises the
+    non-automatable count from 8 to 9 and lowers fail from 55 to 54.'
+  comments_lost: The v2.x file carried its scope and section headings as YAML comments. Those are gone
+    - comments are not data. Everything load-bearing that lived in them, principally the ENTITY_SCOPE
+    block, is now a real key.
+open_items:
+- id: OI-1
+  status: CLOSED at v2.2.0 - identity returned to its original value and now corroborated
+  title: Entity identity changed four times and returned to its starting point
+  detail: 'The canonical identity was stated four ways - UAS-QUAD-SKYDIO-X2D at v1.0.0, UAS-QUAD-SKYDIO-X2DENTERPRISE
+    at v1.1.0 (with the X2D references declared stale and superseded), UAS-QUAD-SKYDIO-X2E at v2.1.0 on
+    the grounds that X2E was the correct convention, and UAS-QUAD-SKYDIO-X2D again at v2.2.0 because the
+    catalog feeds a military simulation and the defense airframe is the one in scope.
+
+    '
+  why_this_is_now_closed_on_firmer_ground_than_before: 'v2.0.0 also closed this item, on the strength
+    of a declaration that later proved wrong. This closure is different in kind because it is the first
+    one with CORROBORATION rather than declaration alone - the X2D is the defense variant, the declared
+    segment SEG-US-DEF-2020S-QUAD-G1 is labelled "Group 1 quadcopter, defense" with the rationale "Blue
+    UAS list platforms", and the stated purpose is a military simulation. Three independent facts point
+    the same way. Nothing in the catalog names entity ids directly, so direction is still the authority,
+    but it is no longer the ONLY thing consistent with the choice.
+
+    '
+  the_residual_risk_this_churn_leaves: 'Values may have been researched during the X2DENTERPRISE or X2E
+    windows. The X2E is a sibling airframe, not a variant, so any figure carried across from that window
+    is a wrong-aircraft value. No test in this suite can detect one. That is XF-014, and the churn makes
+    it materially more likely rather than less.
+
+    '
+  what_is_settled: 'The id string, the display name, the filename, and - newly at v2.2.0 - the segment
+    attribution. XF-001, XF-013 and XF-015 enforce the identity consistency; OI-16 records the segment
+    closure.
+
+    '
+  what_is_not_settled: 'Whether the record''s values came from X2D sources (XF-014).
+
+    '
+  affects:
+  - XF-001
+  - XF-013
+  - XF-014
+  - XF-015
+  - XF-016
+- id: OI-2
+  status: OPEN - unchanged since v1.0.0
+  title: RR4's nine paths do not cover the schema's ten REQUIRED_MODELING paths
+  detail: 'RR4 splits REQUIRED_MODELING into five airframe-specific paths and four class-typical constants
+    - nine paths. The schema declares TEN parameters with requirement REQUIRED_MODELING. The unaccounted
+    path is aerodynamic_assumptions.air_density_kg_m3, in neither group. Re-verified against the schema
+    at v2.0.0; still true.
+
+    '
+  handling: 'CC-006 and CC-007 are scoped to the nine RR4 paths as literally written. CC-009 covers air_density_kg_m3
+    under the generic REQUIRED_MODELING rule only and asserts nothing about which group it belongs to.
+    Warn, not fail, because the classification does not exist yet.
+
+    '
+  affects:
+  - CC-006
+  - CC-007
+  - CC-009
+  - KC-002
+- id: OI-3
+  status: CLOSED at v2.0.0 - superseded by the RR3 two-tier rule
+  title: RR3 / INV4 confidence floor at R1
+  detail: 'v1.0.0 flagged the R1 confidence floor as unconfirmed. The v2.0.0 prompt resolves it with an
+    explicit two-tier rule including an escalation-marker clause. CC-002, CC-002B and CC-002C now implement
+    that rule. A NEW tension inside the rule as written is recorded separately as OI-11.
+
+    '
+  affects:
+  - CC-002
+  - CC-002B
+  - CC-002C
+- id: OI-4
+  status: OPEN - unchanged since v1.0.0
+  title: Internal shape of value_type range is undefined
+  detail: 'The schema declares value_type range for performance_operational.observed_flight_time_min and
+    observed_hover_time_min but nowhere defines its internal structure - min/max keys, a two-element array,
+    or something else.
+
+    '
+  handling: 'VT-005 asserts only that a range value under status present is non-null and is a structured
+    container (object or array), never a bare scalar. It does NOT assert key names, element count, ordering,
+    or that any low bound is below any high bound. VT-005B records the undefined shape as a gap.
+
+    '
+  affects:
+  - VT-005
+  - VT-005B
+- id: OI-5
+  status: OPEN - unchanged since v1.0.0
+  title: R3 staleness limit is not defined in the schema file
+  detail: 'The R3 tier definition requires the oldest verified_on to be within the staleness limit. entity_schema_3.0.json
+    defines no such limit - no number, no unit, no reference to one. Re-verified at v2.0.0; still absent.
+
+    '
+  handling: 'EXPLICIT GAP. RT-005 is automatable false. RT-004 deliberately excludes staleness, so passing
+    RT-004 must not be read as confirming freshness.
+
+    '
+  affects:
+  - RT-004
+  - RT-005
+  - RT-010
+- id: OI-6
+  status: OPEN - unchanged since v1.0.0
+  title: The word present is ambiguous in the R1 tier definition
+  detail: 'R1 requires every REQUIRED_MEASURED and REQUIRED_MODELING parameter present. This may mean
+    the key exists in the file, or the parameter carries parameter_status present with a non-null value.
+    RR2 uses the first reading. INV12 implies the five airframe-specific REQUIRED_MODELING paths legitimately
+    sit at status missing for a period, which is only coherent under the first reading.
+
+    '
+  handling: 'KC-001 and KC-002 test key existence at fail level, which both readings agree on. RT-002B
+    tests the stricter reading at R1 as warn only. CC-007 makes status present a hard requirement for
+    the five airframe-specific paths at R2 and above only.
+
+    '
+  affects:
+  - KC-001
+  - KC-002
+  - RT-002
+  - RT-002B
+  - CC-007
+- id: OI-7
+  status: OPEN - narrowed at v2.0.0
+  title: Schema does not declare where verified_on lives
+  detail: 'verified_on appears in the schema''s cross_field_rules and in the R3 tier definition, but is
+    not a declared attribute in the parameters list and no location is specified. v2.0.0 adds that verified_on
+    is stamped at promotion rather than by research, and that the rule only fires when the field is present
+    - which resolves the absence question but not the location question.
+
+    '
+  handling: 'XF-008 walks the whole record recursively and applies the rule to every key literally named
+    verified_on at any depth. Absence is never a failure. Location-agnostic by design; over-broad but
+    not unsound if the intended location is narrower.
+
+    '
+  affects:
+  - XF-008
+  - XF-009
+- id: OI-8
+  status: OPEN - unchanged since v1.0.0
+  title: No machine-detectable signal for whether the operational profile is used
+  detail: 'REQUIRED_FOR_OPERATIONAL parameters must be present only when the operational profile is used.
+    Nothing in the record declares whether that profile is in use.
+
+    '
+  handling: 'KC-003 is conditional on readiness_declared R3, which the schema independently requires REQUIRED_FOR_OPERATIONAL
+    completeness for - that condition IS readable. KC-003B covers the general case and is automatable
+    false.
+
+    '
+  affects:
+  - KC-003
+  - KC-003B
+- id: OI-9
+  status: CLOSED at v2.0.0 - superseded, calibration out of scope
+  title: Held-out anchor scorability
+  detail: 'v1.0.0 flagged that R3 requires anchors present AND scorable while the record carries no scorability
+    flag. Calibration is now entirely out of scope, so this suite no longer looks at held-out anchors
+    at all. The underlying problem is not solved, it is no longer this suite''s to examine. Folded into
+    OI-13.
+
+    '
+  affects: []
+- id: OI-10
+  status: OPEN - expanded at v2.0.0
+  title: Formats for compiled_on, compiled_by and segment_id are undeclared
+  detail: 'The schema requires these top-level keys but declares no type, format, or vocabulary for any
+    of them. v2.0.0 adds that compiled_on and compiled_by are stamped at promotion, so their absence in
+    a pre-promotion draft is informational rather than a failure - which introduces a second undeclared
+    thing, namely how a reader knows a record is a pre-promotion draft.
+
+    '
+  handling: 'TL-001 splits the required top-level keys into six always-required and two promotion-stamped.
+    TL-001B reports the promotion-stamped pair at info severity. TL-005 and TL-006 stay warn-level because
+    asserting an undeclared format would be inventing a requirement. The draft-detection problem is OI-14.
+
+    '
+  affects:
+  - TL-001
+  - TL-001B
+  - TL-002
+  - TL-005
+  - TL-006
+  - TL-008
+- id: OI-11
+  status: OPEN - NEW at v2.0.0
+  title: RR3's escalation-marker clause has no operative effect at R1 as written
+  detail: 'RR3 says a REQUIRED_MEASURED field carrying literature or estimated is a warning rather than
+    a hard fail "ONLY IF" it also carries an escalation marker - which reads as though the absence of
+    a marker makes it a hard fail. The very next sentence says a field with NO escalation marker "is a
+    WARNING at R1 and a HARD FAIL at R2 and above". And the R2 clause says no lesser confidence is tolerated
+    at R2+ regardless. Taken together, the marker changes nothing operationally - warn at R1 either way,
+    fail at R2+ either way.
+
+    '
+  handling: 'The suite implements the LATER and more specific sentence, because it is unambiguous - CC-002
+    warns for the marked case, CC-002B warns for the unmarked case under a DISTINCT finding code so the
+    distinction survives in reporting, and CC-002C fails both at R2+. If the intent was that an unmarked
+    field hard-fails at R1, this suite is under-strict at R1 and CC-002B must be raised to fail. Flagged
+    rather than assumed.
+
+    '
+  affects:
+  - CC-002
+  - CC-002B
+  - CC-002C
+  - CC-010
+- id: OI-12
+  status: OPEN - NEW at v2.0.0
+  title: SQS1/SQS5 may collide with INV12's shipped class-typical constants
+  detail: 'SQS1 and SQS5 require a source_quote for EVERY non-null value. INV12 says the four class-typical
+    REQUIRED_MODELING constants are shipped pre-populated and are not re-researched per airframe. If those
+    shipped constants were populated without a source_quote, every record in the catalog fails SQS-001
+    and SQS-005 on four paths at once, for a reason that has nothing to do with the record author''s work.
+
+    '
+  handling: 'SQS-001 and SQS-005 are implemented exactly as specified, with no carve-out, because the
+    prompt states them without one and inventing an exemption would silently weaken the check. SQS-006
+    records the collision. If the collision is real, the fix belongs in the shipped constants or in an
+    explicit SQS exemption, not in a quietly softened test.
+
+    '
+  affects:
+  - SQS-001
+  - SQS-005
+  - SQS-006
+  - CC-006
+- id: OI-13
+  status: OPEN - NEW at v2.0.0
+  title: Excluding calibration leaves R2 and R3 partially unverifiable against the schema's own definitions
+  detail: 'The schema''s R2 definition ends "and the calibration block is internally coherent". Its R3
+    definition includes "at least two held-out anchors present and scorable". Calibration is out of scope
+    for this run by direction, so this suite cannot evaluate either clause. R2 is therefore verified on
+    four of its five stated clauses, and R3 on one of its three.
+
+    '
+  handling: 'RT-003 states which R2 clause it does not cover. RT-004 states which R3 clauses it does not
+    cover. RT-010 exists solely to make the shortfall a line item in every run report rather than a footnote.
+    A PASS on RT-003 or RT-004 is NOT a tier grant.
+
+    '
+  affects:
+  - RT-003
+  - RT-004
+  - RT-010
+  carried_from: 'Also absorbs OI-9. The v1.1.0 test that caught an anchor being used to both set and test
+    a parameter (XF-005) no longer exists.
+
+    '
+- id: OI-14
+  status: OPEN - NEW at v2.0.0
+  title: Nothing distinguishes a pre-promotion draft from a promoted record
+  detail: 'RR6 and INV9 say compiled_on and compiled_by absence is informational when validating a pre-promotion
+    draft. The record carries no flag saying which it is, so a validator cannot tell a legitimate draft
+    from a promoted record that lost its stamps.
+
+    '
+  handling: 'TL-001B reports the pair at info severity unconditionally, and TL-008 raises a WARNING where
+    the combination is incoherent - a record declaring R2 or R3 while lacking promotion stamps. The prompt
+    does not state whether a draft may declare R2+, so TL-008 is warn, not fail.
+
+    '
+  affects:
+  - TL-001B
+  - TL-008
+  - RT-003
+- id: OI-15
+  status: OPEN - NEW at v2.0.0
+  title: source_quote and conflicting are not declared in the schema
+  detail: 'Verified directly - neither the string source_quote nor the string conflicting appears anywhere
+    in entity_schema_3.0.json. The Tier 1.5 SQS checks and RR3''s escalation-marker clause therefore test
+    fields that catalog.py, which validates against the schema, does not know about.
+
+    '
+  handling: 'The SQS tests and CC-010 are implemented as specified and are automatable, but are labelled
+    NOT SCHEMA-BACKED so nobody later mistakes a SQS failure for a schema-conformance failure. If these
+    fields are meant to be enforced by catalog.py, the schema needs a declaration for them.
+
+    '
+  affects:
+  - SQS-001
+  - SQS-002
+  - SQS-003
+  - SQS-004
+  - SQS-005
+  - CC-010
+  - KC-005
+- id: OI-16
+  status: CLOSED at v2.2.0 - the revert to X2D aligned the entity with its segment
+  title: Segment attribution versus entity variant
+  detail: 'Raised at v2.1.0, when the entity was corrected to X2E while segment_id remained SEG-US-DEF-2020S-QUAD-G1.
+    That was a live contradiction - the X2E is the enterprise variant and the segment is the defense one,
+    and catalog/coverage_plan.json registers a commercial alternative, SEG-US-COM-2020S-QUAD-G1, under
+    the IDENTICAL category string "UAS - Group 1 - Quadcopter".
+
+    '
+  why_it_closes: 'A-4 reverts the entity to the X2D, the defense variant, which is what SEG-US-DEF-2020S-QUAD-G1
+    is for - its label is "Group 1 quadcopter, defense" and its rationale is "Blue UAS list platforms".
+    The stated purpose, a military simulation, points the same way. The entity and its declared segment
+    now agree, which was not true at v2.1.0 and was never independently checked before it.
+
+    '
+  what_closing_this_does_not_mean: 'It does not mean the suite can now VERIFY segment attribution. No
+    test can. A segment_id that is wrong still fails nothing here - it passes XF-010, XF-013 and TL-006
+    while silently miscounting two segments. XF-016 is retained at gap severity for that permanent property,
+    with its urgency lowered from "live contradiction" to "standing check", because the current attribution
+    is corroborated rather than merely declared.
+
+    '
+  affects:
+  - XF-010
+  - XF-013
+  - XF-016
+  - TL-006
+tests:
+- id: SC-001
+  description: Every parameter block declares a status drawn from the schema's status vocabulary, or omits
+    status entirely.
+  category: status_coherence
+  target: record
+  applies_to:
+    scope: parameters
+  checks:
+  - check: field_in_enum
+    params:
+      field: status
+      enum_ref: PARAMETER_STATUSES
+      allow_absent: true
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each declared path P present in the record, block.status is either absent, or a
+    member of PARAMETER_STATUSES {present, missing, not_applicable}.
+  rationale: An unrecognised status string silently defeats every downstream coherence check, because
+    a validator branching on three known values falls through on a fourth.
+  rule_reference: RR1, INV1
+- id: SC-002
+  description: A parameter block with status present (explicit or by omission) carries a non-null value.
+  category: status_coherence
+  target: record
+  applies_to:
+    scope: parameters
+    statuses: &id001
+    - present
+  checks:
+  - check: field_not_null
+    params:
+      field: value
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each present-status block, block.value is not null and the value key exists.
+  rationale: Status present is the schema's assertion that a number is on the record; a null under it
+    is the exact contradiction the schema names as an error.
+  rule_reference: RR1, INV1
+- id: SC-003
+  description: A present parameter carries a confidence from the vocabulary.
+  category: status_coherence
+  target: record
+  applies_to:
+    scope: parameters
+    statuses: *id001
+  checks:
+  - check: field_in_enum
+    params:
+      field: confidence
+      enum_ref: CONFIDENCE_VOCABULARY
+      allow_absent: false
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each present-status block, block.confidence exists and is a member of CONFIDENCE_VOCABULARY.
+  rationale: Confidence is how a reader distinguishes a spec-sheet figure from a guess; a present value
+    without one is unauditable.
+  rule_reference: RR1, INV3
+- id: SC-004
+  description: A present parameter carries a non-empty source.
+  category: status_coherence
+  target: record
+  applies_to:
+    scope: parameters
+    statuses: *id001
+  checks:
+  - check: field_non_empty_string
+    params:
+      field: source
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each present-status block, block.source exists, is a string, and is not empty or
+    whitespace-only.
+  rationale: The schema makes source mandatory for present under every requirement class, including REQUIRED_MODELING,
+    so a modelling choice stays auditable even when it is not a fact about the aircraft. This checks that
+    a source string EXISTS - it does not check that it says anything true or that it supports the value,
+    which is out of scope.
+  rule_reference: RR1
+- id: SC-005
+  description: A parameter with status missing has an explicitly null value.
+  category: status_coherence
+  target: record
+  applies_to:
+    scope: parameters
+    statuses:
+    - missing
+  checks:
+  - check: field_present
+    params:
+      field: value
+  - check: field_is_null
+    params:
+      field: value
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each block with status == "missing", the value key exists and block.value is null.
+  rationale: The schema requires the null to be written rather than the key omitted, because a written
+    null is evidence the author looked at the field.
+  rule_reference: RR1, INV1, INV2
+- id: SC-006
+  description: A parameter with status missing carries no confidence key.
+  category: status_coherence
+  target: record
+  applies_to:
+    scope: parameters
+    statuses:
+    - missing
+  checks:
+  - check: field_absent
+    params:
+      field: confidence
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each block with status == "missing", the key confidence is absent (absent, not
+    null).
+  rationale: Confidence on a declared gap is a category error - there is no value for it to qualify -
+    and it would let a gap score as sourced.
+  rule_reference: RR1, INV1
+- id: SC-007
+  description: A parameter with status missing carries a non-empty todo.
+  category: status_coherence
+  target: record
+  applies_to:
+    scope: parameters
+    statuses:
+    - missing
+  checks:
+  - check: field_non_empty_string
+    params:
+      field: todo
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each block with status == "missing", block.todo exists, is a string, and is not
+    empty or whitespace-only.
+  rationale: The todo is what converts an admission of ignorance into a work item; without it, missing
+    is indistinguishable in practice from abandonment.
+  rule_reference: RR1
+- id: SC-008
+  description: A parameter with status not_applicable has an explicitly null value.
+  category: status_coherence
+  target: record
+  applies_to:
+    scope: parameters
+    statuses:
+    - not_applicable
+  checks:
+  - check: field_present
+    params:
+      field: value
+  - check: field_is_null
+    params:
+      field: value
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each block with status == "not_applicable", the value key exists and block.value
+    is null.
+  rationale: Same shape discipline as missing - a number under not_applicable means the status and the
+    payload disagree about whether the field applies.
+  rule_reference: RR1, INV1
+- id: SC-009
+  description: A parameter with status not_applicable carries no confidence key.
+  category: status_coherence
+  target: record
+  applies_to:
+    scope: parameters
+    statuses:
+    - not_applicable
+  checks:
+  - check: field_absent
+    params:
+      field: confidence
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each block with status == "not_applicable", the key confidence is absent.
+  rationale: There is nothing to be confident about in a field that does not apply.
+  rule_reference: RR1, INV1
+- id: SC-010
+  description: A parameter with status not_applicable carries a non-empty note explaining why.
+  category: status_coherence
+  target: record
+  applies_to:
+    scope: parameters
+    statuses:
+    - not_applicable
+  checks:
+  - check: field_non_empty_string
+    params:
+      field: note
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each block with status == "not_applicable", block.note exists, is a string, and
+    is not empty or whitespace-only.
+  rationale: not_applicable is the one status that permanently closes a field; the schema requires a stated
+    reason so the closure can be challenged later. The test checks a reason exists, not that the reasoning
+    is correct.
+  rule_reference: RR1
+- id: SC-011
+  description: No parameter block mixes two of the three field shapes.
+  category: status_coherence
+  target: record
+  applies_to:
+    scope: parameters
+  checks:
+  - check: exactly_one_shape
+    params:
+      shapes_ref: predicates.field_shapes
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each parameter block, exactly one of the three shape predicates holds - present-shape,
+    missing-shape (null value AND no confidence AND todo), not_applicable-shape (null value AND no confidence
+    AND note). A block satisfying zero or more than one predicate fails.
+  rationale: This is the invariant the individual SC tests only approach one clause at a time. A block
+    can pass every single-clause check and still be a hybrid - status missing carrying both a todo AND
+    a confidence - and a hybrid is where a gap silently starts scoring as data.
+  rule_reference: INV1, RR1
+- id: SC-012
+  description: A null value is never carried without an explicit status naming it as a gap.
+  category: status_coherence
+  target: record
+  applies_to:
+    scope: parameters
+  checks:
+  - check: implies
+    params:
+      if_:
+        field: value
+        is_null: true
+      then:
+        field: status
+        in:
+        - missing
+        - not_applicable
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each declared path present in the record, if block.value is null then block.status
+    exists and is one of {missing, not_applicable}.
+  rationale: A bare null with no status defaults to present under the schema's own rule that absent status
+    means present, which then contradicts the present rule that value must be non-null. Catching the ambiguity
+    directly beats letting it surface as a confusing SC-002 failure.
+  rule_reference: RR1, INV1, INV2
+- id: SC-013
+  description: Every declared parameter path resolves to an object, not a bare scalar.
+  category: status_coherence
+  target: record
+  applies_to:
+    scope: parameters
+  checks:
+  - check: block_is_json_type
+    params:
+      json_type: object
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each declared path present in the record, the value at that path is a JSON object
+    (mapping), not a number, string, boolean, null, or array.
+  rationale: A path written as a bare number - mass_kg 1.3 rather than a mass_kg block - carries no status,
+    confidence, source, or source_quote, and would be skipped or misread by every other test in this suite.
+  rule_reference: RR1, INV1
+- id: SC-014
+  description: An absent key and a status-missing key are reported as distinct failure modes even though
+    they score identically.
+  category: status_coherence
+  target: report
+  checks:
+  - check: report_contract
+    params:
+      requirement: absent_key_count and status_missing_count are emitted as SEPARATE labelled counts per
+        requirement class; completeness scoring treats them identically
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: The validation report emits, for each requirement class, two separately labelled counts
+    - keys absent from the record, and keys present with status missing - and does not collapse them into
+    one figure. Completeness scoring treats them identically.
+  rationale: INV2 is a reporting invariant, not a record invariant. The schema is explicit that an author
+    who wrote missing with a todo has demonstrably looked and one who omitted the key has not; if the
+    report merges them, that distinction dies at exactly the moment someone would use it to assign work.
+  rule_reference: INV2, RR2
+- id: KC-001
+  description: Every REQUIRED_MEASURED path appears as a key in the record.
+  category: key_coverage
+  target: record
+  applies_to:
+    scope: parameters
+    requirement_class:
+    - REQUIRED_MEASURED
+  checks:
+  - check: paths_exist
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each path in REQUIRED_MEASURED_PATHS, the path resolves to an existing key. Absence
+    fails; status missing does not fail this test.
+  rationale: RR2 requires these to appear as keys from R1 onward and never simply be absent. Both readings
+    of the R1 present ambiguity (OI-6) agree on key existence, so this is safe as fail-level.
+  rule_reference: RR2, INV2
+- id: KC-002
+  description: Every REQUIRED_MODELING path appears as a key in the record.
+  category: key_coverage
+  target: record
+  applies_to:
+    scope: parameters
+    requirement_class:
+    - REQUIRED_MODELING
+  checks:
+  - check: paths_exist
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each path in REQUIRED_MODELING_PATHS (all ten as declared by the schema, not the
+    nine enumerated by RR4), the path resolves to an existing key. Absence fails; status missing does
+    not fail this test.
+  rationale: Same as KC-001. Scoped to the schema's ten rather than RR4's nine deliberately - see OI-2.
+    If the schema is the validator's input, its ten govern coverage regardless of how RR4 classifies them.
+  rule_reference: RR2, INV2
+- id: KC-003
+  description: When the record declares R3, every REQUIRED_FOR_OPERATIONAL path is present and complete.
+  category: key_coverage
+  target: record
+  condition:
+    readiness_declared_in:
+    - R3
+  applies_to:
+    scope: parameters
+    requirement_class:
+    - REQUIRED_FOR_OPERATIONAL
+  checks:
+  - check: paths_exist
+  - check: block_matches_shape
+    params:
+      shape: present_shape
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: If readiness_declared == "R3", then for each path in REQUIRED_FOR_OPERATIONAL_PATHS
+    the key exists and satisfies present_shape.
+  rationale: The general trigger for these parameters is not machine-detectable (OI-8), but the schema's
+    R3 definition requires REQUIRED_FOR_OPERATIONAL completeness unconditionally, and readiness_declared
+    IS readable. This captures the decidable half.
+  rule_reference: RR2, RR8
+- id: KC-003B
+  description: Whether the operational profile is in use for this record, below R3, cannot be determined
+    from the artifact.
+  category: key_coverage
+  target: human
+  checks:
+  - check: manual_review
+  severity: gap
+  automatable: false
+  tolerance: N/A
+  human_review: Reviewer states whether the operational profile is used for this entity. If yes, apply
+    KC-003's assertion unconditionally rather than only at R3.
+  assertion_prose: No automated assertion. Flagged for human review.
+  rationale: Nothing in the record declares profile usage, so an automated test would have to guess, and
+    a guess either forces unnecessary work or excuses a real gap.
+  rule_reference: RR2
+- id: KC-004
+  description: Absence of an OPTIONAL path never produces a failure.
+  category: key_coverage
+  target: suite
+  checks:
+  - check: suite_invariant
+    params:
+      requirement: no test in this suite emits a fail-level finding for the ABSENCE of a path whose requirement
+        class is OPTIONAL; no exceptions
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each path in OPTIONAL_PATHS, absence from the record produces no fail-level finding
+    from any test in this suite. No exceptions.
+  rationale: RR2 states OPTIONAL paths may be absent. Written as a test because coverage tooling drifts
+    toward requiring everything it can enumerate. NOTE - v1.1.0 carved out an exception for anchors named
+    in the record's own calibration block; that exception is REMOVED at v2.0.0 because calibration is
+    out of scope, so the rule is now absolute.
+  rule_reference: RR2
+- id: KC-005
+  description: The record contains no parameter path the schema does not declare.
+  category: key_coverage
+  target: record
+  applies_to:
+    scope: parameters
+  checks:
+  - check: no_undeclared_paths
+    params:
+      ignore_block_keys:
+      - value
+      - status
+      - confidence
+      - source
+      - source_quote
+      - note
+      - todo
+      - conflicting
+      - unit
+      - verified_on
+  severity: warn
+  automatable: true
+  tolerance: N/A
+  assertion_prose: Every leaf parameter block found under the record's parameter-bearing sections resolves
+    to a path in ALL_DECLARED_PATHS. Block-level keys such as value, status, confidence, source, source_quote,
+    note, todo and conflicting are not paths and are not flagged here.
+  rationale: An undeclared PATH is unvalidated by construction - no requirement class, no value_type -
+    so it can carry anything and be silently ignored. Warn rather than fail because the schema does not
+    state its parameter list is closed. The block-key carve-out matters because source_quote and conflicting
+    are not schema-declared (OI-15) and must not be reported as stray paths.
+  rule_reference: RR2, RR7
+- id: KC-006
+  description: Coverage reporting is broken out by requirement class.
+  category: key_coverage
+  target: report
+  checks:
+  - check: report_contract
+    params:
+      requirement: per requirement class emit declared/present/missing/not_applicable/absent counts; the
+        five MUST sum to the class total
+  severity: fail
+  automatable: true
+  tolerance: exact - the five counts must sum to the class total, no rounding
+  assertion_prose: The validation report states, per requirement class, the count of declared paths, present-shape
+    paths, status-missing paths, not_applicable paths, and absent paths, and these five counts sum to
+    the declared total for that class.
+  rationale: A single aggregate completeness percentage lets a record with all six REQUIRED_MEASURED gaps
+    and every OPTIONAL filled look healthier than the reverse. The arithmetic check catches paths lost
+    between buckets.
+  rule_reference: RR2, INV2
+- id: CC-001
+  description: Every confidence value anywhere in the record is drawn from the schema vocabulary.
+  category: confidence_class
+  target: record
+  applies_to:
+    scope: parameters
+    only_if_field_present: confidence
+  checks:
+  - check: field_in_enum
+    params:
+      field: confidence
+      enum_ref: CONFIDENCE_VOCABULARY
+      allow_absent: false
+      case_sensitive: true
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For every parameter block carrying a confidence key, the value is a member of CONFIDENCE_VOCABULARY
+    {published, derived, literature, estimated}. Case-sensitive.
+  rationale: INV3 is the base of the whole confidence system; a stray "high", "verified", or "Published"
+    defeats every class-based check downstream because it matches no branch.
+  rule_reference: INV3, RR1
+- id: CC-002
+  description: At R1, a REQUIRED_MEASURED parameter carrying literature or estimated WITH an escalation
+    marker is warned, not failed.
+  category: confidence_class
+  target: record
+  condition:
+    readiness_declared_in:
+    - R1
+  applies_to:
+    scope: parameters
+    requirement_class:
+    - REQUIRED_MEASURED
+    shape: present_shape
+  checks:
+  - check: confidence_floor
+    params:
+      allowed:
+      - published
+      - derived
+      marker_state: present
+      finding_code: CONF-R1-MARKED
+  severity: warn
+  automatable: true
+  tolerance: N/A
+  assertion_prose: If readiness_declared == "R1", then for each present-shape REQUIRED_MEASURED path whose
+    confidence is not in {published, derived} AND which satisfies escalation_marker_present, emit finding
+    code CONF-R1-MARKED naming the path and its confidence. Do not fail.
+  rationale: RR3's two-tier rule. The marker is what makes a below-floor confidence an acknowledged limitation
+    rather than an undeclared one, so this case is reported separately from CC-002B even though both are
+    warnings at R1. Only the marker's EXISTENCE is checked - its wording is Tier 2.
+  rule_reference: RR3, INV4
+- id: CC-002B
+  description: At R1, a REQUIRED_MEASURED parameter carrying literature or estimated WITHOUT an escalation
+    marker is warned under a distinct code.
+  category: confidence_class
+  target: record
+  condition:
+    readiness_declared_in:
+    - R1
+  applies_to:
+    scope: parameters
+    requirement_class:
+    - REQUIRED_MEASURED
+    shape: present_shape
+  checks:
+  - check: confidence_floor
+    params:
+      allowed:
+      - published
+      - derived
+      marker_state: absent
+      finding_code: CONF-R1-UNMARKED
+  severity: warn
+  automatable: true
+  tolerance: N/A
+  assertion_prose: If readiness_declared == "R1", then for each present-shape REQUIRED_MEASURED path whose
+    confidence is not in {published, derived} AND which does NOT satisfy escalation_marker_present, emit
+    finding code CONF-R1-UNMARKED naming the path. Do not fail.
+  rationale: RR3 states this case is a WARNING at R1 and a hard fail at R2 and above, so warn is the faithful
+    implementation at R1. The distinct finding code exists because RR3's own "ONLY IF" phrasing suggests
+    a stricter intent (OI-11) - keeping the two cases separately countable means the suite can be tightened
+    later without re-deriving which fields were unmarked. If OI-11 resolves toward strictness, THIS is
+    the test that becomes fail-level.
+  rule_reference: RR3, INV4
+- id: CC-002C
+  description: At R2 and above, every present REQUIRED_MEASURED parameter carries published or derived,
+    escalation marker or not.
+  category: confidence_class
+  target: record
+  condition:
+    readiness_declared_in:
+    - R2
+    - R3
+  applies_to:
+    scope: parameters
+    requirement_class:
+    - REQUIRED_MEASURED
+    shape: present_shape
+  checks:
+  - check: confidence_floor
+    params:
+      allowed:
+      - published
+      - derived
+      marker_state: any
+      finding_code: CONF-R2-FLOOR
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: If at_or_above_R2, then for each present-shape REQUIRED_MEASURED path, confidence is
+    in {published, derived}. An escalation marker does NOT excuse a below-floor confidence at this tier.
+  rationale: RR3 says no lesser confidence is tolerated at R2 and above, and the schema's own R2 definition
+    independently states every REQUIRED_MEASURED parameter is published or derived. Two sources agree,
+    so this is fail-level with no carve-out. Checks the LABEL only - whether the cited source genuinely
+    supports the number is out of scope.
+  rule_reference: RR3, INV4, RR8
+- id: CC-003
+  description: A REQUIRED_MODELING parameter is not held to the REQUIRED_MEASURED confidence floor.
+  category: confidence_class
+  target: suite
+  checks:
+  - check: suite_invariant
+    params:
+      requirement: no test emits fail or warn against a REQUIRED_MODELING path solely because its confidence
+        is literature or estimated
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: No test in this suite emits a fail or warn finding against a REQUIRED_MODELING path
+    solely because its confidence is literature or estimated.
+  rationale: The schema states literature and estimated are acceptable here because these are modelling
+    choices rather than facts about the aircraft. Written as an explicit negative test because over-strict
+    validators are a real failure mode - one that pushes an author to relabel an honest estimate as derived
+    to clear a gate.
+  rule_reference: RR3, INV12
+- id: CC-004
+  description: Every present REQUIRED_MODELING parameter carries a source.
+  category: confidence_class
+  target: record
+  applies_to:
+    scope: parameters
+    requirement_class:
+    - REQUIRED_MODELING
+    shape: present_shape
+  checks:
+  - check: field_non_empty_string
+    params:
+      field: source
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each present-shape path in REQUIRED_MODELING_PATHS, block.source exists and is
+    a non-empty string.
+  rationale: The schema is explicit that source stays mandatory for REQUIRED_MODELING precisely because
+    the value is a choice - the source is what makes it auditable rather than arbitrary. Grading whether
+    the cited literature is the right choice is out of scope.
+  rule_reference: RR3, RR1
+- id: CC-005
+  description: A derived confidence carries a note stating the computation.
+  category: confidence_class
+  target: record
+  applies_to:
+    scope: parameters
+    shape: present_shape
+    where:
+      field: confidence
+      equals: derived
+  checks:
+  - check: field_non_empty_string
+    params:
+      field: note
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each present-shape block with confidence == "derived", block.note exists and is
+    a non-empty string.
+  rationale: The schema's vocabulary entry for derived says to state the computation in note. Without
+    it, a derived value is indistinguishable from an estimate relabelled to clear the REQUIRED_MEASURED
+    floor. Checks the note exists, never that the arithmetic in it is right.
+  rule_reference: RR1, INV3
+- id: CC-005B
+  description: An estimated confidence carries a note stating basis and tolerance.
+  category: confidence_class
+  target: record
+  applies_to:
+    scope: parameters
+    shape: present_shape
+    where:
+      field: confidence
+      equals: estimated
+  checks:
+  - check: field_non_empty_string
+    params:
+      field: note
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each present-shape block with confidence == "estimated", block.note exists and
+    is a non-empty string.
+  rationale: Same construction as CC-005, from the vocabulary entry directing that basis and tolerance
+    be stated in note. Presence only - the suite does not parse the note for a tolerance figure, since
+    no format for one is declared and marker format is Tier 2.
+  rule_reference: RR1, INV3
+- id: CC-006
+  description: The four class-typical REQUIRED_MODELING constants are present with a source, and are not
+    required to carry per-airframe provenance.
+  category: confidence_class
+  target: record
+  applies_to:
+    scope: parameters
+    paths_ref: RR4_CLASS_TYPICAL
+  checks:
+  - check: paths_exist
+  - check: field_in_enum
+    params:
+      field: confidence
+      enum_ref: CONFIDENCE_VOCABULARY
+      allow_absent: false
+    when: present_shape
+  - check: field_non_empty_string
+    params:
+      field: source
+    when: present_shape
+  severity: fail
+  forbids_assertion_on:
+  - numeric value
+  - airframe-specific provenance
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each path in RR4_CLASS_TYPICAL, the key exists, and if present-shape it carries
+    a vocabulary confidence and a non-empty source. No test asserts its source is specific to this airframe,
+    and no test asserts any particular numeric value for it.
+  rationale: These are airframe-independent constants the catalog ships pre-populated and does not re-research
+    (INV12). Two failure modes are guarded at once - the constant going missing, and a validator demanding
+    X2D-specific sourcing for a value that is deliberately class-typical. No numeric expectation is written,
+    because hardcoding the shipped constant would make this a test of the copy rather than of the record.
+    See OI-12 for how these interact with the SQS checks.
+  rule_reference: RR4, INV12
+- id: CC-007
+  description: The five airframe-specific REQUIRED_MODELING paths carry a real researched value by R2.
+  category: confidence_class
+  target: record
+  applies_to:
+    scope: parameters
+    paths_ref: RR4_AIRFRAME_SPECIFIC
+  checks:
+  - check: block_matches_shape
+    params:
+      shape: present_shape
+  severity: fail
+  severity_map:
+  - when_readiness_in:
+    - R2
+    - R3
+    severity: fail
+  - when_readiness_in:
+    - R1
+    severity: warn
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each path in RR4_AIRFRAME_SPECIFIC - if at_or_above_R2, the path must satisfy present_shape
+    (fail if status is missing). If readiness_declared == "R1", a status of missing emits a warning naming
+    the path.
+  rationale: RR4 and INV12 state these five must eventually carry a real researched value rather than
+    a class default. Eventually is tier-scoped here because of OI-6, and because INV12's "expected to
+    move from missing" only makes sense if missing is tolerable somewhere. R2 is the first tier where
+    the schema's wording is unambiguous. Checks that a sourced value EXISTS, never that the value is correct.
+  rule_reference: RR4, INV12, RR8
+- id: CC-008
+  description: A class-typical constant is not silently substituted for one of the five airframe-specific
+    paths.
+  category: confidence_class
+  target: human
+  checks:
+  - check: manual_review
+  severity: warn
+  automated_precheck:
+    applies_to:
+      scope: parameters
+      paths_ref: RR4_AIRFRAME_SPECIFIC
+      shape: present_shape
+    checks:
+    - check: field_not_in_denylist
+      params:
+        field: source
+        denylist:
+        - ''
+        - TBD
+        - TODO
+        - N/A
+        - '-'
+        - see above
+        case_insensitive: true
+  automatable: false
+  tolerance: N/A
+  human_review: At R2 promotion, a reviewer confirms each of the five airframe-specific paths cites a
+    source about this airframe rather than a class-typical default. The automated placeholder check runs
+    regardless and is necessary but not sufficient.
+  assertion_prose: Automated portion - for each path in RR4_AIRFRAME_SPECIFIC that is present-shape, block.source
+    must not be empty, whitespace, or a placeholder token ("TBD", "TODO", "N/A", "-", "see above"). Whether
+    the citation is genuinely airframe-specific is human review.
+  rationale: The realistic way INV12 gets violated is not omission but substitution - a plausible class-typical
+    number dropped into an airframe-specific slot with a generic citation, which passes every other test
+    here. The automated half catches only the crude form.
+  rule_reference: RR4, INV12
+- id: CC-009
+  description: aerodynamic_assumptions.air_density_kg_m3 is checked under the generic REQUIRED_MODELING
+    rule only.
+  category: confidence_class
+  target: record
+  applies_to:
+    scope: parameters
+    paths:
+    - aerodynamic_assumptions.air_density_kg_m3
+  checks:
+  - check: paths_exist
+  - check: field_in_enum
+    params:
+      field: confidence
+      enum_ref: CONFIDENCE_VOCABULARY
+      allow_absent: false
+    when: present_shape
+  - check: field_non_empty_string
+    params:
+      field: source
+    when: present_shape
+  severity: warn
+  automatable: true
+  tolerance: N/A
+  assertion_prose: The path exists (covered by KC-002) and, if present-shape, carries a vocabulary confidence
+    and non-empty source. No assertion is made about whether it is airframe-specific or class-typical.
+  rationale: RR4's five-plus-four split accounts for nine of the schema's ten REQUIRED_MODELING paths
+    and leaves this one unclassified (OI-2). Rather than guess a classification, the suite applies only
+    the rule that indisputably covers it. Warn-level so the unclassified state stays visible in every
+    run instead of decaying into a silent assumption.
+  rule_reference: RR4, RR3
+- id: CC-010
+  description: Where an escalation marker is used, its carrier fields are well-formed.
+  category: confidence_class
+  target: record
+  applies_to:
+    scope: parameters
+  checks:
+  - check: field_is_json_type
+    params:
+      field: conflicting
+      json_type: boolean
+    when: field_present
+  - check: field_is_json_type
+    params:
+      field: note
+      json_type: string
+    when: field_present
+  severity: warn
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each parameter block carrying a conflicting key, the value is a JSON boolean, not
+    a string, number, or null. For each block carrying a note key, the value is a string. Type only -
+    no wording, format, or content is examined.
+  rationale: RR3 makes escalation_marker_present load-bearing for CC-002 and CC-002B, so a conflicting
+    field written as the string "true" or the number 1 would silently fail the boolean test and reclassify
+    a marked field as unmarked. Warn rather than fail because neither key is declared in the schema (OI-15)
+    and marker FORMAT is explicitly Tier 2 - this checks only the JSON type the predicate depends on.
+  rule_reference: RR3, INV4
+- id: SQS-001
+  description: Every non-null value carries a source_quote key.
+  category: source_quote_structure
+  target: record
+  applies_to: &id002
+    scope: parameters
+    where:
+      field: value
+      not_null: true
+  checks:
+  - check: field_present
+    params:
+      field: source_quote
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each declared path whose block has a non-null value, the key source_quote exists
+    on that block.
+  rationale: SQS1. This closes the most obvious way quote-what-you-read could be silently skipped - simply
+    not writing the field. Existence only; the string's truthfulness is out of scope and is a human review
+    step at promotion.
+  rule_reference: SQS1
+- id: SQS-002
+  description: source_quote is a non-empty string.
+  category: source_quote_structure
+  target: record
+  applies_to:
+    scope: parameters
+    only_if_field_present: source_quote
+  checks:
+  - check: field_is_json_type
+    params:
+      field: source_quote
+      json_type: string
+  - check: field_non_empty_string
+    params:
+      field: source_quote
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each block carrying a source_quote, the value is a JSON string and is not empty
+    or whitespace-only.
+  rationale: SQS2. An empty string satisfies a naive existence check while carrying nothing, which is
+    the shape a field takes when it is added to clear a validator rather than to record a quote.
+  rule_reference: SQS2
+- id: SQS-003
+  description: source_quote is at most 200 characters.
+  category: source_quote_structure
+  target: record
+  applies_to:
+    scope: parameters
+    only_if_field_present: source_quote
+  checks:
+  - check: string_max_length
+    params:
+      field: source_quote
+      max: 200
+      unit: characters
+  severity: fail
+  automatable: true
+  tolerance: N/A (structural) - the 200-character bound is exact, no grace
+  assertion_prose: For each block carrying a source_quote string, len(source_quote) <= 200, counting characters
+    not bytes.
+  rationale: SQS3. A bound keeps the field a QUOTE rather than a pasted page, which is what makes it checkable
+    by a human at promotion. Length is a structural property and says nothing about whether the quote
+    is real.
+  rule_reference: SQS3
+- id: SQS-004
+  description: source_quote is not identical to the source value.
+  category: source_quote_structure
+  target: record
+  applies_to:
+    scope: parameters
+    requires_fields:
+    - source
+    - source_quote
+  checks:
+  - check: fields_differ
+    params:
+      field_a: source_quote
+      field_b: source
+      normalize: strip
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each block carrying both source and source_quote, the two strings are not identical
+    after stripping leading and trailing whitespace.
+  rationale: SQS4. Copying the citation into the quote field is the cheapest way to satisfy SQS-001 and
+    SQS-002 without having read anything, and it is the single most likely mechanical evasion of the quote
+    requirement.
+  rule_reference: SQS4
+- id: SQS-005
+  description: A non-null value carries BOTH source and source_quote.
+  category: source_quote_structure
+  target: record
+  applies_to: *id002
+  checks:
+  - check: field_non_empty_string
+    params:
+      field: source
+  - check: field_non_empty_string
+    params:
+      field: source_quote
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each declared path whose block has a non-null value, both source and source_quote
+    exist and are non-empty strings. A non-null value missing either one fails.
+  rationale: SQS5. Deliberately overlaps SQS-001 and SC-004 - the overlap is the point, because it states
+    the pairing as one rule so a record cannot satisfy each half in isolation while leaving the pair incoherent.
+    Reported separately so a run shows whether the gap is quotes, citations, or both.
+  rule_reference: SQS5, RR1
+- id: SQS-006
+  description: Whether a source_quote is authentic, or actually supports the value it sits beside, cannot
+    be determined from the artifact.
+  category: source_quote_structure
+  target: human
+  checks:
+  - check: manual_review
+  severity: gap
+  automatable: false
+  tolerance: N/A
+  human_review: At promotion, a reviewer opens each cited source and confirms the quoted string appears
+    in it and supports the value recorded. Separately, a reviewer confirms whether the four class-typical
+    shipped constants are expected to carry source_quotes at all; if not, an explicit exemption belongs
+    in the requirements rather than a silent softening of SQS-001 and SQS-005.
+  assertion_prose: No automated assertion. Flagged for human review.
+  rationale: A structurally perfect source_quote can be fabricated wholesale, and nothing in the record
+    distinguishes a real quote from an invented one. Recorded as a test so this appears in every run report
+    rather than living only in a comment - a clean SQS-001 through SQS-005 sweep must never be read as
+    evidence the quotes are real. Also carries OI-12, the possible collision between SQS-001/SQS-005 and
+    INV12's shipped class-typical constants.
+  rule_reference: SQS1, SQS5, INV12
+- id: XF-001
+  description: The record's filename without extension equals its own entity_id.
+  category: cross_field
+  target: record
+  applies_to:
+    scope: record_root
+  checks:
+  - check: filename_matches_field
+    params:
+      field: entity_id
+      strip_extension: true
+      case_sensitive: true
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: basename(record_path) with the final extension stripped == record.entity_id, exact
+    case-sensitive string comparison.
+  rationale: The schema names this as the commonest stub-authoring error - copy an existing entity, rename
+    the file, forget the id inside. Written as pure self-consistency, with no id literal hardcoded, so
+    the rule survives a scope rename without a suite rewrite. The scope's declared id changed four times
+    and returned to its starting value (see OI-1), and this test needed no edit on any of them; XF-013
+    is what ties the record to the current declaration.
+  rule_reference: RR5, INV6
+- id: XF-008
+  description: No verified_on anywhere in the record is more than one day in the future.
+  category: cross_field
+  target: record
+  applies_to:
+    scope: recursive_key
+    key_name: verified_on
+  checks:
+  - check: date_not_future
+    params:
+      max_future_days: 1
+      absence_is_pass: true
+  severity: fail
+  automatable: true
+  tolerance: 1 day (86400 s) grace, per the rule's own wording; timezone-naive values compared as UTC
+    dates
+  assertion_prose: Walk the record recursively. For every key literally named verified_on at any depth,
+    parse the value as a date and assert it is not later than (validation_time + 1 day). ABSENCE OF verified_on
+    IS NOT A FAILURE - the rule fires only where the field is present.
+  rationale: The schema's verified_on_not_future rule, with its stated reasoning - a verification date
+    that has not happened yet is a data-entry fault, and treating it as fresh errs in the wrong direction.
+    Absence is explicitly tolerated because verified_on is stamped at promotion, not by research. Applied
+    location-agnostically because the schema never says where verified_on lives (OI-7). Time-relative
+    by design, so this test is not frozen in the way the others are.
+  rule_reference: RR5, INV7
+- id: XF-009
+  description: Every verified_on value present parses as a date.
+  category: cross_field
+  target: record
+  applies_to:
+    scope: recursive_key
+    key_name: verified_on
+  checks:
+  - check: date_parseable
+    params:
+      formats:
+      - iso8601-date
+      - iso8601-datetime
+      absence_is_pass: true
+  severity: warn
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For every verified_on key found by XF-008's walk, the value parses as an ISO-8601 date
+    or datetime.
+  rationale: The schema declares no date format anywhere (OI-10), so an unparseable value is flagged rather
+    than failed. It matters because an unparseable date silently SKIPS XF-008 - the future-date check
+    cannot fire on a string it cannot read, so a malformed date is a check that quietly does not run.
+  rule_reference: RR5, INV7
+- id: XF-010
+  description: segment_id is present, explicit, and non-empty.
+  category: cross_field
+  target: record
+  applies_to:
+    scope: record_root
+  checks:
+  - check: field_non_empty_string
+    params:
+      field: segment_id
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: record.segment_id exists at top level, is a non-empty string, and is not whitespace-only.
+  rationale: The schema requires attribution to be DECLARED rather than inferred from category, because
+    "UAS - Group 1 - Quadcopter" matches both the commercial and the defense segment and guessing between
+    them would silently misreport coverage. This entity sits on exactly that ambiguity - its category
+    is that literal string, and the coverage plan registers BOTH SEG-US-DEF-2020S-QUAD-G1 and SEG-US-COM-2020S-QUAD-G1
+    under it, differing only in declared attribution. Note what this test does and does not do - it checks
+    that a segment is declared, never that the declared segment is the right one. See XF-016.
+  rule_reference: RR5, INV8
+- id: XF-011
+  description: segment_id is not reconstructed from category by the validator or any tooling.
+  category: cross_field
+  target: tooling
+  checks:
+  - check: manual_review
+  severity: gap
+  automatable: false
+  tolerance: N/A
+  human_review: Reviewer inspects catalog.py and any record-authoring tooling to confirm no default or
+    inference is applied to segment_id.
+  assertion_prose: No code path in the validation tooling assigns, defaults, or infers segment_id when
+    it is absent. Absence produces a failure, never a substitution.
+  rationale: INV8 says segment_id is never inferred. Presence alone (XF-010) does not establish that -
+    a helpful default filled in upstream would satisfy XF-010 while destroying exactly the distinction
+    the schema wrote the rule to preserve. This is a property of the tooling, checkable by inspection.
+  rule_reference: INV8, RR5
+- id: XF-013
+  description: The record's declared identity matches the suite's ENTITY_SCOPE.
+  category: cross_field
+  target: record
+  applies_to:
+    scope: record_root
+  checks:
+  - check: equals_scope
+    params:
+      field: entity_id
+      scope_key: entity_id
+  - check: equals_scope
+    params:
+      field: entity
+      scope_key: entity
+  - check: equals_scope
+    params:
+      field: category
+      scope_key: category
+  - check: equals_scope
+    params:
+      field: segment_id
+      scope_key: segment_id
+  - check: equals_schema
+    params:
+      field: schema_version
+      schema_key: schema_version
+  - check: field_matches_regex
+    params:
+      field: entity_id
+      regex: ^\S+$
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: record.entity_id, record.entity, record.category and record.segment_id each equal the
+    corresponding ENTITY_SCOPE value recorded in this suite's header. schema_version equals SCHEMA.schema_version.
+    entity_id contains no whitespace.
+  rationale: XF-001 proves the record agrees with its own filename, which an entirely wrong record would
+    also satisfy. This is the test that ties the artifact to the scope it was commissioned under, and
+    it is the only place a scope literal appears in an assertion. That is a deliberate exception to the
+    no-hardcoding rule - these four strings are the SCOPE DEFINITION, not data copied from a populated
+    record, and the suite was authored without ever opening one. Confining scope literals to this one
+    test is what let four identity changes (A-1, A-3, A-4) land as header edits rather than suite rewrites.
+    NOTE - this test enforces that the record matches the DECLARED scope; it cannot tell whether the declared
+    scope is itself correct. For entity_id that residue is XF-014, for segment_id it is XF-016.
+  rule_reference: RR5, RR6, INV6, INV8
+- id: XF-014
+  description: Whether the record's values were sourced from the declared configuration cannot be determined
+    from the artifact.
+  category: cross_field
+  target: human
+  checks:
+  - check: manual_review
+  severity: gap
+  automatable: false
+  tolerance: N/A
+  human_review: A reviewer confirms that the mass, battery, and performance figures were taken from sources
+    describing the X2D in standard configuration on the stock battery, and that any X2E or alternate-configuration
+    source was recorded as a conflict rather than used as a fill. Any value populated during the X2DENTERPRISE
+    or X2E windows must be re-confirmed against X2D sources rather than assumed to carry across. Until
+    done, no figure from this record should be quoted.
+  assertion_prose: No automated assertion. Flagged for human review.
+  rationale: The scope declares the record represents the X2D in standard configuration on the stock battery,
+    and that X2E, alternate-payload, or non-standard-battery sources are CONFLICTS rather than fills.
+    Detecting that requires reading the source behind each value, which is out of scope twice over - factual
+    accuracy, and Tier 2 conflict structure. Every test here is self-consistent, so a record populated
+    entirely from X2E sources passes all of them. Four identity changes RAISE this risk rather than lowering
+    it - any figure researched during the X2DENTERPRISE or X2E windows is a wrong-aircraft value unless
+    re-confirmed against X2D sources, and nothing here can detect one that was carried across.
+  rule_reference: RR5, INV6
+- id: XF-015
+  description: The entity display name and entity_id are not mutually contradictory.
+  category: cross_field
+  target: record
+  applies_to:
+    scope: record_root
+  checks:
+  - check: identity_consistency
+    params:
+      field_a: entity
+      field_b: entity_id
+      normalize: uppercase_alnum_only
+      qualifier_tokens:
+      - ENTERPRISE
+      - PRO
+      - PLUS
+      - LITE
+      - MAX
+      - SE
+      - PLATFORM
+  severity: warn
+  automatable: true
+  tolerance: N/A
+  assertion_prose: Normalise record.entity and record.entity_id by uppercasing and stripping all non-alphanumeric
+    characters. Warn if neither normalised string contains the other as a substring, or if one carries
+    a variant qualifier token (ENTERPRISE, PRO, PLUS, LITE, MAX, SE, PLATFORM) that the other lacks.
+  rationale: NOT SCHEMA-BACKED - the schema declares no relationship between entity and entity_id, which
+    is why this is warn and not fail. Added at A-1, when entity_id moved to the Enterprise variant while
+    the display name had not, producing a record whose two identity fields disagreed with nothing looking
+    at both. At v2.0.0 the scope declares both, so XF-013 now covers the exact-match case and this test
+    remains as the general consistency guard. Not evidence about which configuration the numbers describe
+    - that is XF-014.
+  rule_reference: RR5, RR6
+- id: XF-016
+  description: Whether the declared segment_id is the correct segment for this entity cannot be determined
+    from the artifact.
+  category: cross_field
+  target: human
+  checks:
+  - check: manual_review
+  severity: gap
+  automatable: false
+  tolerance: N/A
+  human_review: At promotion, a reviewer confirms the declared segment still matches the entity's variant
+    - for the X2D, SEG-US-DEF-2020S-QUAD-G1 ("Group 1 quadcopter, defense", Blue UAS list platforms, planned
+    count 3) rather than SEG-US-COM-2020S-QUAD-G1 ("Group 1 quadcopter, commercial", planned count 4).
+    Currently corroborated. Re-check on any future change to the entity's variant, since that is what
+    invalidated it at v2.1.0.
+  assertion_prose: No automated assertion. Flagged for human review.
+  rationale: XF-010 checks a segment is declared and XF-013 checks it matches this suite's scope, but
+    neither can check the scope is right - if the header names the wrong segment, every run agrees with
+    it. A wrong segment_id produces no finding anywhere in this suite and silently miscounts two segments
+    at once, since the coverage plan registers both a defense and a commercial segment under the identical
+    category string. As of v2.2.0 the declared attribution is CORROBORATED - the X2D is the defense variant
+    and the declared segment is the defense segment - so this is a standing check rather than a live contradiction.
+    It was a live contradiction at v2.1.0 (OI-16), which is why it stays on the report.
+  rule_reference: RR5, INV8
+- id: TL-001
+  description: All six always-required top-level keys are present.
+  category: top_level_keys
+  target: record
+  applies_to:
+    scope: record_root
+    keys_ref: CORE_TOP_LEVEL_KEYS
+  checks:
+  - check: keys_present
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each key in CORE_TOP_LEVEL_KEYS - entity, entity_id, category, segment_id, schema_version,
+    readiness_declared - the key exists at the top level of the record.
+  rationale: RR6 and INV9, scoped to the keys that exist independently of promotion. The full list is
+    read from the schema rather than transcribed, then compiled_on and compiled_by are subtracted per
+    RR6's pre-promotion caveat and handled by TL-001B.
+  rule_reference: RR6, INV9
+- id: TL-001B
+  description: Absence of the promotion-stamped keys is reported, not failed.
+  category: top_level_keys
+  target: record
+  applies_to:
+    scope: record_root
+    keys_ref: PROMOTION_STAMPED_KEYS
+  checks:
+  - check: keys_present
+    params:
+      on_absent_message: record is not promotion-ready
+  severity: info
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each key in PROMOTION_STAMPED_KEYS - compiled_on, compiled_by - if the key is absent,
+    emit an informational finding stating the record is not promotion-ready. Do not fail, and do not describe
+    the absence as a defect.
+  rationale: RR6 and INV9 state these are stamped at promotion rather than written by the research agent,
+    so their absence in a pre-promotion draft is expected. Info severity rather than warn is deliberate
+    - a warning on a correctly-authored draft trains authors to ignore warnings. What the record cannot
+    do without them is be promoted, which is what the finding says.
+  rule_reference: RR6, INV9
+- id: TL-002
+  description: No required top-level key that is present is null or empty.
+  category: top_level_keys
+  target: record
+  applies_to:
+    scope: record_root
+    keys_ref: REQUIRED_TOP_LEVEL_KEYS
+    only_present_keys: true
+  checks:
+  - check: field_not_null
+  - check: field_non_empty_string
+    when: is_string
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each key in REQUIRED_TOP_LEVEL_KEYS that EXISTS in the record, the value is not
+    null, and if a string is not empty or whitespace-only. Applies to compiled_on and compiled_by only
+    when they are present.
+  rationale: INV9 requires present AND non-null. A key present with an empty string satisfies a naive
+    presence check while carrying no information - the common shape of a stub copied and half-filled.
+    Scoped to present keys so it does not re-fail what TL-001B has already handled as informational.
+  rule_reference: RR6, INV9
+- id: TL-003
+  description: readiness_declared is one of the schema's declared tiers.
+  category: top_level_keys
+  target: record
+  applies_to:
+    scope: record_root
+  checks:
+  - check: field_in_enum
+    params:
+      field: readiness_declared
+      enum_ref: READINESS_TIERS
+      allow_absent: false
+      case_sensitive: true
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: record.readiness_declared is a member of READINESS_TIERS {R0, R1, R2, R3}. Case-sensitive
+    exact match.
+  rationale: An unrecognised tier string defeats every tier-gated test in this suite - CC-002, CC-002B,
+    CC-002C, CC-007, KC-003, TL-008 and RT-002 through RT-004 all branch on this value and would silently
+    skip on a value matching no branch.
+  rule_reference: RR6, RR8, INV10
+- id: TL-004
+  description: schema_version matches the schema the record is validated against.
+  category: top_level_keys
+  target: record
+  applies_to:
+    scope: record_root
+  checks:
+  - check: equals_schema
+    params:
+      field: schema_version
+      schema_key: schema_version
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: record.schema_version == SCHEMA.schema_version.
+  rationale: Validating a 2.x record against the 3.0 requirement list produces confident-looking results
+    about the wrong requirements. The schema file is a static input, not a runtime dependency.
+  rule_reference: RR6
+- id: TL-005
+  description: compiled_on, when present, parses as a date and is not more than one day in the future.
+  category: top_level_keys
+  target: record
+  applies_to:
+    scope: record_root
+  checks:
+  - check: date_parseable
+    params:
+      field: compiled_on
+      absence_is_pass: true
+  - check: date_not_future
+    params:
+      field: compiled_on
+      max_future_days: 1
+      absence_is_pass: true
+  severity: warn
+  automatable: true
+  tolerance: 1 day (86400 s), mirroring the verified_on rule
+  assertion_prose: If record.compiled_on exists, it parses as an ISO-8601 date or datetime and is not
+    later than (validation_time + 1 day).
+  rationale: The schema's future-date rule names verified_on specifically and says nothing about compiled_on,
+    and declares no date format for either (OI-10). Warn-level for that reason. The same reasoning applies
+    though - a compile date that has not happened yet is a data-entry fault. Conditional on presence per
+    the RR6 pre-promotion caveat.
+  rule_reference: RR6, INV7, INV9
+- id: TL-006
+  description: Present top-level identity keys carry declared content, not placeholders.
+  category: top_level_keys
+  target: record
+  applies_to:
+    scope: record_root
+    keys:
+    - compiled_by
+    - segment_id
+    only_present_keys: true
+  checks:
+  - check: field_not_in_denylist
+    params:
+      denylist:
+      - ''
+      - TBD
+      - TODO
+      - unknown
+      - N/A
+      - '-'
+      - auto
+      - default
+      case_insensitive: true
+  severity: warn
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For record.compiled_by and record.segment_id, where present - the value is a non-empty
+    string and does not equal a placeholder token ("TBD", "TODO", "unknown", "N/A", "-", "auto", "default").
+  rationale: The schema declares no type or vocabulary for either (OI-10), so no format is asserted. The
+    placeholder check is the only content assertion defensible from the schema alone - a placeholder is
+    an admission the field was not filled, wearing the shape of a filled field. For segment_id this matters
+    doubly, since INV8 requires the attribution be declared rather than defaulted.
+  rule_reference: RR6, INV8, INV9
+- id: TL-007
+  description: No required top-level key is duplicated or shadowed by a nested key of the same name.
+  category: top_level_keys
+  target: record
+  applies_to:
+    scope: record_root
+    keys_ref: REQUIRED_TOP_LEVEL_KEYS
+  checks:
+  - check: keys_unique_at_top_level
+    params:
+      forbid_nested_resolution: true
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: Each key in REQUIRED_TOP_LEVEL_KEYS appears at most once at the top level. A key of
+    the same name nested deeper is permitted but is never read in place of the top-level one by any test
+    in this suite.
+  rationale: Guards a reader bug rather than an authoring bug - a validator resolving entity_id or segment_id
+    by recursive search rather than top-level lookup will find a nested one and report on the wrong value.
+    INV8's never-inferred covers substitution by inference; this covers substitution by lookup.
+  rule_reference: RR6, INV8, INV9
+- id: TL-008
+  description: A record lacking promotion stamps does not declare a promoted tier.
+  category: top_level_keys
+  target: record
+  applies_to:
+    scope: record_root
+  checks:
+  - check: implies
+    params:
+      if_:
+        any_key_absent:
+        - compiled_on
+        - compiled_by
+      then:
+        field: readiness_declared
+        not_in:
+        - R2
+        - R3
+  severity: warn
+  automatable: true
+  tolerance: N/A
+  assertion_prose: If either compiled_on or compiled_by is absent, and readiness_declared is in {R2, R3},
+    emit a warning naming both facts.
+  rationale: RR6 says a record is not promotion-ready until the stamps are present, and the schema's R2
+    and R3 are the tiers whose output is unstamped or quotable respectively. A record claiming either
+    while missing the promotion metadata is incoherent in one of two ways - a draft over-claiming, or
+    a promoted record that lost its stamps - and the two need different fixes. Warn and not fail because
+    the prompt does not state whether a draft may declare R2+ (OI-14), and asserting either way would
+    invent a rule.
+  rule_reference: RR6, INV9, INV10, RR8
+- id: VT-001
+  description: A value declared number is a JSON number.
+  category: value_type
+  target: record
+  applies_to:
+    scope: parameters
+    shape: present_shape
+    value_types:
+    - number
+  checks:
+  - check: value_type_matches_declaration
+    params:
+      json_types:
+      - integer
+      - float
+      exclude_boolean: true
+      reject_numeric_strings: true
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each present-shape path whose schema value_type is "number", the value is a JSON
+    int or float and is NOT a boolean. Numeric strings fail.
+  rationale: RR7 and INV11. The boolean exclusion is explicit because in several JSON parsers, including
+    Python's, true is an instance of int and would pass a naive numeric check. A numeric string fails
+    because downstream arithmetic on it either throws or silently concatenates.
+  rule_reference: RR7, INV11
+- id: VT-002
+  description: A value declared integer is a JSON integer with no fractional part.
+  category: value_type
+  target: record
+  applies_to:
+    scope: parameters
+    shape: present_shape
+    value_types:
+    - integer
+  checks:
+  - check: value_type_matches_declaration
+    params:
+      json_types:
+      - integer
+      exclude_boolean: true
+      allow_float_with_zero_fraction: true
+  severity: fail
+  automatable: true
+  tolerance: exact - fractional part must be 0, no epsilon allowed
+  assertion_prose: For each present-shape path whose schema value_type is "integer", the value is an integer,
+    is not a boolean, and if expressed as a float has a zero fractional part.
+  rationale: rotor_count is REQUIRED_MEASURED and integer-typed; a rotor_count of 4.0 is harmless and
+    a rotor_count of 3.8 is a corrupted record that would silently propagate into disk area.
+  rule_reference: RR7, INV11
+- id: VT-003
+  description: A value declared string is a JSON string.
+  category: value_type
+  target: record
+  applies_to:
+    scope: parameters
+    shape: present_shape
+    value_types:
+    - string
+  checks:
+  - check: value_type_matches_declaration
+    params:
+      json_types:
+      - string
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each present-shape path whose schema value_type is "string", the value is a JSON
+    string.
+  rationale: RR7 and INV11, applied to the string-typed declared parameters.
+  rule_reference: RR7, INV11
+- id: VT-004
+  description: A value declared object is a JSON object.
+  category: value_type
+  target: record
+  applies_to:
+    scope: parameters
+    shape: present_shape
+    value_types:
+    - object
+  checks:
+  - check: value_type_matches_declaration
+    params:
+      json_types:
+      - object
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each present-shape path whose schema value_type is "object", the value is a JSON
+    object (mapping), not an array or scalar.
+  rationale: RR7 and INV11. The schema declares no internal shape for these objects either, so no key
+    names are asserted - container type only.
+  rule_reference: RR7, INV11
+- id: VT-005
+  description: A value declared range is a non-null structured container.
+  category: value_type
+  target: record
+  applies_to:
+    scope: parameters
+    shape: present_shape
+    value_types:
+    - range
+  checks:
+  - check: value_type_matches_declaration
+    params:
+      json_types:
+      - object
+      - array
+      assert_internal_shape: false
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each present-shape path whose schema value_type is "range", the value is non-null
+    and is a JSON object or array. NO assertion is made about key names, element count, ordering, or that
+    any low bound is below any high bound.
+  rationale: The schema declares value_type range but never defines its internal structure (OI-4). Asserting
+    a shape here would freeze a guess into the suite and would fail a correctly-authored record that chose
+    the other convention. Container type is the strongest claim the artifact supports.
+  rule_reference: RR7, INV11
+- id: VT-005B
+  description: The internal shape of range-typed values is undefined in the schema.
+  category: value_type
+  target: human
+  checks:
+  - check: manual_review
+  severity: gap
+  automatable: false
+  tolerance: N/A
+  human_review: A reviewer or a schema amendment defines the range shape - key names or array convention,
+    and whether ordering is enforced. Until then, any consumer of a range value must handle both conventions.
+  assertion_prose: No automated assertion beyond VT-005. Flagged for human review.
+  rationale: OI-4. Both range-typed parameters (observed_flight_time_min, observed_hover_time_min) are
+    OPTIONAL, so this gap is low-consequence today, but it becomes load-bearing the moment either is used
+    as an independent reality check on a vendor figure. Recorded as a test so it surfaces in every run.
+  rule_reference: RR7, INV11
+- id: VT-006
+  description: Value-type checks are applied only where a value exists.
+  category: value_type
+  target: suite
+  checks:
+  - check: suite_invariant
+    params:
+      requirement: VT-001..VT-005 evaluate only blocks in present_shape; a null under status missing or
+        not_applicable produces no value_type finding
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: VT-001 through VT-005 are evaluated only for paths in present-shape. A null value under
+    status missing or not_applicable produces no value_type finding.
+  rationale: RR7 says when present. Without this guard, every declared gap would produce a spurious type
+    failure, which trains readers to ignore the type findings.
+  rule_reference: RR7, INV11, RR1
+- id: VT-007
+  description: A unit, where recorded on a parameter, matches the unit the schema declares for that path.
+  category: value_type
+  target: record
+  applies_to:
+    scope: parameters
+    shape: present_shape
+    only_if_field_present: unit
+  checks:
+  - check: equals_schema_attribute
+    params:
+      field: unit
+      schema_attribute: unit
+  severity: warn
+  automatable: true
+  tolerance: N/A
+  assertion_prose: For each present-shape path where the record carries a unit key, the recorded unit
+    string equals UNIT_OF[path].
+  rationale: A value_type match alone does not catch a mass recorded in grams under a kg-declared path
+    - both are numbers. Warn-level because the schema declares units on parameters but does not state
+    a record must echo them, and because unit-pairing correctness is explicitly Tier 2 and out of scope.
+    This asserts only equality with the schema's own declaration, not any Tier 2 convention.
+  rule_reference: RR7
+- id: RT-001
+  description: readiness_declared is a recognised tier.
+  category: readiness_tier
+  target: record
+  applies_to:
+    scope: record_root
+  checks:
+  - check: field_in_enum
+    params:
+      field: readiness_declared
+      enum_ref: READINESS_TIERS
+      allow_absent: false
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: record.readiness_declared is in READINESS_TIERS. Duplicate of TL-003, retained here
+    because every subsequent RT test presupposes it.
+  rationale: RR8 and INV10. Listed twice deliberately - a reader auditing the readiness section should
+    not have to know the check lives under top_level_keys.
+  rule_reference: RR8, INV10
+- id: RT-002
+  description: A record declaring R1 or above has zero schema errors and every REQUIRED_MEASURED and REQUIRED_MODELING
+    path present as a key.
+  category: readiness_tier
+  target: record
+  condition:
+    readiness_declared_in:
+    - R1
+    - R2
+    - R3
+  applies_to:
+    scope: record_root
+  checks:
+  - check: tier_gate
+    params:
+      tier: R1
+      requires_no_fail_in:
+      - status_coherence
+      - key_coverage
+      - value_type
+      - top_level_keys
+      requires_pass:
+      - KC-001
+      - KC-002
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: If readiness_declared is in {R1, R2, R3}, then no fail-level finding exists from any
+    status_coherence, key_coverage, value_type, or top_level_keys test, and KC-001 and KC-002 both pass.
+  rationale: The schema's R1 definition. Uses the key-existence reading of present, which both readings
+    of OI-6 agree on, so this is safe as fail-level.
+  rule_reference: RR8, INV10
+- id: RT-002B
+  description: At R1, a REQUIRED_MEASURED or REQUIRED_MODELING path sitting at status missing is flagged.
+  category: readiness_tier
+  target: record
+  condition:
+    readiness_declared_in:
+    - R1
+  applies_to:
+    scope: parameters
+    requirement_class:
+    - REQUIRED_MEASURED
+    - REQUIRED_MODELING
+    statuses:
+    - missing
+  checks:
+  - check: emit_finding
+    params:
+      message: REQUIRED path at status missing while R1 is declared
+  severity: warn
+  automatable: true
+  tolerance: N/A
+  assertion_prose: If readiness_declared == "R1", emit a warning for each REQUIRED_MEASURED or REQUIRED_MODELING
+    path whose status is missing, naming the path. Do not fail.
+  rationale: The stricter reading of R1's present (OI-6). Warn-level because INV12 explicitly anticipates
+    the five airframe-specific paths moving from missing to sourced, which only makes sense if missing
+    is survivable at some tier. The warning keeps the count visible without ratifying either reading.
+  rule_reference: RR8, INV10, INV12
+- id: RT-003
+  description: A record declaring R2 or above satisfies the four R2 conditions this suite can evaluate.
+  category: readiness_tier
+  target: record
+  condition:
+    readiness_declared_in:
+    - R2
+    - R3
+  applies_to:
+    scope: record_root
+  checks:
+  - check: tier_gate
+    params:
+      tier: R2
+      requires_pass:
+      - RT-002
+      - CC-002C
+      - XF-008
+      requires_all_present_blocks_have:
+      - source
+      unevaluated_clauses:
+      - calibration block internally coherent
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: If at_or_above_R2, then all of - RT-002 passes; CC-002C passes; every present-shape
+    parameter regardless of class carries a non-empty source; XF-008 passes. The fifth R2 clause, that
+    the calibration block is internally coherent, is NOT evaluated and its absence from this list is deliberate.
+  rationale: The schema's R2 definition decomposed into its stated clauses. Four of the five are machine-checkable
+    from the artifact, which is why those are fail-level with no carve-outs. The fifth is excluded because
+    calibration is out of scope for this run by direction - see OI-13. A PASS here is therefore not a
+    complete R2 verification.
+  rule_reference: RR8, INV10, INV7
+- id: RT-004
+  description: A record declaring R3 has complete REQUIRED_FOR_OPERATIONAL coverage.
+  category: readiness_tier
+  target: record
+  condition:
+    readiness_declared_in:
+    - R3
+  applies_to:
+    scope: record_root
+  checks:
+  - check: tier_gate
+    params:
+      tier: R3
+      requires_pass:
+      - RT-003
+      - KC-003
+      unevaluated_clauses:
+      - at least two held-out anchors present and scorable
+      - oldest verified_on within the staleness limit
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: If readiness_declared == "R3", then RT-003 passes and KC-003 passes. The held-out-anchor
+    clause and the staleness clause of R3 are NOT evaluated.
+  rationale: One of the three clauses of the schema's R3 definition. The anchor clause is excluded because
+    calibration is out of scope (OI-13); the staleness clause is excluded because the schema defines no
+    limit (OI-5). Passing RT-004 establishes only that the single decidable condition holds, and must
+    NOT be read as an R3 grant. RT-010 exists to keep that shortfall visible.
+  rule_reference: RR8, INV10
+- id: RT-005
+  description: The R3 staleness limit is not defined and cannot be checked.
+  category: readiness_tier
+  target: human
+  checks:
+  - check: manual_review
+  severity: gap
+  automatable: false
+  tolerance: N/A
+  human_review: The staleness limit must be defined in the schema file. Until then, a reviewer manually
+    inspects the oldest verified_on and judges freshness.
+  assertion_prose: No automated assertion. EXPLICIT GAP.
+  rationale: OI-5. The R3 tier requires the oldest verified_on to be within the staleness limit, and entity_schema_3.0.json
+    defines no such limit. This suite does not invent one, because a guessed limit would either fail fresh
+    records or pass stale ones, and either way would present a judgement as a validation result.
+  rule_reference: RR8, INV10
+- id: RT-006
+  description: readiness_declared does not exceed the tier the record's actual fill state supports.
+  category: readiness_tier
+  target: record
+  applies_to:
+    scope: record_root
+  checks:
+  - check: tier_not_over_declared
+    params:
+      compute_from:
+      - RT-002
+      - RT-003
+      - RT-004
+      qualify_labels:
+        R2: R2 (calibration clause unevaluated)
+        R3: R3 (anchor and staleness clauses unevaluated)
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: Compute the highest tier the record satisfies from RT-002, RT-003 and RT-004. Fail
+    if readiness_declared is higher than the computed tier. A computed R2 is reported as "R2 (calibration
+    clause unevaluated)" and a computed R3 as "R3 (anchor and staleness clauses unevaluated)", never as
+    a clean grant.
+  rationale: This is INV10's core. Over-declaration is the consequential direction - it strips the PROVISIONAL
+    banner from output, or promotes a record to quotable planning product, on the strength of a self-assessment
+    nothing checked. The qualified labels exist because after A-2 the computation is incomplete at both
+    R2 and R3, and a bare tier string would hide that.
+  rule_reference: INV10, RR8
+- id: RT-007
+  description: Under-declaration is reported but does not fail.
+  category: readiness_tier
+  target: record
+  applies_to:
+    scope: record_root
+  checks:
+  - check: tier_not_under_declared
+  severity: warn
+  automatable: true
+  tolerance: N/A
+  assertion_prose: If the computed tier is higher than readiness_declared, emit a warning naming both.
+    Do not fail.
+  rationale: A record better than it claims is not a defect - it may be a deliberate hold pending review,
+    which the coverage plan's own note about this segment anticipates. Worth surfacing so work already
+    done is not repeated, but failing it would pressure authors to declare upward, inverting the incentive
+    INV10 exists to protect.
+  rule_reference: INV10, RR8
+- id: RT-008
+  description: A record that fails any R1 condition declares R0.
+  category: readiness_tier
+  target: record
+  applies_to:
+    scope: record_root
+  checks:
+  - check: implies
+    params:
+      if_:
+        any_fail_in_categories:
+        - status_coherence
+        - key_coverage
+        - top_level_keys
+        - value_type
+        - cross_field
+        - source_quote_structure
+      then:
+        field: readiness_declared
+        equals: R0
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: If any fail-level finding exists from the status_coherence, key_coverage, top_level_keys,
+    value_type, cross_field, or source_quote_structure categories, then readiness_declared == "R0".
+  rationale: The schema's R0 definition - below R1 the gate REFUSES, because a required input is absent.
+    The same rule as RT-006 stated from the bottom, worth stating separately because R0 is the tier an
+    author is least likely to declare voluntarily. Note this now includes source_quote_structure failures,
+    which is a real tightening at v2.0.0.
+  rule_reference: RR8, INV10
+- id: RT-009
+  description: The tier computation reads only the record and the schema.
+  category: readiness_tier
+  target: tooling
+  checks:
+  - check: manual_review
+  severity: gap
+  automatable: false
+  tolerance: N/A
+  assertion_prose: The computed tier is a pure function of the record file, the schema file, and validation_time
+    (used solely by XF-008 and TL-005). It consumes no research-agent output, no network resource, no
+    other entity record, and no instruction set.
+  rationale: A tier is a claim about one artifact's state. If the computation could reach outside the
+    artifact, the same record would score differently in different environments, and a frozen suite would
+    stop being frozen. validation_time is the one admitted external input, confined to the two future-date
+    tests, which are time-relative by their own rule's design.
+  rule_reference: RR8, INV10
+  human_review: Reviewer inspects the runner to confirm the tier computation reads only the record file,
+    the schema file, and validation_time - no network, no other entity record, no research-agent output,
+    no instruction set.
+- id: RT-010
+  description: R2 and R3 cannot be fully verified by this suite, and every run report says so.
+  category: readiness_tier
+  target: report
+  checks:
+  - check: report_contract
+    params:
+      requirement: when readiness_declared is R2 or R3, the report names the unevaluated tier clauses
+        and does not present the tier as verified
+  severity: fail
+  automatable: true
+  tolerance: N/A
+  assertion_prose: The validation report states, whenever readiness_declared is R2 or R3, which tier clauses
+    were not evaluated - for R2, calibration coherence; for R3, held-out anchors and staleness. The report
+    must not present a tier as verified while these clauses are unevaluated.
+  rationale: OI-13 and OI-5. Excluding calibration from this run means the schema's R2 definition is checked
+    on four of five clauses and R3 on one of three. That shortfall is invisible in a green run unless
+    something states it, and a green run is exactly when someone decides the record is quotable. This
+    test exists to make the shortfall a line item rather than a footnote.
+  rule_reference: RR8, INV10
+closing_report:
+  tests_per_category:
+    confidence_class: 13
+    cross_field: 9
+    key_coverage: 7
+    readiness_tier: 11
+    source_quote_structure: 6
+    status_coherence: 14
+    top_level_keys: 9
+    value_type: 8
+    TOTAL: 77
+  severity_breakdown:
+    fail: 54
+    warn: 14
+    info: 1
+    gap: 8
+    _note: Regenerated programmatically from the tests block at v3.0.0, not transcribed. RT-009 moved
+      fail->gap; see amendment A-5.
+  automatable_false: 9
+  automatable_false_ids:
+  - CC-008
+  - KC-003B
+  - RT-005
+  - RT-009
+  - SQS-006
+  - VT-005B
+  - XF-011
+  - XF-014
+  - XF-016
+  open_gaps_not_closed:
+  - gap: R3 staleness limit
+    ref: OI-5, RT-005
+    why: entity_schema_3.0.json defines no limit - no number, no unit, no reference. Verified directly
+      at v2.0.0.
+    consequence: R3 cannot be granted by this suite on the freshness dimension at all.
+  - gap: range-type internal shape
+    ref: OI-4, VT-005B
+    why: The schema declares value_type range for two parameters and never defines its structure.
+    consequence: VT-005 can assert container type only. Both affected parameters are OPTIONAL, so low
+      consequence today.
+  - gap: pre-promotion metadata absence
+    ref: OI-10, OI-14, TL-001B, TL-008
+    why: compiled_on and compiled_by are stamped at promotion, but nothing in the record distinguishes
+      a legitimate pre-promotion draft from a promoted record that lost its stamps.
+    consequence: TL-001B reports absence at info severity and cannot tell the two cases apart. TL-008
+      catches only the incoherent combination of missing stamps plus a declared R2/R3.
+  - gap: R2 and R3 partially unverifiable after calibration exclusion
+    ref: OI-13, RT-003, RT-004, RT-010
+    why: The schema's R2 definition includes calibration coherence and its R3 definition includes held-out
+      anchors; both are out of scope for this run by direction.
+    consequence: R2 verified on 4 of 5 clauses, R3 on 1 of 3. Seven v1.1.0 tests were removed, including
+      XF-005, which caught an anchor being used to both fit and test a parameter - the failure mode that
+      produces a validation result looking like a successful fit while the model reproduces its own input.
+  - gap: RR3 escalation-marker clause has no operative effect at R1
+    ref: OI-11, CC-002, CC-002B
+    why: RR3's "ONLY IF" phrasing implies an unmarked field hard-fails at R1, but the following sentence
+      states it is a warning at R1, and the R2 clause fails both cases regardless.
+    consequence: Implemented per the later, unambiguous sentence - warn either way at R1, under distinct
+      finding codes. If strictness was intended, CC-002B must be raised to fail and this suite is currently
+      under-strict at R1.
+  - gap: SQS versus INV12 shipped constants
+    ref: OI-12, SQS-006
+    why: SQS1 and SQS5 require a source_quote for every non-null value; INV12 says the four class-typical
+      constants are shipped pre-populated and not re-researched.
+    consequence: If those constants ship without source_quotes, every catalog record fails SQS-001 and
+      SQS-005 on four paths for reasons unrelated to the author's work. Implemented without a carve-out,
+      as specified, and flagged.
+  - gap: source_quote and conflicting are not schema-declared
+    ref: OI-15
+    why: Verified directly - neither string appears anywhere in entity_schema_3.0.json.
+    consequence: The six SQS tests and CC-010 test fields catalog.py does not know about. A SQS failure
+      is a requirements failure, not a schema-conformance failure, and the two should not be reported
+      as the same thing.
+  - gap: air_density_kg_m3 unclassified by RR4
+    ref: OI-2, CC-009
+    why: RR4 enumerates nine REQUIRED_MODELING paths; the schema declares ten.
+    consequence: The tenth is checked under the generic REQUIRED_MODELING rule only, at warn level.
+  - gap: segment attribution is asserted, never verified
+    ref: XF-016 (OI-16 closed at v2.2.0)
+    why: 'The suite asserts the segment recorded in its header. It cannot check that header value is right,
+      and the coverage plan registers both a defense and a commercial segment under the identical category
+      string "UAS - Group 1 - Quadcopter".
+
+      '
+    consequence: 'A wrong segment_id fails no test here - it passes XF-010, XF-013 and TL-006 - and miscounts
+      two segments at once. Not currently live: at v2.2.0 the X2D (defense variant) and SEG-US-DEF-2020S-QUAD-G1
+      (defense segment) agree, so this is a standing check. It WAS live at v2.1.0, which is the evidence
+      that a variant change can invalidate it silently.
+
+      '
+  - gap: configuration provenance
+    ref: OI-1, XF-014
+    why: The scope declares the record represents the X2D in standard configuration on the stock battery,
+      and that X2E or alternate-configuration sources are conflicts rather than fills. Detecting that
+      requires reading the source behind a value.
+    consequence: 'A record populated entirely from X2E sources passes every test in this suite. Sharpened
+      by four identity changes - any value researched during the X2DENTERPRISE or X2E windows is a wrong-aircraft
+      value unless re-confirmed against X2D sources. Human review at promotion is the only control.
+
+      '
+  tests_per_target:
+    human: 7
+    record: 62
+    report: 3
+    suite: 3
+    tooling: 2
+  runner_executable_count: 62
+  runner_executable_note: 62 tests target the record and are directly executable. 3 target the runner
+    report, 3 lint this suite, 2 require source inspection, 7 are human review at promotion.
+explicitly_out_of_scope:
+- Whether any sourced value is factually correct. A record can pass every test above and state the wrong
+  mass.
+- Whether a source_quote is authentic, real, or supports the value it sits beside. Only its structural
+  shape is tested. See SQS-006.
+- Whether a cited source actually supports the value cited to it. SC-004, CC-004, CC-005 and CC-005B check
+  that a source or note string EXISTS and is non-empty. None reads it.
+- Whether the aerodynamic_assumptions literature values are the right modelling choices. CC-003 and CC-004
+  confirm they carry an acceptable confidence tier and a source. The choice is not graded.
+- CALIBRATION, entirely - presence, block structure, anchor existence, fitted-versus-held-out separation,
+  and fit accuracy. Out of scope for this run by direction. See OI-13.
+- Tier 2 conventions - conflict structure, source quote authenticity, unit-pairing correctness, conditions
+  blocks, escalation marker format, source budgets.
+- Whether the record's values came from sources describing the declared configuration - i.e. the X2D rather
+  than the X2E. See OI-1 and XF-014.
+- Whether the declared segment_id is the correct segment for this entity. The suite checks a segment is
+  declared and matches the scope, never that the scope is right. See OI-16 and XF-016.
+- R3 staleness. See OI-5 and RT-005.

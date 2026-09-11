@@ -1,0 +1,2000 @@
+{
+  "record_path": "C:\\Users\\black\\Documents\\AirSim_Scripts_Claude\\catalog\\entities\\UAS-QUAD-SKYDIO-X2D.json",
+  "schema_path": "C:\\Users\\black\\Documents\\AirSim_Scripts_Claude\\catalog\\schema\\entity_schema_3.0.json",
+  "suite_path": "C:\\Users\\black\\Documents\\AirSim_Scripts_Claude\\catalog\\tests\\validation_suite_UAS-QUAD-SKYDIO-X2D.yaml",
+  "suite_id": "VS-UAS-QUAD-SKYDIO-X2D-004",
+  "suite_version": "3.0.0",
+  "suite_frozen": true,
+  "run_timestamp": "2026-09-11T03:53:38.118846Z",
+  "validation_time": "2026-09-11T03:53:38.118846",
+  "entity_identity_preflight": {
+    "outcome": "PASS",
+    "record_path": "C:\\Users\\black\\Documents\\AirSim_Scripts_Claude\\catalog\\entities\\UAS-QUAD-SKYDIO-X2D.json",
+    "record_directory": "C:\\Users\\black\\Documents\\AirSim_Scripts_Claude\\catalog\\entities",
+    "_note": "The directory component is NOT part of the identity check; XF-001 compares the basename only.",
+    "comparisons": [
+      {
+        "field": "basename vs scope entity_id",
+        "left": "UAS-QUAD-SKYDIO-X2D",
+        "right": "UAS-QUAD-SKYDIO-X2D",
+        "match": true
+      },
+      {
+        "field": "record.entity_id vs scope",
+        "left": "UAS-QUAD-SKYDIO-X2D",
+        "right": "UAS-QUAD-SKYDIO-X2D",
+        "match": true
+      },
+      {
+        "field": "record.entity vs scope",
+        "left": "Skydio X2D",
+        "right": "Skydio X2D",
+        "match": true
+      },
+      {
+        "field": "record.category vs scope",
+        "left": "UAS - Group 1 - Quadcopter",
+        "right": "UAS - Group 1 - Quadcopter",
+        "match": true
+      },
+      {
+        "field": "record.segment_id vs scope",
+        "left": "SEG-US-DEF-2020S-QUAD-G1",
+        "right": "SEG-US-DEF-2020S-QUAD-G1",
+        "match": true
+      },
+      {
+        "field": "basename vs record.entity_id",
+        "left": "UAS-QUAD-SKYDIO-X2D",
+        "right": "UAS-QUAD-SKYDIO-X2D",
+        "match": true
+      },
+      {
+        "field": "filename vs scope expected_filename",
+        "left": "UAS-QUAD-SKYDIO-X2D.json",
+        "right": "UAS-QUAD-SKYDIO-X2D.json",
+        "match": true
+      }
+    ]
+  },
+  "schema_conformance": {
+    "library": "jsonschema",
+    "schema_path": "C:\\Users\\black\\Documents\\AirSim_Scripts_Claude\\catalog\\schema\\entity_schema_3.0.json",
+    "schema_declares_not_json_schema": true,
+    "feeds_any_test": false,
+    "outcome": "skipped",
+    "reason": "jsonschema is not importable (No module named 'jsonschema'); the schema also states it must not be vendored."
+  },
+  "entity_scope": {
+    "entity": "Skydio X2D",
+    "entity_id": "UAS-QUAD-SKYDIO-X2D",
+    "category": "UAS - Group 1 - Quadcopter",
+    "segment_id": "SEG-US-DEF-2020S-QUAD-G1",
+    "schema_version": "3.0",
+    "expected_filename": "UAS-QUAD-SKYDIO-X2D.json",
+    "configuration": "standard configuration, stock battery",
+    "conflict_sources": [
+      "Skydio X2E",
+      "alternate payload or sensor package",
+      "non-standard battery"
+    ],
+    "segment_attribution_status": "corroborated - X2D is the defense variant and SEG-US-DEF-2020S-QUAD-G1 is the defense segment",
+    "_note": "XF-013 compares the record against THESE values. They were the header comment block before v3.0.0, which no runner could read. Changing the scope means editing this block only - it is the single place scope literals live."
+  },
+  "derived_sets_resolved": {
+    "REQUIRED_MEASURED_PATHS": [
+      "physical.mass_kg",
+      "physical.propeller_diameter_m",
+      "physical.rotor_count",
+      "battery.capacity_wh",
+      "battery.voltage_full_v",
+      "performance_published.max_hover_time_min"
+    ],
+    "REQUIRED_MODELING_PATHS": [
+      "battery.voltage_empty_v",
+      "aerodynamic_assumptions.air_density_kg_m3",
+      "aerodynamic_assumptions.equivalent_flat_plate_area_m2",
+      "aerodynamic_assumptions.figure_of_merit",
+      "aerodynamic_assumptions.motor_esc_efficiency",
+      "aerodynamic_assumptions.propulsive_efficiency",
+      "aerodynamic_assumptions.avionics_power_w",
+      "aerodynamic_assumptions.thrust_coefficient",
+      "aerodynamic_assumptions.profile_power_mu_factor",
+      "performance_published.max_speed_ms"
+    ],
+    "REQUIRED_FOR_OPERATIONAL_PATHS": [
+      "performance_operational.usable_energy_fraction",
+      "performance_operational.operational_overhead_factor"
+    ],
+    "OPTIONAL_PATHS": [
+      "performance_published.max_flight_time_min",
+      "performance_published.flight_time_test_speed_ms",
+      "performance_published.max_flight_distance_km",
+      "performance_published.max_wind_resistance_ms",
+      "performance_published.max_ascent_speed_ms",
+      "performance_published.max_descent_speed_ms",
+      "performance_operational.observed_flight_time_min",
+      "performance_operational.observed_hover_time_min",
+      "physical.propeller_pitch_m",
+      "physical.dimensions_unfolded_mm",
+      "physical.dimensions_folded_mm",
+      "battery.capacity_mah",
+      "battery.voltage_nominal_v",
+      "battery.chemistry",
+      "battery.weight_g"
+    ],
+    "ALL_DECLARED_PATHS": [
+      "physical.mass_kg",
+      "physical.propeller_diameter_m",
+      "physical.rotor_count",
+      "battery.capacity_wh",
+      "battery.voltage_full_v",
+      "performance_published.max_hover_time_min",
+      "battery.voltage_empty_v",
+      "aerodynamic_assumptions.air_density_kg_m3",
+      "aerodynamic_assumptions.equivalent_flat_plate_area_m2",
+      "aerodynamic_assumptions.figure_of_merit",
+      "aerodynamic_assumptions.motor_esc_efficiency",
+      "aerodynamic_assumptions.propulsive_efficiency",
+      "aerodynamic_assumptions.avionics_power_w",
+      "aerodynamic_assumptions.thrust_coefficient",
+      "aerodynamic_assumptions.profile_power_mu_factor",
+      "performance_published.max_speed_ms",
+      "performance_operational.usable_energy_fraction",
+      "performance_operational.operational_overhead_factor",
+      "performance_published.max_flight_time_min",
+      "performance_published.flight_time_test_speed_ms",
+      "performance_published.max_flight_distance_km",
+      "performance_published.max_wind_resistance_ms",
+      "performance_published.max_ascent_speed_ms",
+      "performance_published.max_descent_speed_ms",
+      "performance_operational.observed_flight_time_min",
+      "performance_operational.observed_hover_time_min",
+      "physical.propeller_pitch_m",
+      "physical.dimensions_unfolded_mm",
+      "physical.dimensions_folded_mm",
+      "battery.capacity_mah",
+      "battery.voltage_nominal_v",
+      "battery.chemistry",
+      "battery.weight_g"
+    ],
+    "VALUE_TYPE_OF": {
+      "physical.mass_kg": "number",
+      "physical.propeller_diameter_m": "number",
+      "physical.rotor_count": "integer",
+      "battery.capacity_wh": "number",
+      "battery.voltage_full_v": "number",
+      "performance_published.max_hover_time_min": "number",
+      "battery.voltage_empty_v": "number",
+      "aerodynamic_assumptions.air_density_kg_m3": "number",
+      "aerodynamic_assumptions.equivalent_flat_plate_area_m2": "number",
+      "aerodynamic_assumptions.figure_of_merit": "number",
+      "aerodynamic_assumptions.motor_esc_efficiency": "number",
+      "aerodynamic_assumptions.propulsive_efficiency": "number",
+      "aerodynamic_assumptions.avionics_power_w": "number",
+      "aerodynamic_assumptions.thrust_coefficient": "number",
+      "aerodynamic_assumptions.profile_power_mu_factor": "number",
+      "performance_published.max_speed_ms": "number",
+      "performance_operational.usable_energy_fraction": "number",
+      "performance_operational.operational_overhead_factor": "number",
+      "performance_published.max_flight_time_min": "number",
+      "performance_published.flight_time_test_speed_ms": "number",
+      "performance_published.max_flight_distance_km": "number",
+      "performance_published.max_wind_resistance_ms": "number",
+      "performance_published.max_ascent_speed_ms": "number",
+      "performance_published.max_descent_speed_ms": "number",
+      "performance_operational.observed_flight_time_min": "range",
+      "performance_operational.observed_hover_time_min": "range",
+      "physical.propeller_pitch_m": "number",
+      "physical.dimensions_unfolded_mm": "object",
+      "physical.dimensions_folded_mm": "object",
+      "battery.capacity_mah": "integer",
+      "battery.voltage_nominal_v": "number",
+      "battery.chemistry": "string",
+      "battery.weight_g": "number"
+    },
+    "UNIT_OF": {
+      "physical.mass_kg": "kg",
+      "physical.propeller_diameter_m": "m",
+      "physical.rotor_count": "count",
+      "battery.capacity_wh": "Wh",
+      "battery.voltage_full_v": "V",
+      "performance_published.max_hover_time_min": "min",
+      "battery.voltage_empty_v": "V",
+      "aerodynamic_assumptions.air_density_kg_m3": "kg/m3",
+      "aerodynamic_assumptions.equivalent_flat_plate_area_m2": "m2",
+      "aerodynamic_assumptions.figure_of_merit": "dimensionless",
+      "aerodynamic_assumptions.motor_esc_efficiency": "dimensionless",
+      "aerodynamic_assumptions.propulsive_efficiency": "dimensionless",
+      "aerodynamic_assumptions.avionics_power_w": "W",
+      "aerodynamic_assumptions.thrust_coefficient": "dimensionless",
+      "aerodynamic_assumptions.profile_power_mu_factor": "dimensionless",
+      "performance_published.max_speed_ms": "m/s",
+      "performance_operational.usable_energy_fraction": "dimensionless",
+      "performance_operational.operational_overhead_factor": "dimensionless",
+      "performance_published.max_flight_time_min": "min",
+      "performance_published.flight_time_test_speed_ms": "m/s",
+      "performance_published.max_flight_distance_km": "km",
+      "performance_published.max_wind_resistance_ms": "m/s",
+      "performance_published.max_ascent_speed_ms": "m/s",
+      "performance_published.max_descent_speed_ms": "m/s",
+      "performance_operational.observed_flight_time_min": "min",
+      "performance_operational.observed_hover_time_min": "min",
+      "physical.propeller_pitch_m": "m",
+      "physical.dimensions_unfolded_mm": "mm",
+      "physical.dimensions_folded_mm": "mm",
+      "battery.capacity_mah": "mAh",
+      "battery.voltage_nominal_v": "V",
+      "battery.chemistry": null,
+      "battery.weight_g": "g"
+    },
+    "CONFIDENCE_VOCABULARY": [
+      "published",
+      "derived",
+      "literature",
+      "estimated"
+    ],
+    "PARAMETER_STATUSES": [
+      "present",
+      "missing",
+      "not_applicable"
+    ],
+    "READINESS_TIERS": [
+      "R0",
+      "R1",
+      "R2",
+      "R3"
+    ],
+    "REQUIRED_TOP_LEVEL_KEYS": [
+      "entity",
+      "entity_id",
+      "category",
+      "segment_id",
+      "schema_version",
+      "compiled_on",
+      "compiled_by",
+      "readiness_declared"
+    ],
+    "CORE_TOP_LEVEL_KEYS": [
+      "entity",
+      "entity_id",
+      "category",
+      "segment_id",
+      "schema_version",
+      "readiness_declared"
+    ],
+    "PROMOTION_STAMPED_KEYS": [
+      "compiled_on",
+      "compiled_by"
+    ],
+    "RR4_AIRFRAME_SPECIFIC": [
+      "battery.voltage_empty_v",
+      "aerodynamic_assumptions.equivalent_flat_plate_area_m2",
+      "aerodynamic_assumptions.avionics_power_w",
+      "aerodynamic_assumptions.thrust_coefficient",
+      "performance_published.max_speed_ms"
+    ],
+    "RR4_CLASS_TYPICAL": [
+      "aerodynamic_assumptions.figure_of_merit",
+      "aerodynamic_assumptions.motor_esc_efficiency",
+      "aerodynamic_assumptions.propulsive_efficiency",
+      "aerodynamic_assumptions.profile_power_mu_factor"
+    ]
+  },
+  "coverage_by_requirement_class": {
+    "REQUIRED_MEASURED": {
+      "declared": 6,
+      "present_shape": 2,
+      "status_missing": 4,
+      "not_applicable": 0,
+      "absent_keys": 0,
+      "other": 0,
+      "absent_key_paths": [],
+      "status_missing_paths": [
+        "physical.propeller_diameter_m",
+        "battery.capacity_wh",
+        "battery.voltage_full_v",
+        "performance_published.max_hover_time_min"
+      ]
+    },
+    "REQUIRED_MODELING": {
+      "declared": 10,
+      "present_shape": 6,
+      "status_missing": 4,
+      "not_applicable": 0,
+      "absent_keys": 0,
+      "other": 0,
+      "absent_key_paths": [],
+      "status_missing_paths": [
+        "battery.voltage_empty_v",
+        "aerodynamic_assumptions.equivalent_flat_plate_area_m2",
+        "aerodynamic_assumptions.avionics_power_w",
+        "aerodynamic_assumptions.thrust_coefficient"
+      ]
+    },
+    "REQUIRED_FOR_OPERATIONAL": {
+      "declared": 2,
+      "present_shape": 0,
+      "status_missing": 2,
+      "not_applicable": 0,
+      "absent_keys": 0,
+      "other": 0,
+      "absent_key_paths": [],
+      "status_missing_paths": [
+        "performance_operational.usable_energy_fraction",
+        "performance_operational.operational_overhead_factor"
+      ]
+    },
+    "OPTIONAL": {
+      "declared": 15,
+      "present_shape": 5,
+      "status_missing": 10,
+      "not_applicable": 0,
+      "absent_keys": 0,
+      "other": 0,
+      "absent_key_paths": [],
+      "status_missing_paths": [
+        "performance_published.flight_time_test_speed_ms",
+        "performance_published.max_flight_distance_km",
+        "performance_published.max_ascent_speed_ms",
+        "performance_published.max_descent_speed_ms",
+        "performance_operational.observed_flight_time_min",
+        "performance_operational.observed_hover_time_min",
+        "physical.propeller_pitch_m",
+        "battery.capacity_mah",
+        "battery.voltage_nominal_v",
+        "battery.weight_g"
+      ]
+    }
+  },
+  "tier_computation": {
+    "readiness_declared": "R0",
+    "computed_tier": "R0",
+    "computed_tier_label": "R0"
+  },
+  "unevaluated_tier_clauses": [],
+  "results": [
+    {
+      "id": "SC-001",
+      "category": "status_coherence",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 33 subject(s); no findings.",
+      "description": "Every parameter block declares a status drawn from the schema's status vocabulary, or omits status entirely.",
+      "rule_reference": "RR1, INV1",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SC-002",
+      "category": "status_coherence",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 13 subject(s); no findings.",
+      "description": "A parameter block with status present (explicit or by omission) carries a non-null value.",
+      "rule_reference": "RR1, INV1",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SC-003",
+      "category": "status_coherence",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 13 subject(s); no findings.",
+      "description": "A present parameter carries a confidence from the vocabulary.",
+      "rule_reference": "RR1, INV3",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SC-004",
+      "category": "status_coherence",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 13 subject(s); no findings.",
+      "description": "A present parameter carries a non-empty source.",
+      "rule_reference": "RR1",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SC-005",
+      "category": "status_coherence",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 2 check(s) over 20 subject(s); no findings.",
+      "description": "A parameter with status missing has an explicitly null value.",
+      "rule_reference": "RR1, INV1, INV2",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SC-006",
+      "category": "status_coherence",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 20 subject(s); no findings.",
+      "description": "A parameter with status missing carries no confidence key.",
+      "rule_reference": "RR1, INV1",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SC-007",
+      "category": "status_coherence",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 20 subject(s); no findings.",
+      "description": "A parameter with status missing carries a non-empty todo.",
+      "rule_reference": "RR1",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SC-008",
+      "category": "status_coherence",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 2 check(s) over 0 subject(s); no findings.",
+      "description": "A parameter with status not_applicable has an explicitly null value.",
+      "rule_reference": "RR1, INV1",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SC-009",
+      "category": "status_coherence",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 0 subject(s); no findings.",
+      "description": "A parameter with status not_applicable carries no confidence key.",
+      "rule_reference": "RR1, INV1",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SC-010",
+      "category": "status_coherence",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 0 subject(s); no findings.",
+      "description": "A parameter with status not_applicable carries a non-empty note explaining why.",
+      "rule_reference": "RR1",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SC-011",
+      "category": "status_coherence",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 33 subject(s); no findings.",
+      "description": "No parameter block mixes two of the three field shapes.",
+      "rule_reference": "INV1, RR1",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SC-012",
+      "category": "status_coherence",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 33 subject(s); no findings.",
+      "description": "A null value is never carried without an explicit status naming it as a gap.",
+      "rule_reference": "RR1, INV1, INV2",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SC-013",
+      "category": "status_coherence",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 33 subject(s); no findings.",
+      "description": "Every declared parameter path resolves to an object, not a bare scalar.",
+      "rule_reference": "RR1, INV1",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SC-014",
+      "category": "status_coherence",
+      "target": "report",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "An absent key and a status-missing key are reported as distinct failure modes even though they score identically.",
+      "rule_reference": "INV2, RR2",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "KC-001",
+      "category": "key_coverage",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 6 subject(s); no findings.",
+      "description": "Every REQUIRED_MEASURED path appears as a key in the record.",
+      "rule_reference": "RR2, INV2",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "KC-002",
+      "category": "key_coverage",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 10 subject(s); no findings.",
+      "description": "Every REQUIRED_MODELING path appears as a key in the record.",
+      "rule_reference": "RR2, INV2",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "KC-003",
+      "category": "key_coverage",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "skipped",
+      "detail": "SKIPPED - condition readiness_declared_in ['R3'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked.",
+      "description": "When the record declares R3, every REQUIRED_FOR_OPERATIONAL path is present and complete.",
+      "rule_reference": "RR2, RR8",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "KC-003B",
+      "category": "key_coverage",
+      "target": "human",
+      "severity": "gap",
+      "effective_severity": "gap",
+      "automatable": false,
+      "outcome": "gap",
+      "detail": "GAP - not automatable (target: human). Requires human review.",
+      "description": "Whether the operational profile is in use for this record, below R3, cannot be determined from the artifact.",
+      "rule_reference": "RR2",
+      "tolerance": "N/A",
+      "human_review": "Reviewer states whether the operational profile is used for this entity. If yes, apply KC-003's assertion unconditionally rather than only at R3."
+    },
+    {
+      "id": "KC-004",
+      "category": "key_coverage",
+      "target": "suite",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "Absence of an OPTIONAL path never produces a failure.",
+      "rule_reference": "RR2",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "KC-005",
+      "category": "key_coverage",
+      "target": "record",
+      "severity": "warn",
+      "effective_severity": "warn",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 33 subject(s); no findings.",
+      "description": "The record contains no parameter path the schema does not declare.",
+      "rule_reference": "RR2, RR7",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "KC-006",
+      "category": "key_coverage",
+      "target": "report",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "Coverage reporting is broken out by requirement class.",
+      "rule_reference": "RR2, INV2",
+      "tolerance": "exact - the five counts must sum to the class total, no rounding"
+    },
+    {
+      "id": "CC-001",
+      "category": "confidence_class",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 13 subject(s); no findings.",
+      "description": "Every confidence value anywhere in the record is drawn from the schema vocabulary.",
+      "rule_reference": "INV3, RR1",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "CC-002",
+      "category": "confidence_class",
+      "target": "record",
+      "severity": "warn",
+      "effective_severity": "warn",
+      "automatable": true,
+      "outcome": "skipped",
+      "detail": "SKIPPED - condition readiness_declared_in ['R1'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked.",
+      "description": "At R1, a REQUIRED_MEASURED parameter carrying literature or estimated WITH an escalation marker is warned, not failed.",
+      "rule_reference": "RR3, INV4",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "CC-002B",
+      "category": "confidence_class",
+      "target": "record",
+      "severity": "warn",
+      "effective_severity": "warn",
+      "automatable": true,
+      "outcome": "skipped",
+      "detail": "SKIPPED - condition readiness_declared_in ['R1'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked.",
+      "description": "At R1, a REQUIRED_MEASURED parameter carrying literature or estimated WITHOUT an escalation marker is warned under a distinct code.",
+      "rule_reference": "RR3, INV4",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "CC-002C",
+      "category": "confidence_class",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "skipped",
+      "detail": "SKIPPED - condition readiness_declared_in ['R2', 'R3'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked.",
+      "description": "At R2 and above, every present REQUIRED_MEASURED parameter carries published or derived, escalation marker or not.",
+      "rule_reference": "RR3, INV4, RR8",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "CC-003",
+      "category": "confidence_class",
+      "target": "suite",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "A REQUIRED_MODELING parameter is not held to the REQUIRED_MEASURED confidence floor.",
+      "rule_reference": "RR3, INV12",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "CC-004",
+      "category": "confidence_class",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 6 subject(s); no findings.",
+      "description": "Every present REQUIRED_MODELING parameter carries a source.",
+      "rule_reference": "RR3, RR1",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "CC-005",
+      "category": "confidence_class",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 0 subject(s); no findings.",
+      "description": "A derived confidence carries a note stating the computation.",
+      "rule_reference": "RR1, INV3",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "CC-005B",
+      "category": "confidence_class",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 0 subject(s); no findings.",
+      "description": "An estimated confidence carries a note stating basis and tolerance.",
+      "rule_reference": "RR1, INV3",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "CC-006",
+      "category": "confidence_class",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 3 check(s) over 4 subject(s); no findings.",
+      "description": "The four class-typical REQUIRED_MODELING constants are present with a source, and are not required to carry per-airframe provenance.",
+      "rule_reference": "RR4, INV12",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "CC-007",
+      "category": "confidence_class",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "fail",
+      "detail": "4 finding(s): battery.voltage_empty_v does not satisfy present_shape (status='missing'); aerodynamic_assumptions.equivalent_flat_plate_area_m2 does not satisfy present_shape (status='missing'); aerodynamic_assumptions.avionics_power_w does not satisfy present_shape (status='missing'); aerodynamic_assumptions.thrust_coefficient does not satisfy present_shape (status='missing')",
+      "description": "The five airframe-specific REQUIRED_MODELING paths carry a real researched value by R2.",
+      "rule_reference": "RR4, INV12, RR8",
+      "tolerance": "N/A",
+      "findings": [
+        {
+          "test_id": "CC-007",
+          "severity": "fail",
+          "subject": "battery.voltage_empty_v",
+          "message": "battery.voltage_empty_v does not satisfy present_shape (status='missing')"
+        },
+        {
+          "test_id": "CC-007",
+          "severity": "fail",
+          "subject": "aerodynamic_assumptions.equivalent_flat_plate_area_m2",
+          "message": "aerodynamic_assumptions.equivalent_flat_plate_area_m2 does not satisfy present_shape (status='missing')"
+        },
+        {
+          "test_id": "CC-007",
+          "severity": "fail",
+          "subject": "aerodynamic_assumptions.avionics_power_w",
+          "message": "aerodynamic_assumptions.avionics_power_w does not satisfy present_shape (status='missing')"
+        },
+        {
+          "test_id": "CC-007",
+          "severity": "fail",
+          "subject": "aerodynamic_assumptions.thrust_coefficient",
+          "message": "aerodynamic_assumptions.thrust_coefficient does not satisfy present_shape (status='missing')"
+        }
+      ]
+    },
+    {
+      "id": "CC-008",
+      "category": "confidence_class",
+      "target": "human",
+      "severity": "warn",
+      "effective_severity": "warn",
+      "automatable": false,
+      "outcome": "gap",
+      "detail": "GAP - not automatable (target: human). Requires human review.",
+      "description": "A class-typical constant is not silently substituted for one of the five airframe-specific paths.",
+      "rule_reference": "RR4, INV12",
+      "tolerance": "N/A",
+      "human_review": "At R2 promotion, a reviewer confirms each of the five airframe-specific paths cites a source about this airframe rather than a class-typical default. The automated placeholder check runs regardless and is necessary but not sufficient."
+    },
+    {
+      "id": "CC-009",
+      "category": "confidence_class",
+      "target": "record",
+      "severity": "warn",
+      "effective_severity": "warn",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 3 check(s) over 1 subject(s); no findings.",
+      "description": "aerodynamic_assumptions.air_density_kg_m3 is checked under the generic REQUIRED_MODELING rule only.",
+      "rule_reference": "RR4, RR3",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "CC-010",
+      "category": "confidence_class",
+      "target": "record",
+      "severity": "warn",
+      "effective_severity": "warn",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 2 check(s) over 33 subject(s); no findings.",
+      "description": "Where an escalation marker is used, its carrier fields are well-formed.",
+      "rule_reference": "RR3, INV4",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SQS-001",
+      "category": "source_quote_structure",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "fail",
+      "detail": "4 finding(s): aerodynamic_assumptions.figure_of_merit: field 'source_quote' is absent; aerodynamic_assumptions.motor_esc_efficiency: field 'source_quote' is absent; aerodynamic_assumptions.propulsive_efficiency: field 'source_quote' is absent; aerodynamic_assumptions.profile_power_mu_factor: field 'source_quote' is absent",
+      "description": "Every non-null value carries a source_quote key.",
+      "rule_reference": "SQS1",
+      "tolerance": "N/A",
+      "findings": [
+        {
+          "test_id": "SQS-001",
+          "severity": "fail",
+          "subject": "aerodynamic_assumptions.figure_of_merit",
+          "message": "aerodynamic_assumptions.figure_of_merit: field 'source_quote' is absent"
+        },
+        {
+          "test_id": "SQS-001",
+          "severity": "fail",
+          "subject": "aerodynamic_assumptions.motor_esc_efficiency",
+          "message": "aerodynamic_assumptions.motor_esc_efficiency: field 'source_quote' is absent"
+        },
+        {
+          "test_id": "SQS-001",
+          "severity": "fail",
+          "subject": "aerodynamic_assumptions.propulsive_efficiency",
+          "message": "aerodynamic_assumptions.propulsive_efficiency: field 'source_quote' is absent"
+        },
+        {
+          "test_id": "SQS-001",
+          "severity": "fail",
+          "subject": "aerodynamic_assumptions.profile_power_mu_factor",
+          "message": "aerodynamic_assumptions.profile_power_mu_factor: field 'source_quote' is absent"
+        }
+      ]
+    },
+    {
+      "id": "SQS-002",
+      "category": "source_quote_structure",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 2 check(s) over 9 subject(s); no findings.",
+      "description": "source_quote is a non-empty string.",
+      "rule_reference": "SQS2",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SQS-003",
+      "category": "source_quote_structure",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 9 subject(s); no findings.",
+      "description": "source_quote is at most 200 characters.",
+      "rule_reference": "SQS3",
+      "tolerance": "N/A (structural) - the 200-character bound is exact, no grace"
+    },
+    {
+      "id": "SQS-004",
+      "category": "source_quote_structure",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 9 subject(s); no findings.",
+      "description": "source_quote is not identical to the source value.",
+      "rule_reference": "SQS4",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "SQS-005",
+      "category": "source_quote_structure",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "fail",
+      "detail": "4 finding(s): aerodynamic_assumptions.figure_of_merit: field 'source_quote' is absent; aerodynamic_assumptions.motor_esc_efficiency: field 'source_quote' is absent; aerodynamic_assumptions.propulsive_efficiency: field 'source_quote' is absent; aerodynamic_assumptions.profile_power_mu_factor: field 'source_quote' is absent",
+      "description": "A non-null value carries BOTH source and source_quote.",
+      "rule_reference": "SQS5, RR1",
+      "tolerance": "N/A",
+      "findings": [
+        {
+          "test_id": "SQS-005",
+          "severity": "fail",
+          "subject": "aerodynamic_assumptions.figure_of_merit",
+          "message": "aerodynamic_assumptions.figure_of_merit: field 'source_quote' is absent"
+        },
+        {
+          "test_id": "SQS-005",
+          "severity": "fail",
+          "subject": "aerodynamic_assumptions.motor_esc_efficiency",
+          "message": "aerodynamic_assumptions.motor_esc_efficiency: field 'source_quote' is absent"
+        },
+        {
+          "test_id": "SQS-005",
+          "severity": "fail",
+          "subject": "aerodynamic_assumptions.propulsive_efficiency",
+          "message": "aerodynamic_assumptions.propulsive_efficiency: field 'source_quote' is absent"
+        },
+        {
+          "test_id": "SQS-005",
+          "severity": "fail",
+          "subject": "aerodynamic_assumptions.profile_power_mu_factor",
+          "message": "aerodynamic_assumptions.profile_power_mu_factor: field 'source_quote' is absent"
+        }
+      ]
+    },
+    {
+      "id": "SQS-006",
+      "category": "source_quote_structure",
+      "target": "human",
+      "severity": "gap",
+      "effective_severity": "gap",
+      "automatable": false,
+      "outcome": "gap",
+      "detail": "GAP - not automatable (target: human). Requires human review.",
+      "description": "Whether a source_quote is authentic, or actually supports the value it sits beside, cannot be determined from the artifact.",
+      "rule_reference": "SQS1, SQS5, INV12",
+      "tolerance": "N/A",
+      "human_review": "At promotion, a reviewer opens each cited source and confirms the quoted string appears in it and supports the value recorded. Separately, a reviewer confirms whether the four class-typical shipped constants are expected to carry source_quotes at all; if not, an explicit exemption belongs in the requirements rather than a silent softening of SQS-001 and SQS-005."
+    },
+    {
+      "id": "XF-001",
+      "category": "cross_field",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "The record's filename without extension equals its own entity_id.",
+      "rule_reference": "RR5, INV6",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "XF-008",
+      "category": "cross_field",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 4 subject(s); no findings.",
+      "description": "No verified_on anywhere in the record is more than one day in the future.",
+      "rule_reference": "RR5, INV7",
+      "tolerance": "1 day (86400 s) grace, per the rule's own wording; timezone-naive values compared as UTC dates"
+    },
+    {
+      "id": "XF-009",
+      "category": "cross_field",
+      "target": "record",
+      "severity": "warn",
+      "effective_severity": "warn",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 4 subject(s); no findings.",
+      "description": "Every verified_on value present parses as a date.",
+      "rule_reference": "RR5, INV7",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "XF-010",
+      "category": "cross_field",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "segment_id is present, explicit, and non-empty.",
+      "rule_reference": "RR5, INV8",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "XF-011",
+      "category": "cross_field",
+      "target": "tooling",
+      "severity": "gap",
+      "effective_severity": "gap",
+      "automatable": false,
+      "outcome": "gap",
+      "detail": "GAP - not automatable (target: tooling). Requires human review.",
+      "description": "segment_id is not reconstructed from category by the validator or any tooling.",
+      "rule_reference": "INV8, RR5",
+      "tolerance": "N/A",
+      "human_review": "Reviewer inspects catalog.py and any record-authoring tooling to confirm no default or inference is applied to segment_id."
+    },
+    {
+      "id": "XF-013",
+      "category": "cross_field",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 6 check(s) over 1 subject(s); no findings.",
+      "description": "The record's declared identity matches the suite's ENTITY_SCOPE.",
+      "rule_reference": "RR5, RR6, INV6, INV8",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "XF-014",
+      "category": "cross_field",
+      "target": "human",
+      "severity": "gap",
+      "effective_severity": "gap",
+      "automatable": false,
+      "outcome": "gap",
+      "detail": "GAP - not automatable (target: human). Requires human review.",
+      "description": "Whether the record's values were sourced from the declared configuration cannot be determined from the artifact.",
+      "rule_reference": "RR5, INV6",
+      "tolerance": "N/A",
+      "human_review": "A reviewer confirms that the mass, battery, and performance figures were taken from sources describing the X2D in standard configuration on the stock battery, and that any X2E or alternate-configuration source was recorded as a conflict rather than used as a fill. Any value populated during the X2DENTERPRISE or X2E windows must be re-confirmed against X2D sources rather than assumed to carry across. Until done, no figure from this record should be quoted."
+    },
+    {
+      "id": "XF-015",
+      "category": "cross_field",
+      "target": "record",
+      "severity": "warn",
+      "effective_severity": "warn",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "The entity display name and entity_id are not mutually contradictory.",
+      "rule_reference": "RR5, RR6",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "XF-016",
+      "category": "cross_field",
+      "target": "human",
+      "severity": "gap",
+      "effective_severity": "gap",
+      "automatable": false,
+      "outcome": "gap",
+      "detail": "GAP - not automatable (target: human). Requires human review.",
+      "description": "Whether the declared segment_id is the correct segment for this entity cannot be determined from the artifact.",
+      "rule_reference": "RR5, INV8",
+      "tolerance": "N/A",
+      "human_review": "At promotion, a reviewer confirms the declared segment still matches the entity's variant - for the X2D, SEG-US-DEF-2020S-QUAD-G1 (\"Group 1 quadcopter, defense\", Blue UAS list platforms, planned count 3) rather than SEG-US-COM-2020S-QUAD-G1 (\"Group 1 quadcopter, commercial\", planned count 4). Currently corroborated. Re-check on any future change to the entity's variant, since that is what invalidated it at v2.1.0."
+    },
+    {
+      "id": "TL-001",
+      "category": "top_level_keys",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 6 subject(s); no findings.",
+      "description": "All six always-required top-level keys are present.",
+      "rule_reference": "RR6, INV9",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "TL-001B",
+      "category": "top_level_keys",
+      "target": "record",
+      "severity": "info",
+      "effective_severity": "info",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 2 subject(s); no findings.",
+      "description": "Absence of the promotion-stamped keys is reported, not failed.",
+      "rule_reference": "RR6, INV9",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "TL-002",
+      "category": "top_level_keys",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "fail",
+      "detail": "4 finding(s): compiled_on: field 'compiled_on' is null; compiled_by: field 'compiled_by' is null; compiled_on: field 'compiled_on' is None - not a non-empty string; compiled_by: field 'compiled_by' is None - not a non-empty string",
+      "description": "No required top-level key that is present is null or empty.",
+      "rule_reference": "RR6, INV9",
+      "tolerance": "N/A",
+      "findings": [
+        {
+          "test_id": "TL-002",
+          "severity": "fail",
+          "subject": "compiled_on",
+          "message": "compiled_on: field 'compiled_on' is null"
+        },
+        {
+          "test_id": "TL-002",
+          "severity": "fail",
+          "subject": "compiled_by",
+          "message": "compiled_by: field 'compiled_by' is null"
+        },
+        {
+          "test_id": "TL-002",
+          "severity": "fail",
+          "subject": "compiled_on",
+          "message": "compiled_on: field 'compiled_on' is None - not a non-empty string"
+        },
+        {
+          "test_id": "TL-002",
+          "severity": "fail",
+          "subject": "compiled_by",
+          "message": "compiled_by: field 'compiled_by' is None - not a non-empty string"
+        }
+      ]
+    },
+    {
+      "id": "TL-003",
+      "category": "top_level_keys",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "readiness_declared is one of the schema's declared tiers.",
+      "rule_reference": "RR6, RR8, INV10",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "TL-004",
+      "category": "top_level_keys",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "schema_version matches the schema the record is validated against.",
+      "rule_reference": "RR6",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "TL-005",
+      "category": "top_level_keys",
+      "target": "record",
+      "severity": "warn",
+      "effective_severity": "warn",
+      "automatable": true,
+      "outcome": "warn",
+      "detail": "1 finding(s): compiled_on is None, which does not parse as an ISO-8601 date or datetime; a future-date check cannot fire on it",
+      "description": "compiled_on, when present, parses as a date and is not more than one day in the future.",
+      "rule_reference": "RR6, INV7, INV9",
+      "tolerance": "1 day (86400 s), mirroring the verified_on rule",
+      "findings": [
+        {
+          "test_id": "TL-005",
+          "severity": "warn",
+          "subject": "<record>",
+          "message": "compiled_on is None, which does not parse as an ISO-8601 date or datetime; a future-date check cannot fire on it"
+        }
+      ]
+    },
+    {
+      "id": "TL-006",
+      "category": "top_level_keys",
+      "target": "record",
+      "severity": "warn",
+      "effective_severity": "warn",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 2 subject(s); no findings.",
+      "description": "Present top-level identity keys carry declared content, not placeholders.",
+      "rule_reference": "RR6, INV8, INV9",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "TL-007",
+      "category": "top_level_keys",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 8 subject(s); no findings.",
+      "description": "No required top-level key is duplicated or shadowed by a nested key of the same name.",
+      "rule_reference": "RR6, INV8, INV9",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "TL-008",
+      "category": "top_level_keys",
+      "target": "record",
+      "severity": "warn",
+      "effective_severity": "warn",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "A record lacking promotion stamps does not declare a promoted tier.",
+      "rule_reference": "RR6, INV9, INV10, RR8",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "VT-001",
+      "category": "value_type",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 9 subject(s); no findings.",
+      "description": "A value declared number is a JSON number.",
+      "rule_reference": "RR7, INV11",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "VT-002",
+      "category": "value_type",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "A value declared integer is a JSON integer with no fractional part.",
+      "rule_reference": "RR7, INV11",
+      "tolerance": "exact - fractional part must be 0, no epsilon allowed"
+    },
+    {
+      "id": "VT-003",
+      "category": "value_type",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "A value declared string is a JSON string.",
+      "rule_reference": "RR7, INV11",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "VT-004",
+      "category": "value_type",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 2 subject(s); no findings.",
+      "description": "A value declared object is a JSON object.",
+      "rule_reference": "RR7, INV11",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "VT-005",
+      "category": "value_type",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 0 subject(s); no findings.",
+      "description": "A value declared range is a non-null structured container.",
+      "rule_reference": "RR7, INV11",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "VT-005B",
+      "category": "value_type",
+      "target": "human",
+      "severity": "gap",
+      "effective_severity": "gap",
+      "automatable": false,
+      "outcome": "gap",
+      "detail": "GAP - not automatable (target: human). Requires human review.",
+      "description": "The internal shape of range-typed values is undefined in the schema.",
+      "rule_reference": "RR7, INV11",
+      "tolerance": "N/A",
+      "human_review": "A reviewer or a schema amendment defines the range shape - key names or array convention, and whether ordering is enforced. Until then, any consumer of a range value must handle both conventions."
+    },
+    {
+      "id": "VT-006",
+      "category": "value_type",
+      "target": "suite",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "Value-type checks are applied only where a value exists.",
+      "rule_reference": "RR7, INV11, RR1",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "VT-007",
+      "category": "value_type",
+      "target": "record",
+      "severity": "warn",
+      "effective_severity": "warn",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 13 subject(s); no findings.",
+      "description": "A unit, where recorded on a parameter, matches the unit the schema declares for that path.",
+      "rule_reference": "RR7",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "RT-001",
+      "category": "readiness_tier",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "readiness_declared is a recognised tier.",
+      "rule_reference": "RR8, INV10",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "RT-002",
+      "category": "readiness_tier",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "skipped",
+      "detail": "SKIPPED - condition readiness_declared_in ['R1', 'R2', 'R3'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked.",
+      "description": "A record declaring R1 or above has zero schema errors and every REQUIRED_MEASURED and REQUIRED_MODELING path present as a key.",
+      "rule_reference": "RR8, INV10",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "RT-002B",
+      "category": "readiness_tier",
+      "target": "record",
+      "severity": "warn",
+      "effective_severity": "warn",
+      "automatable": true,
+      "outcome": "skipped",
+      "detail": "SKIPPED - condition readiness_declared_in ['R1'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked.",
+      "description": "At R1, a REQUIRED_MEASURED or REQUIRED_MODELING path sitting at status missing is flagged.",
+      "rule_reference": "RR8, INV10, INV12",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "RT-003",
+      "category": "readiness_tier",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "skipped",
+      "detail": "SKIPPED - condition readiness_declared_in ['R2', 'R3'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked.",
+      "description": "A record declaring R2 or above satisfies the four R2 conditions this suite can evaluate.",
+      "rule_reference": "RR8, INV10, INV7",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "RT-004",
+      "category": "readiness_tier",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "skipped",
+      "detail": "SKIPPED - condition readiness_declared_in ['R3'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked.",
+      "description": "A record declaring R3 has complete REQUIRED_FOR_OPERATIONAL coverage.",
+      "rule_reference": "RR8, INV10",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "RT-005",
+      "category": "readiness_tier",
+      "target": "human",
+      "severity": "gap",
+      "effective_severity": "gap",
+      "automatable": false,
+      "outcome": "gap",
+      "detail": "GAP - not automatable (target: human). Requires human review.",
+      "description": "The R3 staleness limit is not defined and cannot be checked.",
+      "rule_reference": "RR8, INV10",
+      "tolerance": "N/A",
+      "human_review": "The staleness limit must be defined in the schema file. Until then, a reviewer manually inspects the oldest verified_on and judges freshness."
+    },
+    {
+      "id": "RT-006",
+      "category": "readiness_tier",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "readiness_declared does not exceed the tier the record's actual fill state supports.",
+      "rule_reference": "INV10, RR8",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "RT-007",
+      "category": "readiness_tier",
+      "target": "record",
+      "severity": "warn",
+      "effective_severity": "warn",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "Under-declaration is reported but does not fail.",
+      "rule_reference": "INV10, RR8",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "RT-008",
+      "category": "readiness_tier",
+      "target": "record",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "A record that fails any R1 condition declares R0.",
+      "rule_reference": "RR8, INV10",
+      "tolerance": "N/A"
+    },
+    {
+      "id": "RT-009",
+      "category": "readiness_tier",
+      "target": "tooling",
+      "severity": "gap",
+      "effective_severity": "gap",
+      "automatable": false,
+      "outcome": "gap",
+      "detail": "GAP - not automatable (target: tooling). Requires human review.",
+      "description": "The tier computation reads only the record and the schema.",
+      "rule_reference": "RR8, INV10",
+      "tolerance": "N/A",
+      "human_review": "Reviewer inspects the runner to confirm the tier computation reads only the record file, the schema file, and validation_time - no network, no other entity record, no research-agent output, no instruction set."
+    },
+    {
+      "id": "RT-010",
+      "category": "readiness_tier",
+      "target": "report",
+      "severity": "fail",
+      "effective_severity": "fail",
+      "automatable": true,
+      "outcome": "pass",
+      "detail": "PASS - 1 check(s) over 1 subject(s); no findings.",
+      "description": "R2 and R3 cannot be fully verified by this suite, and every run report says so.",
+      "rule_reference": "RR8, INV10",
+      "tolerance": "N/A"
+    }
+  ],
+  "summary": {
+    "total_tests": 77,
+    "by_outcome": {
+      "pass": 55,
+      "skipped": 8,
+      "gap": 9,
+      "fail": 4,
+      "warn": 1
+    },
+    "by_category": {
+      "status_coherence": {
+        "pass": 14,
+        "warn": 0,
+        "fail": 0,
+        "info": 0,
+        "gap": 0,
+        "skipped": 0
+      },
+      "key_coverage": {
+        "pass": 5,
+        "warn": 0,
+        "fail": 0,
+        "info": 0,
+        "gap": 1,
+        "skipped": 1
+      },
+      "confidence_class": {
+        "pass": 8,
+        "warn": 0,
+        "fail": 1,
+        "info": 0,
+        "gap": 1,
+        "skipped": 3
+      },
+      "source_quote_structure": {
+        "pass": 3,
+        "warn": 0,
+        "fail": 2,
+        "info": 0,
+        "gap": 1,
+        "skipped": 0
+      },
+      "cross_field": {
+        "pass": 6,
+        "warn": 0,
+        "fail": 0,
+        "info": 0,
+        "gap": 3,
+        "skipped": 0
+      },
+      "top_level_keys": {
+        "pass": 7,
+        "warn": 1,
+        "fail": 1,
+        "info": 0,
+        "gap": 0,
+        "skipped": 0
+      },
+      "value_type": {
+        "pass": 7,
+        "warn": 0,
+        "fail": 0,
+        "info": 0,
+        "gap": 1,
+        "skipped": 0
+      },
+      "readiness_tier": {
+        "pass": 5,
+        "warn": 0,
+        "fail": 0,
+        "info": 0,
+        "gap": 2,
+        "skipped": 4
+      }
+    },
+    "by_severity": {
+      "fail": {
+        "pass": 45,
+        "warn": 0,
+        "fail": 4,
+        "info": 0,
+        "gap": 0,
+        "skipped": 5
+      },
+      "gap": {
+        "pass": 0,
+        "warn": 0,
+        "fail": 0,
+        "info": 0,
+        "gap": 8,
+        "skipped": 0
+      },
+      "warn": {
+        "pass": 9,
+        "warn": 1,
+        "fail": 0,
+        "info": 0,
+        "gap": 1,
+        "skipped": 3
+      },
+      "info": {
+        "pass": 1,
+        "warn": 0,
+        "fail": 0,
+        "info": 0,
+        "gap": 0,
+        "skipped": 0
+      }
+    },
+    "by_target": {
+      "record": {
+        "pass": 49,
+        "warn": 1,
+        "fail": 4,
+        "info": 0,
+        "gap": 0,
+        "skipped": 8
+      },
+      "report": {
+        "pass": 3,
+        "warn": 0,
+        "fail": 0,
+        "info": 0,
+        "gap": 0,
+        "skipped": 0
+      },
+      "human": {
+        "pass": 0,
+        "warn": 0,
+        "fail": 0,
+        "info": 0,
+        "gap": 7,
+        "skipped": 0
+      },
+      "suite": {
+        "pass": 3,
+        "warn": 0,
+        "fail": 0,
+        "info": 0,
+        "gap": 0,
+        "skipped": 0
+      },
+      "tooling": {
+        "pass": 0,
+        "warn": 0,
+        "fail": 0,
+        "info": 0,
+        "gap": 2,
+        "skipped": 0
+      }
+    }
+  },
+  "open_items_still_open": [
+    {
+      "id": "OI-2",
+      "status": "OPEN - unchanged since v1.0.0",
+      "title": "RR4's nine paths do not cover the schema's ten REQUIRED_MODELING paths",
+      "affects": [
+        "CC-006",
+        "CC-007",
+        "CC-009",
+        "KC-002"
+      ]
+    },
+    {
+      "id": "OI-4",
+      "status": "OPEN - unchanged since v1.0.0",
+      "title": "Internal shape of value_type range is undefined",
+      "affects": [
+        "VT-005",
+        "VT-005B"
+      ]
+    },
+    {
+      "id": "OI-5",
+      "status": "OPEN - unchanged since v1.0.0",
+      "title": "R3 staleness limit is not defined in the schema file",
+      "affects": [
+        "RT-004",
+        "RT-005",
+        "RT-010"
+      ]
+    },
+    {
+      "id": "OI-6",
+      "status": "OPEN - unchanged since v1.0.0",
+      "title": "The word present is ambiguous in the R1 tier definition",
+      "affects": [
+        "KC-001",
+        "KC-002",
+        "RT-002",
+        "RT-002B",
+        "CC-007"
+      ]
+    },
+    {
+      "id": "OI-7",
+      "status": "OPEN - narrowed at v2.0.0",
+      "title": "Schema does not declare where verified_on lives",
+      "affects": [
+        "XF-008",
+        "XF-009"
+      ]
+    },
+    {
+      "id": "OI-8",
+      "status": "OPEN - unchanged since v1.0.0",
+      "title": "No machine-detectable signal for whether the operational profile is used",
+      "affects": [
+        "KC-003",
+        "KC-003B"
+      ]
+    },
+    {
+      "id": "OI-10",
+      "status": "OPEN - expanded at v2.0.0",
+      "title": "Formats for compiled_on, compiled_by and segment_id are undeclared",
+      "affects": [
+        "TL-001",
+        "TL-001B",
+        "TL-002",
+        "TL-005",
+        "TL-006",
+        "TL-008"
+      ]
+    },
+    {
+      "id": "OI-11",
+      "status": "OPEN - NEW at v2.0.0",
+      "title": "RR3's escalation-marker clause has no operative effect at R1 as written",
+      "affects": [
+        "CC-002",
+        "CC-002B",
+        "CC-002C",
+        "CC-010"
+      ]
+    },
+    {
+      "id": "OI-12",
+      "status": "OPEN - NEW at v2.0.0",
+      "title": "SQS1/SQS5 may collide with INV12's shipped class-typical constants",
+      "affects": [
+        "SQS-001",
+        "SQS-005",
+        "SQS-006",
+        "CC-006"
+      ]
+    },
+    {
+      "id": "OI-13",
+      "status": "OPEN - NEW at v2.0.0",
+      "title": "Excluding calibration leaves R2 and R3 partially unverifiable against the schema's own definitions",
+      "affects": [
+        "RT-003",
+        "RT-004",
+        "RT-010"
+      ]
+    },
+    {
+      "id": "OI-14",
+      "status": "OPEN - NEW at v2.0.0",
+      "title": "Nothing distinguishes a pre-promotion draft from a promoted record",
+      "affects": [
+        "TL-001B",
+        "TL-008",
+        "RT-003"
+      ]
+    },
+    {
+      "id": "OI-15",
+      "status": "OPEN - NEW at v2.0.0",
+      "title": "source_quote and conflicting are not declared in the schema",
+      "affects": [
+        "SQS-001",
+        "SQS-002",
+        "SQS-003",
+        "SQS-004",
+        "SQS-005",
+        "CC-010",
+        "KC-005"
+      ]
+    }
+  ],
+  "gap_severity_tests_that_fired": [
+    {
+      "id": "KC-003B",
+      "category": "key_coverage",
+      "target": "human",
+      "detail": "GAP - not automatable (target: human). Requires human review.",
+      "human_review": "Reviewer states whether the operational profile is used for this entity. If yes, apply KC-003's assertion unconditionally rather than only at R3."
+    },
+    {
+      "id": "CC-008",
+      "category": "confidence_class",
+      "target": "human",
+      "detail": "GAP - not automatable (target: human). Requires human review.",
+      "human_review": "At R2 promotion, a reviewer confirms each of the five airframe-specific paths cites a source about this airframe rather than a class-typical default. The automated placeholder check runs regardless and is necessary but not sufficient."
+    },
+    {
+      "id": "SQS-006",
+      "category": "source_quote_structure",
+      "target": "human",
+      "detail": "GAP - not automatable (target: human). Requires human review.",
+      "human_review": "At promotion, a reviewer opens each cited source and confirms the quoted string appears in it and supports the value recorded. Separately, a reviewer confirms whether the four class-typical shipped constants are expected to carry source_quotes at all; if not, an explicit exemption belongs in the requirements rather than a silent softening of SQS-001 and SQS-005."
+    },
+    {
+      "id": "XF-011",
+      "category": "cross_field",
+      "target": "tooling",
+      "detail": "GAP - not automatable (target: tooling). Requires human review.",
+      "human_review": "Reviewer inspects catalog.py and any record-authoring tooling to confirm no default or inference is applied to segment_id."
+    },
+    {
+      "id": "XF-014",
+      "category": "cross_field",
+      "target": "human",
+      "detail": "GAP - not automatable (target: human). Requires human review.",
+      "human_review": "A reviewer confirms that the mass, battery, and performance figures were taken from sources describing the X2D in standard configuration on the stock battery, and that any X2E or alternate-configuration source was recorded as a conflict rather than used as a fill. Any value populated during the X2DENTERPRISE or X2E windows must be re-confirmed against X2D sources rather than assumed to carry across. Until done, no figure from this record should be quoted."
+    },
+    {
+      "id": "XF-016",
+      "category": "cross_field",
+      "target": "human",
+      "detail": "GAP - not automatable (target: human). Requires human review.",
+      "human_review": "At promotion, a reviewer confirms the declared segment still matches the entity's variant - for the X2D, SEG-US-DEF-2020S-QUAD-G1 (\"Group 1 quadcopter, defense\", Blue UAS list platforms, planned count 3) rather than SEG-US-COM-2020S-QUAD-G1 (\"Group 1 quadcopter, commercial\", planned count 4). Currently corroborated. Re-check on any future change to the entity's variant, since that is what invalidated it at v2.1.0."
+    },
+    {
+      "id": "VT-005B",
+      "category": "value_type",
+      "target": "human",
+      "detail": "GAP - not automatable (target: human). Requires human review.",
+      "human_review": "A reviewer or a schema amendment defines the range shape - key names or array convention, and whether ordering is enforced. Until then, any consumer of a range value must handle both conventions."
+    },
+    {
+      "id": "RT-005",
+      "category": "readiness_tier",
+      "target": "human",
+      "detail": "GAP - not automatable (target: human). Requires human review.",
+      "human_review": "The staleness limit must be defined in the schema file. Until then, a reviewer manually inspects the oldest verified_on and judges freshness."
+    },
+    {
+      "id": "RT-009",
+      "category": "readiness_tier",
+      "target": "tooling",
+      "detail": "GAP - not automatable (target: tooling). Requires human review.",
+      "human_review": "Reviewer inspects the runner to confirm the tier computation reads only the record file, the schema file, and validation_time - no network, no other entity record, no research-agent output, no instruction set."
+    }
+  ],
+  "tests_not_automatable": [
+    {
+      "id": "KC-003B",
+      "category": "key_coverage",
+      "severity": "gap",
+      "outcome": "gap",
+      "human_review": "Reviewer states whether the operational profile is used for this entity. If yes, apply KC-003's assertion unconditionally rather than only at R3."
+    },
+    {
+      "id": "CC-008",
+      "category": "confidence_class",
+      "severity": "warn",
+      "outcome": "gap",
+      "human_review": "At R2 promotion, a reviewer confirms each of the five airframe-specific paths cites a source about this airframe rather than a class-typical default. The automated placeholder check runs regardless and is necessary but not sufficient."
+    },
+    {
+      "id": "SQS-006",
+      "category": "source_quote_structure",
+      "severity": "gap",
+      "outcome": "gap",
+      "human_review": "At promotion, a reviewer opens each cited source and confirms the quoted string appears in it and supports the value recorded. Separately, a reviewer confirms whether the four class-typical shipped constants are expected to carry source_quotes at all; if not, an explicit exemption belongs in the requirements rather than a silent softening of SQS-001 and SQS-005."
+    },
+    {
+      "id": "XF-011",
+      "category": "cross_field",
+      "severity": "gap",
+      "outcome": "gap",
+      "human_review": "Reviewer inspects catalog.py and any record-authoring tooling to confirm no default or inference is applied to segment_id."
+    },
+    {
+      "id": "XF-014",
+      "category": "cross_field",
+      "severity": "gap",
+      "outcome": "gap",
+      "human_review": "A reviewer confirms that the mass, battery, and performance figures were taken from sources describing the X2D in standard configuration on the stock battery, and that any X2E or alternate-configuration source was recorded as a conflict rather than used as a fill. Any value populated during the X2DENTERPRISE or X2E windows must be re-confirmed against X2D sources rather than assumed to carry across. Until done, no figure from this record should be quoted."
+    },
+    {
+      "id": "XF-016",
+      "category": "cross_field",
+      "severity": "gap",
+      "outcome": "gap",
+      "human_review": "At promotion, a reviewer confirms the declared segment still matches the entity's variant - for the X2D, SEG-US-DEF-2020S-QUAD-G1 (\"Group 1 quadcopter, defense\", Blue UAS list platforms, planned count 3) rather than SEG-US-COM-2020S-QUAD-G1 (\"Group 1 quadcopter, commercial\", planned count 4). Currently corroborated. Re-check on any future change to the entity's variant, since that is what invalidated it at v2.1.0."
+    },
+    {
+      "id": "VT-005B",
+      "category": "value_type",
+      "severity": "gap",
+      "outcome": "gap",
+      "human_review": "A reviewer or a schema amendment defines the range shape - key names or array convention, and whether ordering is enforced. Until then, any consumer of a range value must handle both conventions."
+    },
+    {
+      "id": "RT-005",
+      "category": "readiness_tier",
+      "severity": "gap",
+      "outcome": "gap",
+      "human_review": "The staleness limit must be defined in the schema file. Until then, a reviewer manually inspects the oldest verified_on and judges freshness."
+    },
+    {
+      "id": "RT-009",
+      "category": "readiness_tier",
+      "severity": "gap",
+      "outcome": "gap",
+      "human_review": "Reviewer inspects the runner to confirm the tier computation reads only the record file, the schema file, and validation_time - no network, no other entity record, no research-agent output, no instruction set."
+    }
+  ],
+  "closing_report_open_gaps_not_closed": [
+    {
+      "gap": "R3 staleness limit",
+      "ref": "OI-5, RT-005",
+      "why": "entity_schema_3.0.json defines no limit - no number, no unit, no reference. Verified directly at v2.0.0.",
+      "consequence": "R3 cannot be granted by this suite on the freshness dimension at all."
+    },
+    {
+      "gap": "range-type internal shape",
+      "ref": "OI-4, VT-005B",
+      "why": "The schema declares value_type range for two parameters and never defines its structure.",
+      "consequence": "VT-005 can assert container type only. Both affected parameters are OPTIONAL, so low consequence today."
+    },
+    {
+      "gap": "pre-promotion metadata absence",
+      "ref": "OI-10, OI-14, TL-001B, TL-008",
+      "why": "compiled_on and compiled_by are stamped at promotion, but nothing in the record distinguishes a legitimate pre-promotion draft from a promoted record that lost its stamps.",
+      "consequence": "TL-001B reports absence at info severity and cannot tell the two cases apart. TL-008 catches only the incoherent combination of missing stamps plus a declared R2/R3."
+    },
+    {
+      "gap": "R2 and R3 partially unverifiable after calibration exclusion",
+      "ref": "OI-13, RT-003, RT-004, RT-010",
+      "why": "The schema's R2 definition includes calibration coherence and its R3 definition includes held-out anchors; both are out of scope for this run by direction.",
+      "consequence": "R2 verified on 4 of 5 clauses, R3 on 1 of 3. Seven v1.1.0 tests were removed, including XF-005, which caught an anchor being used to both fit and test a parameter - the failure mode that produces a validation result looking like a successful fit while the model reproduces its own input."
+    },
+    {
+      "gap": "RR3 escalation-marker clause has no operative effect at R1",
+      "ref": "OI-11, CC-002, CC-002B",
+      "why": "RR3's \"ONLY IF\" phrasing implies an unmarked field hard-fails at R1, but the following sentence states it is a warning at R1, and the R2 clause fails both cases regardless.",
+      "consequence": "Implemented per the later, unambiguous sentence - warn either way at R1, under distinct finding codes. If strictness was intended, CC-002B must be raised to fail and this suite is currently under-strict at R1."
+    },
+    {
+      "gap": "SQS versus INV12 shipped constants",
+      "ref": "OI-12, SQS-006",
+      "why": "SQS1 and SQS5 require a source_quote for every non-null value; INV12 says the four class-typical constants are shipped pre-populated and not re-researched.",
+      "consequence": "If those constants ship without source_quotes, every catalog record fails SQS-001 and SQS-005 on four paths for reasons unrelated to the author's work. Implemented without a carve-out, as specified, and flagged."
+    },
+    {
+      "gap": "source_quote and conflicting are not schema-declared",
+      "ref": "OI-15",
+      "why": "Verified directly - neither string appears anywhere in entity_schema_3.0.json.",
+      "consequence": "The six SQS tests and CC-010 test fields catalog.py does not know about. A SQS failure is a requirements failure, not a schema-conformance failure, and the two should not be reported as the same thing."
+    },
+    {
+      "gap": "air_density_kg_m3 unclassified by RR4",
+      "ref": "OI-2, CC-009",
+      "why": "RR4 enumerates nine REQUIRED_MODELING paths; the schema declares ten.",
+      "consequence": "The tenth is checked under the generic REQUIRED_MODELING rule only, at warn level."
+    },
+    {
+      "gap": "segment attribution is asserted, never verified",
+      "ref": "XF-016 (OI-16 closed at v2.2.0)",
+      "why": "The suite asserts the segment recorded in its header. It cannot check that header value is right, and the coverage plan registers both a defense and a commercial segment under the identical category string \"UAS - Group 1 - Quadcopter\".\n",
+      "consequence": "A wrong segment_id fails no test here - it passes XF-010, XF-013 and TL-006 - and miscounts two segments at once. Not currently live: at v2.2.0 the X2D (defense variant) and SEG-US-DEF-2020S-QUAD-G1 (defense segment) agree, so this is a standing check. It WAS live at v2.1.0, which is the evidence that a variant change can invalidate it silently.\n"
+    },
+    {
+      "gap": "configuration provenance",
+      "ref": "OI-1, XF-014",
+      "why": "The scope declares the record represents the X2D in standard configuration on the stock battery, and that X2E or alternate-configuration sources are conflicts rather than fills. Detecting that requires reading the source behind a value.",
+      "consequence": "A record populated entirely from X2E sources passes every test in this suite. Sharpened by four identity changes - any value researched during the X2DENTERPRISE or X2E windows is a wrong-aircraft value unless re-confirmed against X2D sources. Human review at promotion is the only control.\n"
+    }
+  ],
+  "explicitly_out_of_scope": [
+    "Whether any sourced value is factually correct. A record can pass every test above and state the wrong mass.",
+    "Whether a source_quote is authentic, real, or supports the value it sits beside. Only its structural shape is tested. See SQS-006.",
+    "Whether a cited source actually supports the value cited to it. SC-004, CC-004, CC-005 and CC-005B check that a source or note string EXISTS and is non-empty. None reads it.",
+    "Whether the aerodynamic_assumptions literature values are the right modelling choices. CC-003 and CC-004 confirm they carry an acceptable confidence tier and a source. The choice is not graded.",
+    "CALIBRATION, entirely - presence, block structure, anchor existence, fitted-versus-held-out separation, and fit accuracy. Out of scope for this run by direction. See OI-13.",
+    "Tier 2 conventions - conflict structure, source quote authenticity, unit-pairing correctness, conditions blocks, escalation marker format, source budgets.",
+    "Whether the record's values came from sources describing the declared configuration - i.e. the X2D rather than the X2E. See OI-1 and XF-014.",
+    "Whether the declared segment_id is the correct segment for this entity. The suite checks a segment is declared and matches the scope, never that the scope is right. See OI-16 and XF-016.",
+    "R3 staleness. See OI-5 and RT-005."
+  ],
+  "skipped_tests": [
+    {
+      "id": "KC-003",
+      "detail": "SKIPPED - condition readiness_declared_in ['R3'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked."
+    },
+    {
+      "id": "CC-002",
+      "detail": "SKIPPED - condition readiness_declared_in ['R1'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked."
+    },
+    {
+      "id": "CC-002B",
+      "detail": "SKIPPED - condition readiness_declared_in ['R1'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked."
+    },
+    {
+      "id": "CC-002C",
+      "detail": "SKIPPED - condition readiness_declared_in ['R2', 'R3'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked."
+    },
+    {
+      "id": "RT-002",
+      "detail": "SKIPPED - condition readiness_declared_in ['R1', 'R2', 'R3'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked."
+    },
+    {
+      "id": "RT-002B",
+      "detail": "SKIPPED - condition readiness_declared_in ['R1'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked."
+    },
+    {
+      "id": "RT-003",
+      "detail": "SKIPPED - condition readiness_declared_in ['R2', 'R3'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked."
+    },
+    {
+      "id": "RT-004",
+      "detail": "SKIPPED - condition readiness_declared_in ['R3'] not met (readiness_declared='R0'). Per runner_contract.condition the test is skipped entirely; nothing was checked."
+    }
+  ]
+}

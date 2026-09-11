@@ -4,97 +4,319 @@
   "category": "UAS - Group 1 - Quadcopter",
   "segment_id": "SEG-US-DEF-2020S-QUAD-G1",
   "schema_version": "3.0",
-  "compiled_on": "2026-09-10",
-  "compiled_by": "Conor Maloney",
-  "_standards": "See STANDARDS.md. Requirement classes and readiness tiers are enforced by catalog/schema/entity_schema_3.0.json.",
+  "compiled_on": null,
+  "compiled_by": null,
   "readiness_declared": "R0",
-  "_readiness_note": "STUB. Structure only. Every aircraft-specific value is a declared gap or is not recorded at all - nothing here has been sourced. The catalog reports this entity as unmodelable and the gate REFUSES it. That is correct behaviour, not a defect to work around by filling fields with plausible numbers.",
-  "_stub_note": "Deliberately thin, and several optional keys are ABSENT rather than declared - they report as NOT RECORDED, in contrast with UAS-QUAD-DJI-MINI4PRO where every gap carries a todo. Public performance data for Blue UAS platforms is thinner than for commercial aircraft and some figures are not published at all, so a low readiness tier here may be the honest steady state rather than a temporary condition.",
-
+  "_standards": "See STANDARDS.md. Requirement classes and readiness tiers are enforced by catalog/schema/entity_schema_3.0.json.",
+  "_readiness_note": "R0 / STUB, and correctly so. Four of the six REQUIRED_MEASURED parameters are declared gaps: propeller diameter, pack capacity in Wh, full-charge voltage, and max_hover_time_min. max_hover_time_min is the calibration anchor, so nothing can be fitted and the gate must REFUSE. Skydio publishes an airframe-level datasheet and an operator manual but publishes no battery electrical specification, no propeller geometry and no separate hover endurance figure anywhere the author could reach. This may be the honest steady state for this platform rather than a temporary condition.",
+  "_metadata_note": "OUTSTANDING - THE LAST THING BLOCKING A CLEAN VALIDATION. compiled_on and compiled_by are null, and no present parameter carries verified_on, because the compiling run was directed (R14) not to write them - they belong to the promotion step. This record has now BEEN promoted into catalog/entities/, so that step is due and a human must stamp them. This departs from STANDARDS.md section 3, which makes verified_on mandatory on a present parameter; the departure is recorded here rather than hidden. Every present parameter is otherwise complete: value, confidence, source, source_url and a verbatim source_quote. EXCEPTION: the four carried-across modelling constants in aerodynamic_assumptions DO carry verified_on - inherited verbatim from the superseded stub as its author's attestation, not written by this run.",
+  "_calibration_note": "The calibration block is INHERITED from the superseded stub, not authored here - see calibration._provenance. The compiling run was directed (R15) that calibration was out of scope and left the key null; that was correct for a drafts/ record but became a deletion once this file replaced one that had a block. No fit is possible while max_hover_time_min is missing, so the block is inert either way.",
+  "calibration": {
+    "_note": "Declared intent. Nothing can be fitted until the hover anchor and the physical parameters exist.",
+    "_provenance": "CARRIED ACROSS VERBATIM from the UAS-QUAD-SKYDIO-X2D stub this record supersedes (git 16cdb3c). NOT authored by the compiling run, which was directed under R15 that calibration was out of scope - and which therefore left 'calibration': null and recorded that as a declared consequence. Dropping the block on supersede was a regression: it broke test_catalog.py check 3, which had been green, and it deleted a prior author's declaration for no gain. Preserving it is the same call already made for the four modelling constants - superseding must not silently delete what the superseded file held.",
+    "ratified": false,
+    "_ratification_note": "'ratified': false marks that this run did not evaluate whether profile_power_hover_w is the right parameter to fit, or whether max_flight_time_min is a sound held-out anchor. It asserts only that this is what the previous record declared. A human must confirm it before any fit is run. Note it is currently INERT in either case: fitted_to_anchor names max_hover_time_min, which is a declared gap, so nothing can be fitted and the gate refuses the entity regardless.",
+    "fitted_parameter": "profile_power_hover_w",
+    "fitted_to_anchor": "max_hover_time_min",
+    "held_out_anchors": [
+      "max_flight_time_min"
+    ]
+  },
+  "_escalations": [
+    {
+      "id": "ESC-1",
+      "severity": "RESOLVED by human direction - X2D. Retained with its full history, not deleted.",
+      "trigger": "R11: cannot determine which variant a source describes",
+      "issue": "The configuration under test was originally given as 'Skydio X2D, Enterprise variant'. No such Skydio configuration exists. Skydio's X2 line splits into X2D, the DEFENSE variant, and X2E, the ENTERPRISE variant. They are separate products with separate datasheets, separate operator manuals, different radios (X2D 1.8/5 GHz, X2E 5 GHz), different encryption (X2D AES-256, X2E AES-128) and, materially for this model, DIFFERENT PUBLISHED MAX SPEED. The original brief conflated the two.",
+      "resolution": "The aircraft is the Skydio X2D, the defense variant, on the stated grounds that this catalog feeds a MILITARY simulation. Confirmed by the catalog owner, 2026-09-10.",
+      "resolution_history": "RECORDED BECAUSE IT MATTERS. This escalation was answered twice. It was first resolved to X2E, and the record was re-based onto the X2E line accordingly. The owner then corrected that to X2D on the military-simulation grounds above, and the record was re-based back. Both turns are on the record because a reader comparing this file against an intermediate copy, a board output or a git object from the X2E interval must be able to see why the numbers moved, rather than discovering an unexplained 24 percent change in max_speed_ms. Neither turn was a research finding; both were directions.",
+      "what_the_x2d_answer_sets": "max_speed_ms is 11.2 m/s (25 mph), NOT the 13.9 m/s (31 mph) the X2E publishes - a 24 percent difference, and the only value in this record that the variant question moves. Every other figure is published identically by both variants, because the X2 airframe is common to them. All five airframe fields are cited to X2D documents; the X2E readings are retained in conflicting_values as the rejected alternative.",
+      "residual": "RESOLVED. The working id UAS-QUAD-SKYDIO-X2DENTERPRISE was dropped. This record now carries the correct id UAS-QUAD-SKYDIO-X2D, superseding the thinner stub that previously held it - see _supersedes. No 'Enterprise' naming survives on this entity. The word still appears in the 'issue' field above, deliberately: it is the explanation of what was wrong, and deleting it would leave a record that had changed variant twice with nothing saying why."
+    },
+    {
+      "id": "ESC-2",
+      "severity": "ADVISORY - not a blocker, recorded for the next author",
+      "trigger": "R11-adjacent: payload package ambiguity",
+      "issue": "'Standard configuration' was not defined. Skydio ships the X2D in at least two payload packages: X2D Color/Thermal (12MP colour + FLIR Boson 320x256) and X2D Color (single colour sensor). This record treats Color/Thermal as standard, because it is the dual-sensor package the general X2D datasheet describes and the one that matches the Short-Range Reconnaissance framing Skydio uses for the X2D. Every airframe figure used here - weight, both dimension sets, flight time, wind resistance, max speed - is published identically across both X2D packages, so no value in this record depends on which is meant.",
+      "still_open": "If the fleet actually flies the single-sensor X2D Color, nothing in this record changes today. It would start to matter once avionics_power_w is sourced, because the FLIR Boson is a continuous electrical load that the Color package does not carry."
+    }
+  ],
+  "_entity_id_note": "RESOLVED 2026-09-10 by the catalog owner: supersede. This record replaced the previous UAS-QUAD-SKYDIO-X2D stub rather than being promoted alongside it under a separate id. The alternative would have made the coverage board read 2 of 3 populated for segment SEG-US-DEF-2020S-QUAD-G1 while documenting one aircraft - the false completeness the coverage plan exists to prevent. The four REQUIRED_MODELING constants the old stub held were CARRIED ACROSS rather than lost in the overwrite; each is marked 'ratified': false and awaits a human sign-off. The superseded file remains recoverable at git 16cdb3c.",
   "physical": {
     "mass_kg": {
-      "value": null,
-      "status": "missing",
-      "todo": "Takeoff weight including battery. Skydio product documentation or the Blue UAS listing."
+      "value": 1.325,
+      "value_as_published": "1325 g",
+      "unit": "kg",
+      "confidence": "published",
+      "source": "Skydio X2D Color/Thermal datasheet - Technical Specs, Aircraft, 'Weight (with battery)'",
+      "source_url": "https://www.skydio.com/ja-jp/resources/datasheets/skydio-x2d-colorthermal",
+      "source_quote": "Weight (with battery)            1325 g",
+      "conditions": "Takeoff weight with battery installed. Payload package: Color/Thermal (12MP colour + FLIR Boson 320x256). Datasheet does not state whether propellers or microSD are included.",
+      "note": "Conversion: 1325 g / 1000 = 1.325 kg, converted once from the published gram figure. Four significant figures, as published. Corroborated at 1325 g by two further Skydio X2D documents - the X2D Color datasheet and the X2D defense datasheet -. The DHS S&T Urban OpEx 2022 report describes the same aircraft as '(2.9 pounds)', which is 1315 g; that is a rounded restatement of 1325 g (2.921 lb), not an independent measurement, so it is recorded as corroboration rather than as a conflict. CROSS-MODEL CAVEAT: the Skydio X2E publishes this same figure. That is recorded as CONSISTENCY, not as independent corroboration of this aircraft. WHETHER THE X2D AND X2E SHARE AN AIRFRAME IS UNSOURCED, in both directions: no source was found stating they share structure, and none was found stating they do not. Identical published figures are consistent with a shared airframe but do not establish one, so an X2E figure cannot be treated as a second measurement of this aircraft. Every value in this field is quoted from an X2D document."
     },
     "propeller_diameter_m": {
       "value": null,
       "status": "missing",
-      "todo": "Propeller diameter. Needs the propeller part number from a parts listing, then convert from inches."
+      "todo": "Propeller diameter. Not published in any Skydio datasheet, in the X2D User Guide (FCC filing 2ATQRSMO5GV1), or in the X2E Operator Manual - all were checked and none carries propeller geometry. Closing this needs either the propeller part number from the X2 Propeller Kit (SKYX2PRP100NA) packaging or parts listing with a stated blade length, or a direct measurement of a blade. Do NOT derive it from the 663 mm unfolded span; the schema note is explicit that induced power scales as 1/sqrt(disk area) and a guessed diameter corrupts every endurance figure downstream."
     },
     "rotor_count": {
       "value": 4,
+      "value_as_published": "four propellers",
       "unit": "count",
       "confidence": "published",
-      "source": "Quadcopter airframe",
-      "verified_on": "2026-09-10",
-      "note": "Definitional from the category, not a measurement."
+      "source": "DHS Science and Technology Directorate, 'Urban OpEx 2022 Skydio X2 Autonomous Unmanned Aircraft System Technology Report', OpEx-T-R-15, evaluator feedback table, UAV Platform row",
+      "source_url": "https://www.dhs.gov/sites/default/files/2023-01/22_0818_st_skydio_x2.pdf",
+      "source_quote": "Well-designed with four propellers",
+      "conditions": "Not a measurement condition; an airframe configuration fact.",
+      "note": "Report is marked 'Approved for Public Release' on every page, so it clears R4. VARIANT CAVEAT: the report refers to the aircraft as 'Skydio X2' with no D or E suffix, and evaluates it with FDNY and other first responders, which is the X2E's role rather than the X2D's. It is cited here only for rotor count, which is common to both variants and is definitional from the category in any case. Independently corroborated by the Skydio X2D User Guide disassembly procedure, which instructs 'Lift all four arms up and in toward the body of the drone'."
+    },
+    "propeller_pitch_m": {
+      "value": null,
+      "status": "missing",
+      "todo": "Propeller pitch. Same gap and same route as propeller_diameter_m - needs a propeller part number with a published pitch, or a measured blade. Reporting only; does not block modelling."
+    },
+    "dimensions_unfolded_mm": {
+      "value": {
+        "length": 663,
+        "width": 569,
+        "height": 211
+      },
+      "value_as_published": "26.1\" x 22.4\" x 8.3\"",
+      "unit": "mm",
+      "confidence": "published",
+      "source": "Skydio X2D Color/Thermal datasheet - Technical Specs, Aircraft, 'Dimensions (unfolded, flying)'",
+      "source_url": "https://www.skydio.com/ja-jp/resources/datasheets/skydio-x2d-colorthermal",
+      "source_quote": "Dimensions (unfolded, flying)    26.1\" x 22.4\" x 8.3\"  (66 x 56 x 20 cm)",
+      "conditions": "Unfolded, flying configuration - arms deployed.",
+      "note": "Conversion from the published inches, which carry three significant figures: 26.1 x 25.4 = 662.94 -> 663 mm; 22.4 x 25.4 = 568.96 -> 569 mm; 8.3 x 25.4 = 210.82 -> 211 mm. Converted once from inches rather than from the datasheet's own rounded '(66 x 56 x 20 cm)', per R7. The X2E Operator Manual (2023) prints the finer metric conversion '66.3 cm X 56.9 cm X 21.1 cm' for the same inch figures. That matches this conversion exactly, which is useful evidence that INCHES are the original unit and the centimetres are the rounded derivative - a fact about how Skydio writes its datasheets, not a measurement of this aircraft. CROSS-MODEL CAVEAT: the Skydio X2E publishes this same figure. That is recorded as CONSISTENCY, not as independent corroboration of this aircraft. WHETHER THE X2D AND X2E SHARE AN AIRFRAME IS UNSOURCED, in both directions: no source was found stating they share structure, and none was found stating they do not. Identical published figures are consistent with a shared airframe but do not establish one, so an X2E figure cannot be treated as a second measurement of this aircraft. Every value in this field is quoted from an X2D document."
+    },
+    "dimensions_folded_mm": {
+      "value": {
+        "length": 302,
+        "width": 140,
+        "height": 91
+      },
+      "value_as_published": "11.9\" x 5.5\" x 3.6\"",
+      "unit": "mm",
+      "confidence": "published",
+      "source": "Skydio X2D Color/Thermal datasheet - Technical Specs, Aircraft, 'Dimensions (folded, no battery)'",
+      "source_url": "https://www.skydio.com/ja-jp/resources/datasheets/skydio-x2d-colorthermal",
+      "source_quote": "Dimensions (folded, no battery)  11.9\" x 5.5\" x 3.6\"  (30 x 15 x 10 cm)",
+      "conditions": "Folded for transport, BATTERY REMOVED. Not comparable with a folded dimension that includes the pack.",
+      "note": "Conversion from the published inches: 11.9 x 25.4 = 302.26 -> 302 mm; 5.5 x 25.4 = 139.7 -> 140 mm; 3.6 x 25.4 = 91.44 -> 91 mm. Converted once from inches, not from the datasheet's rounded '(30 x 15 x 10 cm)'. The X2E Operator Manual prints '30.2 cm X 14 cm X 9.1 cm' for the same inch figures, matching this conversion - again evidence about the original unit rather than about this airframe. CROSS-MODEL CAVEAT: the Skydio X2E publishes this same figure. That is recorded as CONSISTENCY, not as independent corroboration of this aircraft. WHETHER THE X2D AND X2E SHARE AN AIRFRAME IS UNSOURCED, in both directions: no source was found stating they share structure, and none was found stating they do not. Identical published figures are consistent with a shared airframe but do not establish one, so an X2E figure cannot be treated as a second measurement of this aircraft. Every value in this field is quoted from an X2D document."
     }
   },
-
   "battery": {
     "capacity_wh": {
       "value": null,
       "status": "missing",
-      "todo": "Pack energy in Wh. Manufacturer battery specification."
+      "todo": "Pack energy in Wh. Skydio publishes NO battery electrical specification for the X2 anywhere the author could reach: not in the X2D Color/Thermal datasheet, the X2D Color datasheet, the X2D defense datasheet, the X2D User Guide (FCC filing 2ATQRSMO5GV1), the Skydio support article on charging and maintaining X2 batteries, nor - checked because the pack is common to both variants - the X2E Operator Manual Specifications section or the X2E datasheets. Search engines attribute '48.79 Wh / 4280 mAh / 11.4 V' to retailer listings for part SKYX2BAT100NA, but the Adorama product page was opened directly and its DOM contains no Watt-hour, voltage, mAh or capacity field at all - the figures could not be read on the page and are therefore not recorded. The same aggregated snippet also carried 'approximately 23 minutes of flight time', which is a Skydio 2/2+ figure, not an X2 figure, so the aggregation is demonstrably contaminated by a different product. To close: the pack's own regulatory label (a Wh marking is required on the pack), a Skydio dangerous-goods or shipping declaration, or a retailer page whose specification table can actually be read."
     },
     "voltage_full_v": {
       "value": null,
       "status": "missing",
-      "todo": "Charge voltage limit. Manufacturer battery specification, or cell count times the per-cell limit for the stated chemistry."
+      "todo": "Charge voltage limit. The same sources listed under capacity_wh were checked and none publishes it. Do NOT compute it as cell count times a per-cell limit: the cell count is itself unpublished, and R2 forbids back-computing. To close: the pack regulatory label, a Skydio battery specification sheet, or an FCC/IC test report for the aircraft radio (FCC ID 2ATQRSDRC2V1), whose EUT description usually states the DC supply voltage."
+    },
+    "capacity_mah": {
+      "value": null,
+      "status": "missing",
+      "todo": "Pack capacity in mAh. Same gap and same route as capacity_wh. Reporting only."
+    },
+    "voltage_nominal_v": {
+      "value": null,
+      "status": "missing",
+      "todo": "Nominal pack voltage. Same gap and same route as voltage_full_v. Note that unread aggregator snippets offered two different figures for this pack, 11.4 V and 11.55 V; neither could be verified on a readable page, so neither is recorded even as a conflict. Reporting only."
+    },
+    "chemistry": {
+      "value": "lithium polymer (LiPo)",
+      "value_as_published": "lithium polymer batteries (LiPo)",
+      "unit": null,
+      "confidence": "published",
+      "source": "Skydio support, 'How to charge and maintain your Skydio X2 batteries', Safety Guidelines section (published 2021-04-26, updated 2026-09-04)",
+      "source_url": "https://support.skydio.com/hc/en-us/articles/1260804644430-How-to-charge-and-maintain-your-Skydio-X2-batteries",
+      "source_quote": "Skydio X2 uses lightweight, rechargeable lithium polymer batteries (LiPo) that provide higher specific energy than other lithium batteries.",
+      "conditions": "Applies to the stock Skydio X2 pack. VARIANT CAVEAT: the article is filed under Skydio's X2E section, but its text says 'Skydio X2' throughout, and it is the only battery-handling article Skydio publishes for the X2 line. The pack (part SKYX2BAT100NA) is sold as a single part for the X2, not per variant.",
+      "conflicting": true,
+      "contested": true,
+      "conflicting_values": [
+        {
+          "value": "lithium polymer (LiPo)",
+          "source": "Skydio support, 'How to charge and maintain your Skydio X2 batteries', Safety Guidelines",
+          "source_url": "https://support.skydio.com/hc/en-us/articles/1260804644430-How-to-charge-and-maintain-your-Skydio-X2-batteries",
+          "source_quote": "Skydio X2 uses lightweight, rechargeable lithium polymer batteries (LiPo) that provide higher specific energy than other lithium batteries."
+        },
+        {
+          "value": "lithium-ion",
+          "source": "Adorama retail listing, 'Skydio Battery for Skydio X2 Drone' (MFR SKYX2BAT100NA), Key Features",
+          "source_url": "https://www.adorama.com/skyx2bat100.html",
+          "source_quote": "Extend your Skydio X2 drone flights with this high-capacity lithium-ion battery!"
+        }
+      ],
+      "note": "CONFLICT PRESERVED, NOT AVERAGED. Skydio's own support documentation says lithium polymer; the Adorama retail listing for the same part number says lithium-ion. Using the manufacturer figure because it is the primary source and the retailer text is marketing copy, on a page whose specification table is absent entirely (see the capacity_wh todo). The distinction is not cosmetic for this model - LiPo and Li-ion have different discharge curve shapes and different safe cutoffs, so whichever is true changes the voltage curve. Flagging rather than resolving."
+    },
+    "weight_g": {
+      "value": null,
+      "status": "missing",
+      "todo": "Battery pack mass. Not published by Skydio. Note that a derivation is available and was deliberately NOT taken: the datasheet gives 1325 g WITH battery and the folded-dimension row is 'no battery', but no all-up-less-battery MASS is published anywhere, so there is nothing to subtract. To close: weigh a pack, or find a shipping declaration that states the pack mass."
     },
     "voltage_empty_v": {
       "value": null,
       "status": "missing",
-      "todo": "Cutoff voltage. Manufacturer battery specification."
+      "todo": "Cutoff voltage. Not published. The Skydio support article describes low-battery behaviour qualitatively - forced landing, hibernation below 50 percent - but states no cutoff voltage. To close: a Skydio battery specification, or a logged voltage trace from a flight flown to forced landing."
     }
   },
-
   "performance_published": {
-    "_note": "No performance figure has been sourced yet.",
     "max_hover_time_min": {
       "value": null,
       "status": "missing",
-      "todo": "Hover endurance. THIS IS THE CALIBRATION ANCHOR - no parameter can be fitted without it."
+      "todo": "Hover endurance. THIS IS THE CALIBRATION ANCHOR - no parameter can be fitted without it, and the gate must refuse the entity until it exists. Skydio publishes a single endurance figure, 'up to 35 minutes' flight time, and does not distinguish hover from cruise anywhere in the X2D Color/Thermal datasheet, the X2D Color datasheet, the X2D defense datasheet, the X2D User Guide, or - checked as the same airframe - the X2E Operator Manual and X2E datasheets. Do NOT reuse the 35 minute flight-time figure here: it is already claimed as the held-out validation anchor (max_flight_time_min), and the schema forbids an anchor being both fitted to and held out. To close: an instrumented hover-to-cutoff test, or a Skydio figure that explicitly says hover. ZERO distinct published values were found, so the three-or-more-values escalation in R11 was not triggered - the opposite problem applies."
     },
     "max_flight_time_min": {
+      "value": 35,
+      "value_as_published": "Up to 35 minutes",
+      "unit": "min",
+      "confidence": "published",
+      "source": "Skydio X2D Color/Thermal datasheet - Technical Specs, Aircraft, 'Flight Time'",
+      "source_url": "https://www.skydio.com/ja-jp/resources/datasheets/skydio-x2d-colorthermal",
+      "source_quote": "Flight Time                      Up to 35 minutes",
+      "conditions": "NONE PUBLISHED. Skydio states no airspeed, wind, altitude, temperature, payload state, or start and end state of charge for this figure. Per R9 this is an incomplete specification - a marketing ceiling rather than a measured endurance. The datasheet's own hedge is the words 'Up to'.",
+      "note": "Recorded as an integer because the source gives an integer. Corroborated verbatim as 'up to 35 minutes' by the X2D Color datasheet and the X2D defense datasheet, and independently restated by the DHS S&T Urban OpEx 2022 report: 'Skydio X2 ... with an altitude ceiling of 12,000 feet and a flight time of up to 35 minutes.' All of those trace to the same manufacturer claim, so this is one value repeated, not several independent measurements. Treat the absent conditions as the dominant uncertainty on this anchor. CROSS-MODEL CAVEAT: the Skydio X2E publishes this same figure. That is recorded as CONSISTENCY, not as independent corroboration of this aircraft. WHETHER THE X2D AND X2E SHARE AN AIRFRAME IS UNSOURCED, in both directions: no source was found stating they share structure, and none was found stating they do not. Identical published figures are consistent with a shared airframe but do not establish one, so an X2E figure cannot be treated as a second measurement of this aircraft. Every value in this field is quoted from an X2D document."
+    },
+    "flight_time_test_speed_ms": {
       "value": null,
       "status": "missing",
-      "todo": "Flight endurance, together with the speed it was measured at."
+      "todo": "The speed the 35-minute flight-time figure was measured at. Skydio publishes no test condition of any kind for its endurance number (see the conditions field on max_flight_time_min). Without this the flight-time anchor cannot be scored against a speed-dependent predictor. To close: a Skydio test-condition statement, or an independent instrumented endurance run at a recorded airspeed."
+    },
+    "max_flight_distance_km": {
+      "value": null,
+      "status": "missing",
+      "todo": "Maximum flight distance. Not published. CAUTION FOR THE NEXT AUTHOR: the widely quoted '10 km' for this aircraft is WIRELESS CONTROL RANGE at 1.8 GHz, not flight distance - the datasheet row reads 'Wireless range at 1.8 GHz' and a second row gives 6 km at 5 GHz. Recording either as a distance anchor would be a category error. To close: a Skydio range figure that explicitly means ground track flown, or an instrumented out-and-back."
+    },
+    "max_wind_resistance_ms": {
+      "value": 10.3,
+      "value_as_published": "23 mph",
+      "unit": "m/s",
+      "confidence": "published",
+      "source": "Skydio X2D Color/Thermal datasheet - Technical Specs, Aircraft, 'Max Wind Speed Resistance'",
+      "source_url": "https://www.skydio.com/ja-jp/resources/datasheets/skydio-x2d-colorthermal",
+      "source_quote": "Max Wind Speed Resistance        23 mph",
+      "conditions": "No altitude, temperature or duration stated, and the datasheet does not say whether 23 mph is sustained wind or includes gusts. Sustained-versus-gust matters here: the competing X2D User Guide figure is explicitly 'winds or gusts'.",
+      "conflicting": true,
+      "contested": true,
+      "conflicting_values": [
+        {
+          "value": 10.3,
+          "value_as_published": "23 mph",
+          "source": "Skydio X2D Color/Thermal datasheet - 'Max Wind Speed Resistance'",
+          "source_url": "https://www.skydio.com/ja-jp/resources/datasheets/skydio-x2d-colorthermal",
+          "source_quote": "Max Wind Speed Resistance        23 mph"
+        },
+        {
+          "value": 11.2,
+          "value_as_published": "25 mph/40kmh",
+          "source": "Skydio X2D User Guide, effective 6 April 2021, Flying Safely / Where to fly (FCC filing 2ATQRSMO5GV1)",
+          "source_url": "https://fccid.io/2ATQRSMO5GV1/User-Manual/Combo-Manual-5302035.pdf",
+          "source_quote": "Skydio X2 should not be flown when winds or gusts are above 25 mph/40kmh."
+        }
+      ],
+      "note": "CONFLICT PRESERVED, NOT AVERAGED. Using the datasheet's 23 mph because it is the figure Skydio publishes under the heading 'Max Wind Speed Resistance', i.e. an aircraft capability, whereas the User Guide's 25 mph is an operating prohibition on winds OR GUSTS - a different quantity, and one that sits ABOVE the capability figure, which is the wrong direction for a safety limit and is itself worth a query to Skydio. Conversion: 23 x 0.44704 = 10.28192 m/s, rounded to 10.3; converted once from the published mph. Both sources here are X2D documents. CROSS-MODEL CAVEAT: the Skydio X2E publishes this same figure. That is recorded as CONSISTENCY, not as independent corroboration of this aircraft. WHETHER THE X2D AND X2E SHARE AN AIRFRAME IS UNSOURCED, in both directions: no source was found stating they share structure, and none was found stating they do not. Identical published figures are consistent with a shared airframe but do not establish one, so an X2E figure cannot be treated as a second measurement of this aircraft. Every value in this field is quoted from an X2D document. This anchor is UNSCORED in any case - the schema records that no wind predictor is pre-registered."
+    },
+    "max_ascent_speed_ms": {
+      "value": null,
+      "status": "missing",
+      "todo": "Maximum ascent speed. Not published in any Skydio datasheet or manual checked. A search aggregator (originofbots.com) offers '22 mph', but the page was not read, the site is a low-tier aggregator, and its max-speed figure matches neither the X2D nor the X2E datasheet - so it is not recorded even at literature confidence. To close: a Skydio specification row, or a logged climb from a flight record. Reporting only."
+    },
+    "max_descent_speed_ms": {
+      "value": null,
+      "status": "missing",
+      "todo": "Maximum descent speed. Same gap, same unreliable aggregator ('around 9 mph'), same reasoning as max_ascent_speed_ms. Reporting only."
     },
     "max_speed_ms": {
-      "value": null,
-      "status": "missing",
-      "todo": "Maximum speed. Sets the best-range search ceiling."
+      "value": 11.2,
+      "value_as_published": "25 mph (40 km/h)",
+      "unit": "m/s",
+      "confidence": "published",
+      "source": "Skydio X2D Color/Thermal datasheet - Technical Specs, Aircraft, 'Max Flight Speed (sea level, no wind)'",
+      "source_url": "https://www.skydio.com/ja-jp/resources/datasheets/skydio-x2d-colorthermal",
+      "source_quote": "Max Flight Speed  25 mph (40 km/h)  (sea level, no wind)",
+      "conditions": "Sea level, no wind, as printed in the row heading. Airspeed, per the X2D User Guide corroboration below. Payload package Color/Thermal. The X2D User Guide adds that max speed is REDUCED when obstacle avoidance is set to Close or Minimal, or in GPS Night Flight - all three are plausible states in a military simulation, so this is a ceiling and not a planning speed.",
+      "conflicting": true,
+      "contested": true,
+      "conflicting_values": [
+        {
+          "value": 11.2,
+          "value_as_published": "25 mph (40 km/h)",
+          "variant": "X2D - the resolved variant",
+          "source": "Skydio X2D Color/Thermal datasheet - 'Max Flight Speed (sea level, no wind)'",
+          "source_url": "https://www.skydio.com/ja-jp/resources/datasheets/skydio-x2d-colorthermal",
+          "source_quote": "Max Flight Speed  25 mph (40 km/h)  (sea level, no wind)"
+        },
+        {
+          "value": 11.2,
+          "value_as_published": "25 mph/40 kmh (air speed)",
+          "variant": "X2D User Guide - text says 'Skydio X2' throughout, so variant attribution is by document branding only",
+          "source": "Skydio X2D User Guide, effective 6 April 2021 (FCC filing 2ATQRSMO5GV1)",
+          "source_url": "https://fccid.io/2ATQRSMO5GV1/User-Manual/Combo-Manual-5302035.pdf",
+          "source_quote": "Your Skydio X2 can fly up to 35 mph/57 kmh (ground speed) or 25 mph/40 kmh (air speed) under most conditions."
+        },
+        {
+          "value": 13.9,
+          "value_as_published": "31 mph (50 km/h)",
+          "variant": "X2E - retained as the rejected reading of ESC-1",
+          "source": "Skydio X2E Color/Thermal datasheet, 28 November 2023",
+          "source_url": "https://www.unmannedsystemstechnology.com/wp-content/uploads/2023/12/X2E-Color-Thermal-Datasheet-11-28-23.pdf",
+          "source_quote": "MAX FLIGHT SPEED (SEA LEVEL, NO WIND)      31 mph (50 km/h)"
+        },
+        {
+          "value": 13.9,
+          "value_as_published": "31 mph (49 km/h) fully autonomous",
+          "variant": "X2E - retained as the rejected reading of ESC-1",
+          "source": "Skydio X2E Operator Manual, 2023, Specifications - 'MAX FLIGHT SPEED (SEA LEVEL, NO WIND)'",
+          "source_url": "https://www.adorama.com/col/productManuals/SKYX2EK12MEX.pdf",
+          "source_quote": "MAX FLIGHT SPEED (SEA LEVEL, NO WIND)  31 mph (49 km/h ) fully autonomous"
+        }
+      ],
+      "note": "CONFLICT PRESERVED, NOT AVERAGED. The split is by variant, not by measurement scatter: every X2D-branded document says 25 mph, every X2E-branded document says 31 mph, under an identical 'sea level, no wind' heading. ESC-1 resolved the variant to X2D, so 25 mph is used and the two X2E readings are retained as the rejected alternative rather than deleted - a reader must be able to see what the other answer would have been, and this escalation was answered X2E before it was answered X2D. The 25 mph figure is additionally corroborated as AIR speed by the X2D User Guide, which is what the model wants. Conversion: 25 x 0.44704 = 11.176 m/s, rounded to 11.2; converted once from the published mph, not from the rounded 40 km/h. Note that the User Guide's 35 mph is GROUND speed, a third quantity, not usable as a still-air ceiling. This field stays flagged contested after resolution: the 24 percent spread is real and is the residual uncertainty a reader should see."
     }
   },
-
   "performance_operational": {
     "usable_energy_fraction": {
       "value": null,
       "status": "missing",
-      "todo": "Reserve policy. Likely inherited from doctrine rather than from the vendor, but adopt it explicitly."
+      "todo": "Reserve policy - how much of the pack is actually flyable. Not a vendor figure; this is inherited from operating doctrine and must be adopted explicitly rather than assumed. Skydio publishes the qualitative behaviour only (the X2D User Guide describes green/yellow/red return-and-land bands and a two-minute countdown) but attaches no state-of-charge percentages to them. To close: a unit SOP or doctrinal reserve, ratified by a human. For a military simulation this is a doctrinal input, not a research finding."
     },
     "operational_overhead_factor": {
       "value": null,
       "status": "missing",
-      "todo": "Needs an independent measured endurance to compare against the published figure."
+      "todo": "Gust, temperature and manoeuvring overhead. Needs an independent measured endurance to compare against the published 35 minutes, and no such measurement was found - the DHS S&T Urban OpEx 2022 report evaluated the X2 operationally but published qualitative first-responder feedback rather than timed endurance. To close: an instrumented field endurance run, or a fleet log."
+    },
+    "observed_flight_time_min": {
+      "value": null,
+      "status": "missing",
+      "todo": "Independently measured flight endurance, as a range. Nothing found. The DHS S&T Urban OpEx 2022 report is the strongest independent evaluation located and it records only qualitative notes such as 'Long battery life for most operations' and that scanning large structures 'uses a lot of power and may require a battery swap'. To close: instrumented flights, or a published field trial with timings."
+    },
+    "observed_hover_time_min": {
+      "value": null,
+      "status": "missing",
+      "todo": "Independently measured hover endurance, as a range. Nothing found. This would also close the max_hover_time_min gap that is currently blocking the whole entity, so it is the single highest-value piece of research outstanding on this record."
     }
   },
-
   "aerodynamic_assumptions": {
     "air_density_kg_m3": {
       "value": 1.225,
+      "value_as_published": "1.225 kg/m3",
       "unit": "kg/m3",
-      "confidence": "published",
-      "source": "ISA sea level standard atmosphere",
-      "verified_on": "2026-09-10",
-      "note": "Environmental constant, not an aircraft property."
+      "confidence": "literature",
+      "source": "McCormick, B. W., 'Aerodynamics, Aeronautics, and Flight Mechanics', Wiley, 1979 - standard sea-level conditions. Reached via the Wikipedia article 'Standard sea-level conditions', which cites McCormick for this table.",
+      "source_url": "https://en.wikipedia.org/wiki/Standard_sea-level_conditions",
+      "source_quote": "Density, rho = 1.225 kg/m3 <=> 0.002377 slug/ft3",
+      "conditions": "ISA sea level: 101.325 kPa, 15 degrees C, dry air. A model input for a sea-level standard-day case only; any density-altitude case must override it.",
+      "note": "SOURCE HONESTY (R6): the value was read on Wikipedia, which attributes the table to McCormick's textbook. The textbook itself was not opened, so the citation names the origin but the confidence is 'literature' rather than 'published', and the reached-via path is stated. This is an environmental constant, not a property of this airframe, and it matches the value already carried by every other entity in this catalog. Worth noting that the aircraft's own spec sheet undercuts the sea-level assumption for real use: Skydio publishes a 12,000 ft service ceiling, where density is far below 1.225. For a military simulation with any terrain elevation, expect this to be overridden per scenario."
     },
     "equivalent_flat_plate_area_m2": {
       "value": null,
       "status": "missing",
-      "todo": "Airframe-specific drag area. Estimate from frontal area and a bluff-body Cd, or identify it from a tilt-versus-wind sweep the way test_3b_wind.py does for the simulator's airframe."
+      "todo": "Airframe-specific parasitic drag area. Not published, and not derivable from the sourced data without inventing a bluff-body Cd, which R2 forbids. To close: estimate from a measured frontal area with a stated Cd and tolerance and label it 'estimated', or identify it from a tilt-versus-wind sweep the way test_3b_wind.py does for the simulator airframe. Negligible at hover, matters in cruise."
     },
     "figure_of_merit": {
       "value": 0.65,
@@ -102,7 +324,9 @@
       "confidence": "literature",
       "source": "Rotorcraft literature, typical small electric multirotor",
       "verified_on": "2026-09-10",
-      "note": "Class-typical modelling assumption carried at the same literature citation the rest of the catalog uses. It is NOT a measurement of this airframe and must be revisited before this entity is briefed."
+      "inherited_from": "UAS-QUAD-SKYDIO-X2D stub, git 16cdb3c",
+      "ratified": false,
+      "note": "CARRIED ACROSS, NOT RESEARCHED AND NOT RATIFIED. This run was directed under R10 not to research the modelling choices, so it did not. The value is preserved verbatim from the stub this record supersedes, so that superseding did not silently DELETE it - deletion would have been the worse error. It is a class-typical assumption, NOT a measurement of this airframe. 'ratified': false marks that a human has not signed off on it for this record; STANDARDS.md 12.5 puts that call with a person. Original stub note: Class-typical modelling assumption carried at the same literature citation the rest of the catalog uses. It is NOT a measurement of this airframe and must be revisited before this entity is briefed. | verified_on is the stub author's attestation carried forward verbatim, not a fresh check by this run."
     },
     "motor_esc_efficiency": {
       "value": 0.8,
@@ -110,7 +334,9 @@
       "confidence": "literature",
       "source": "Rotorcraft literature, typical small electric multirotor",
       "verified_on": "2026-09-10",
-      "note": "Class-typical modelling assumption, not a measurement of this airframe."
+      "inherited_from": "UAS-QUAD-SKYDIO-X2D stub, git 16cdb3c",
+      "ratified": false,
+      "note": "CARRIED ACROSS, NOT RESEARCHED AND NOT RATIFIED. This run was directed under R10 not to research the modelling choices, so it did not. The value is preserved verbatim from the stub this record supersedes, so that superseding did not silently DELETE it - deletion would have been the worse error. It is a class-typical assumption, NOT a measurement of this airframe. 'ratified': false marks that a human has not signed off on it for this record; STANDARDS.md 12.5 puts that call with a person. Original stub note: Class-typical modelling assumption, not a measurement of this airframe. | verified_on is the stub author's attestation carried forward verbatim, not a fresh check by this run."
     },
     "propulsive_efficiency": {
       "value": 0.7,
@@ -118,17 +344,19 @@
       "confidence": "literature",
       "source": "Rotorcraft literature, typical small electric multirotor",
       "verified_on": "2026-09-10",
-      "note": "Class-typical modelling assumption, not a measurement of this airframe."
+      "inherited_from": "UAS-QUAD-SKYDIO-X2D stub, git 16cdb3c",
+      "ratified": false,
+      "note": "CARRIED ACROSS, NOT RESEARCHED AND NOT RATIFIED. This run was directed under R10 not to research the modelling choices, so it did not. The value is preserved verbatim from the stub this record supersedes, so that superseding did not silently DELETE it - deletion would have been the worse error. It is a class-typical assumption, NOT a measurement of this airframe. 'ratified': false marks that a human has not signed off on it for this record; STANDARDS.md 12.5 puts that call with a person. Original stub note: Class-typical modelling assumption, not a measurement of this airframe. | verified_on is the stub author's attestation carried forward verbatim, not a fresh check by this run."
     },
     "avionics_power_w": {
       "value": null,
       "status": "missing",
-      "todo": "Airframe-specific. Needs a hover current draw measurement, or a teardown estimate of the compute, radio and gimbal loads. Skydio's onboard autonomy stack likely draws more than a comparable commercial aircraft, so do not carry the Mavic 3 figure across."
+      "todo": "Fixed avionics overhead. Not published. Airframe-specific, and expected to be unusually HIGH here: the X2 carries an NVIDIA Tegra X2 SOC with a 256-core Pascal GPU running nine deep networks in flight, plus six 4K navigation cameras and a FLIR Boson, all drawing continuously. Do NOT carry the Mavic 3 figure across. To close: a hover current-draw measurement, or a teardown power budget for the compute, radio, gimbal and thermal payload."
     },
     "thrust_coefficient": {
       "value": null,
       "status": "missing",
-      "todo": "Propeller-specific C_T. Needs the propeller model, then a UIUC propeller database lookup or a static thrust bench test."
+      "todo": "Propeller-specific C_T. Blocked behind the same gap as propeller_diameter_m - the propeller model is unknown, so there is nothing to look up. To close: identify the X2 propeller (part SKYX2PRP100NA), then a UIUC propeller database lookup or a static thrust bench test."
     },
     "profile_power_mu_factor": {
       "value": 4.65,
@@ -136,16 +364,10 @@
       "confidence": "literature",
       "source": "Standard rotorcraft profile power growth form P = P0 (1 + 4.65 mu^2)",
       "verified_on": "2026-09-10",
-      "note": "Generic rotorcraft relation, not airframe-specific."
+      "inherited_from": "UAS-QUAD-SKYDIO-X2D stub, git 16cdb3c",
+      "ratified": false,
+      "note": "CARRIED ACROSS, NOT RESEARCHED AND NOT RATIFIED. This run was directed under R10 not to research the modelling choices, so it did not. The value is preserved verbatim from the stub this record supersedes, so that superseding did not silently DELETE it - deletion would have been the worse error. It is a class-typical assumption, NOT a measurement of this airframe. 'ratified': false marks that a human has not signed off on it for this record; STANDARDS.md 12.5 puts that call with a person. Original stub note: Generic rotorcraft relation, not airframe-specific. | verified_on is the stub author's attestation carried forward verbatim, not a fresh check by this run."
     }
   },
-
-  "calibration": {
-    "_note": "Declared intent. Nothing can be fitted until the hover anchor and the physical parameters exist.",
-    "fitted_parameter": "profile_power_hover_w",
-    "fitted_to_anchor": "max_hover_time_min",
-    "held_out_anchors": [
-      "max_flight_time_min"
-    ]
-  }
+  "_supersedes": "This record REPLACES the previous UAS-QUAD-SKYDIO-X2D stub committed at 16cdb3c ('C7: two stub entities, and the board that reports them as stubs'). It was compiled in drafts/ under the working id UAS-QUAD-SKYDIO-X2DENTERPRISE, which came from a brief naming a 'Skydio X2D, Enterprise variant'. No such Skydio configuration exists - X2D is the DEFENSE variant and X2E the ENTERPRISE variant. The catalog owner resolved the aircraft to the X2D on military-simulation grounds, so the Enterprise id was dropped and this record took the correct X2D id, superseding the thinner stub that already held it. Full history in drafts/UAS-QUAD-SKYDIO-X2D.research.md sections 8 and 9."
 }
